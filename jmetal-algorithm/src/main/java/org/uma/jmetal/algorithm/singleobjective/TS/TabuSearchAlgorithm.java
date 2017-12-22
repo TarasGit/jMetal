@@ -44,7 +44,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 		while (!stopCondition.mustStop(++currentIteration)) {
 
 			PermutationSolution<Integer> bestNeighborFound = null;
-			List<PermutationSolution<Integer>> candidateNeighbors = getNeighbors(currentSolution);// currentSolution.getNeighbors();
+			List<PermutationSolution<Integer>> candidateNeighbors = getNeighbors(currentSolution);
 			List<PermutationSolution<Integer>> solutionsInTabu = IteratorUtils.toList(tabuList.iterator());
 
 			Optional<PermutationSolution<Integer>> optionalBestNeighborFound = solutionLocator
