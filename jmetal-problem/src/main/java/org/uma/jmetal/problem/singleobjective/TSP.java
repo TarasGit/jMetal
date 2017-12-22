@@ -125,7 +125,7 @@ public class TSP extends AbstractIntegerPermutationProblem {
     return numberOfCities ;
   }
   
-  public double [][] getDistanceMatrix() {
+  public double[][] getDistanceMatrix(){
 	  return this.distanceMatrix;
   }
 }

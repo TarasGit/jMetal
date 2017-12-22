@@ -74,6 +74,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 				PermutationSolution<Integer> tmpSolution = mutationOperator.execute((PermutationSolution<Integer>) solution.copy());
 				problem.evaluate((S)tmpSolution);
 				newList.add(tmpSolution);
+				solution = tmpSolution;
 		}
 		return newList;
 	}

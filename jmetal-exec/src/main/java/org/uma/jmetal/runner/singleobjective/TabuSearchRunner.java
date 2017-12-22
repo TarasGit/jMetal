@@ -6,6 +6,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
 import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -25,20 +26,23 @@ public class TabuSearchRunner {
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
 	 */
 	public static void main(String[] args) throws Exception {
+		
 		TSP problem;
+		NRPClassic problem2;
+		
 		PermutationSwapMutation<Integer> mutation;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
 		int tabuListSize = 20;
 		int numbOfIterations = 200;
 
-		problem = new TSP("/tspInstances/myKro11.tsp");// new TSP("/tspInstances/kroA100.tsp");//**/
+		problem2 = new NRPClassic("/nrpClassicInstances/nrp1.txt"); //new TSP("/tspInstances/myKro11.tsp"); new TSP("/tspInstances/kroA100.tsp");//**/
 
-		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
+		System.out.println("Number of Variables: " + problem2.getNumberOfVariables());// Taras
 
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
-		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
+		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem2, mutation, tabuListSize,
 				numbOfIterations).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
