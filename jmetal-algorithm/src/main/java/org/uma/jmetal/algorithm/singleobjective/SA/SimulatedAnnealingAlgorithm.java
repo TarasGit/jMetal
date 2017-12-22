@@ -9,16 +9,15 @@ import java.util.stream.IntStream;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * @author Taras Iks <ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
-public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
+public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
 	public static final double RATE_OF_COOLING = 0.01;
 	public static final double INITIAL_TEMPERATURE = 2;
@@ -99,7 +98,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 			acceptanceProbability = Math.exp(-(adjacentDistance - currentDistance) / temperature);
 		}
 
-		double randomNumb = Math.random();
+		double randomNumb = JMetalRandom.getInstance().nextDouble();
 		if (acceptanceProbability >= randomNumb)
 			acceptRouteFlag = true;
 		return acceptRouteFlag;
@@ -112,7 +111,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	}
 
 	@Override
-	public List<S> getResult() {
-		return (List<S>) Arrays.asList(this.shortestSolution);
+	public S getResult() {
+		return this.shortestSolution;
 	}
 }

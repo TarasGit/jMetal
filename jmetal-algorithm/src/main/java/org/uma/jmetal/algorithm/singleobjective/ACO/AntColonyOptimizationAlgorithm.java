@@ -1,13 +1,12 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
@@ -16,21 +15,17 @@ import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 @SuppressWarnings("serial")
-public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
+public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
 	public static final int NUMBER_OF_ANTS = 20;
 	public static final double PROCESSING_CYCLE_PROBABILITY = 0.0;//0.8; works correctly with 0.0, or an null pointer exception!!!
 
 	private int count = 0;
-
-	protected TSP problem;
-	// protected PermutationSwapMutation<Integer> mutationOperator;
+	protected Problem<S> problem;
 	private int activeAnts;
 
-	// private SolutionListEvaluator<S> evaluator;
-	private DefaultIntegerPermutationSolution currentSolution;
-	private DefaultIntegerPermutationSolution adjacentSolution;
-	private DefaultIntegerPermutationSolution shortestSolution;
+	private S currentSolution;
+	private S shortestSolution;
 
 	static ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	static ExecutorCompletionService<Ant> executorCompletionService = new ExecutorCompletionService<Ant>(
@@ -39,15 +34,8 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 	/**
 	 * Constructor
 	 */
-	public AntColonyOptimizationAlgorithm(TSP problem) {
+	public AntColonyOptimizationAlgorithm(Problem<S> problem) {
 		this.problem = problem;
-		// this.crossoverOperator = crossoverOperator;
-		// this.mutationOperator = mutationOperator;
-		// this.selectionOperator = selectionOperator;
-
-		// this.evaluator = evaluator;
-
-		// comparator = new ObjectiveComparator<S>(0);
 	}
 
 	@Override
@@ -60,25 +48,10 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 		return "Ant Colony Optimizatio Algorithm";
 	}
 
-	// Route shortestRoute = new Route(currentRoute);
-	// Route adjacentRoute;
-	// while(temperature > MIN_TEMPERATURE) {
-	// System.out.print(currentRoute + " | " + currentRoute.getTotalDistance() + " |
-	// " + String.format("%.2f", temperature));
-	// adjacentRoute = obtainAdjacentRoute(new Route(currentRoute));
-	// if(currentRoute.getTotalDistance() < shortestRoute.getTotalDistance())
-	// shortestRoute = new Route(currentRoute);
-	// if(acceptRoute(currentRoute.getTotalDistance(),
-	// adjacentRoute.getTotalDistance(), temperature))
-	// currentRoute = new Route(adjacentRoute);
-	// temperature *= 1 - RATE_OF_COOLING;
-	// }
-	// return shortestRoute;
-
-	public DefaultIntegerPermutationSolution findRoute(DefaultIntegerPermutationSolution currentSolution) {
+	public S findRoute(S currentSolution) {
 		this.currentSolution = currentSolution;
-		this.shortestSolution = currentSolution.copy();
-		AntColonyOptimization aco = new AntColonyOptimization(problem);
+		this.shortestSolution = (S) currentSolution.copy();
+		AntColonyOptimization<S> aco = new AntColonyOptimization<S>(problem);
 		problem.evaluate(currentSolution);
 		System.out.println("Current Solution: " + currentSolution);
 		IntStream.range(1, NUMBER_OF_ANTS).forEach( x -> {
@@ -102,11 +75,11 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 		while (activeAnts > 0) {
 			try {
 				Ant ant = executorCompletionService.take().get();
-				currentSolution = ant.getSolution();
+				currentSolution = (S) ant.getSolution();
 				problem.evaluate(currentSolution);
 				problem.evaluate(shortestSolution);
 				if (shortestSolution == null || currentSolution.getObjective(0) < shortestSolution.getObjective(0)) {
-					shortestSolution = currentSolution.copy();// copy?
+					shortestSolution = (S) currentSolution.copy();// copy?
 				}
 
 			} catch (Exception e) {
@@ -116,30 +89,13 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 		}
 	}
 
-	// private S obtainAdjacentRoute(S route) {
-	// int x1 = 0, x2 = 0;
-	//
-	// while (x1 == x2) {
-	// x1 = (int) (route.getCities().size() * Math.random());
-	// x2 = (int) (route.getCities().size() * Math.random());
-	// }
-	//
-	// City city1 = route.getCities().get(x1);
-	// City city2 = route.getCities().get(x2);
-	//
-	// route.getCities().set(x2, city1);
-	// route.getCities().set(x1, city2);
-	//
-	// return route;
-	// }
-
 	@Override
 	public void run() {
-		findRoute((DefaultIntegerPermutationSolution) problem.createSolution());
+		findRoute(problem.createSolution());
 	}
 
 	@Override
-	public List<S> getResult() {
-		return (List<S>) Arrays.asList(this.shortestSolution);// XXX TODO wie im NSGA-II
+	public S getResult() {
+		return this.shortestSolution;// XXX TODO wie im NSGA-II
 	}
 }

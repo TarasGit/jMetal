@@ -1,20 +1,20 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO;
 import java.io.IOException;
-import java.util.Random;
 import java.util.stream.IntStream;
 
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
-import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class AntColonyOptimization {
+public class AntColonyOptimization<S extends Solution<?>> {
 	
 	private DefaultIntegerPermutationSolution initialSolution;
 	private int size;
-	private TSP problem;
+	private Problem<S> problem;
 	
-	public AntColonyOptimization(TSP problem) {
+	public AntColonyOptimization(Problem<S> problem) {
 		this.size = problem.getNumberOfVariables();
 		this.initialSolution = (DefaultIntegerPermutationSolution) problem.createSolution();
 		this.problem = problem;
@@ -24,7 +24,7 @@ public class AntColonyOptimization {
 	
 
 	private AtomicDouble[][] pheromonLevelMatrix = null;
-//	private double[][] distanceMatrix = null;
+
 	
 	public AtomicDouble[][] getPheramonLevelMatrix(){ 
 		return pheromonLevelMatrix;
@@ -39,9 +39,8 @@ public class AntColonyOptimization {
 	
 	private void initializePheromonLevel() {
 		pheromonLevelMatrix = new AtomicDouble[size][size];//rename size
-		Random random = new Random();
 		IntStream.range(0,  size).forEach(x -> {
-			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = new AtomicDouble(random.nextDouble()));
+			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = new AtomicDouble(JMetalRandom.getInstance().nextDouble()));
 		});
 	}
 	
@@ -53,7 +52,7 @@ public class AntColonyOptimization {
 		return this.initialSolution;
 	}
 	
-	public TSP getProblem() {
+	public Problem<S> getProblem() {
 		return problem;
 	}
 

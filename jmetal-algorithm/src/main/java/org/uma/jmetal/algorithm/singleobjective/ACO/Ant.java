@@ -5,10 +5,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.problem.singleobjective.TSP;
+import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class Ant implements Callable<Ant> {
+public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 	
 	public static final boolean D = false;//Debug
 	
@@ -18,7 +20,7 @@ public class Ant implements Callable<Ant> {
 	public static final double Q = 0.0005;//feramon deposited level, 0<=x<=1
 	public static final double RHO = 0.2;//feramon avapouration level, 0<=x<=1
 
-	private AntColonyOptimization aco;
+	private AntColonyOptimization<S> aco;
 	private int antNumb;
 	private DefaultIntegerPermutationSolution route = null;
 	
@@ -28,7 +30,7 @@ public class Ant implements Callable<Ant> {
 	
 	private int numbOfCities;
 	
-	public Ant(AntColonyOptimization aco, int antNumb) {
+	public Ant(AntColonyOptimization<S> aco, int antNumb) {
 		this.aco = aco;
 		this.antNumb = antNumb;
 		this.numbOfCities = aco.getProblemSize();
@@ -36,7 +38,7 @@ public class Ant implements Callable<Ant> {
 	}
 	
 	@Override
-	public Ant call() throws Exception {
+	public Ant<S> call() throws Exception {
 		int originatingCityIndex = ThreadLocalRandom.current().nextInt(numbOfCities);
 		DefaultIntegerPermutationSolution routeCities = aco.getInitialSolution();//should be null ArrayList solution
 		//IntStream.range(0, numbOfCities).forEach(x -> routeCities.setVariableValue(x, null));//TODO XXX: should be set to [null?], because otherwise some values are not valid -> result is
@@ -73,8 +75,7 @@ public class Ant implements Callable<Ant> {
 	}
 	
 	private double getDistance(int x, int y) {
-		double result =  aco.getProblem().getDistanceMatrix()[x][y];
-		//System.out.println("# " + count + " [" + x + "," + y + "]: " + result);
+		double result =  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y]; //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
 		return result;
 	}
 	private void adjustPheromonLevel(int x, int y, double routeDistance) {
@@ -92,7 +93,7 @@ public class Ant implements Callable<Ant> {
 	
 	private int getY(int x, HashMap<Integer, Boolean> visitedCities) {
 		int returnY = invalidCityIndex;
-		double random = ThreadLocalRandom.current().nextDouble();
+		double random = JMetalRandom.getInstance().nextDouble();
 		ArrayList<Double> transitionProbabilities = getTransitionProbabilities(x, visitedCities);	
 		for(int y=0;y<numbOfCities;y++) {
 			if(transitionProbabilities.get(y) > random) {
@@ -139,7 +140,7 @@ public class Ant implements Callable<Ant> {
 		double numerator = 0.0;
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
 		if(pheromonLevel != 0.0)
-			numerator = Math.pow(pheromonLevel, ALPHA) * Math.pow(1 /  aco.getProblem().getDistanceMatrix()[x][y], BETA);
+			numerator = Math.pow(pheromonLevel, ALPHA) * Math.pow(1 /  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y], BETA); //TODO: cast to TSP very bad solution!
 		if(D)System.out.println("TPNumerator: " + numerator);
 		return numerator;
 	}

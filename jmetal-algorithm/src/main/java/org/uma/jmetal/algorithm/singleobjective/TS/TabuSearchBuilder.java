@@ -60,7 +60,7 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 	
 	
 
-	public TabuSearch<S> build() {
+	public TabuSearchAlgorithm<S> build() {
 		buildInstance();
 		return setupTS(listSize, numbOfIterations, mutationOperator);
 	}
@@ -81,8 +81,8 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 		return evaluator;
 	}
 
-	public TabuSearch<S> setupTS(Integer tabuListSize, Integer iterations, PermutationSwapMutation<Integer> mutationOperator) {
-		return new TabuSearch<S>(new StaticTabuList(tabuListSize), new IterationsStopCondition(iterations),
+	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations, PermutationSwapMutation<Integer> mutationOperator) {
+		return new TabuSearchAlgorithm<S>(new StaticTabuList(tabuListSize), new IterationsStopCondition(iterations),
 				new BasicNeighborSolutionLocator(),  mutationOperator, solution, problem);
 	}
 

@@ -12,7 +12,7 @@ import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 
 
-public class TabuSearch<S extends Solution<?>> implements Algorithm<S> {
+public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
 	private static final long serialVersionUID = 1L;
 	private TabuList tabuList;
@@ -25,7 +25,7 @@ public class TabuSearch<S extends Solution<?>> implements Algorithm<S> {
 	Problem<S> problem;
 
 
-	public TabuSearch(TabuList tabuList, StopCondition stopCondition, BestNeighborSolutionLocator solutionLocator,
+	public TabuSearchAlgorithm(TabuList tabuList, StopCondition stopCondition, BestNeighborSolutionLocator solutionLocator,
 			PermutationSwapMutation<Integer> mutationOperator, PermutationSolution<Integer> initialSolution, Problem<S> problem) {
 		this.tabuList = tabuList;
 		this.stopCondition = stopCondition;
@@ -55,10 +55,6 @@ public class TabuSearch<S extends Solution<?>> implements Algorithm<S> {
 			else
 				bestNeighborFound = optionalBestNeighborFound.get();
 
-			// SomeSolution someSolution = (SomeSolution)bestNeighborFound;//TODO: remove
-			// this step by adding setNeighbors to the interface.
-			// bestNeighborFound.setNeighbors(generateNNeighbors(3));
-			// bestNeighborFound = someSolution;
 
 			if (bestNeighborFound.getObjective(0) < bestSolution.getObjective(0)) {
 				bestSolution = bestNeighborFound;
