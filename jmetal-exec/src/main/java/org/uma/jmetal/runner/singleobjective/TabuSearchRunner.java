@@ -6,6 +6,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
 import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -25,25 +26,35 @@ public class TabuSearchRunner {
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
 	 */
+
+	public static final boolean NRPORTSP = true; // true = NRP, false = TSP.
+	public static final boolean MINORMAX = true; // true = MIN, false = MAX.
+
 	public static void main(String[] args) throws Exception {
-		
-		TSP problem;
-		NRPClassic problem2;
-		
+
+		Problem<PermutationSolution<Integer>> problem;
 		PermutationSwapMutation<Integer> mutation;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
-		int tabuListSize = 20;
-		int numbOfIterations = 200;
+		int tabuListSize = 200;
+		int numbOfIterations = 2000;
 
-		problem2 = new NRPClassic("/nrpClassicInstances/nrp1.txt"); //new TSP("/tspInstances/myKro11.tsp"); new TSP("/tspInstances/kroA100.tsp");//**/
+		if (NRPORTSP) {
+			System.out.println("Solving NRP");
+			problem = new NRPClassic("/nrpClassicInstances/nrp4.txt");
+		} else {
+			System.out.println("Solving TSP");
+			problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
+		}
 
-		System.out.println("Number of Variables: " + problem2.getNumberOfVariables());// Taras
+		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
+		
+		System.out.println(MINORMAX  ? "MIN" : "MAX");
 
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
-		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem2, mutation, tabuListSize,
-				numbOfIterations).build();
+		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
+				numbOfIterations, MINORMAX).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -54,6 +65,7 @@ public class TabuSearchRunner {
 		population.add(solution);
 
 		System.out.println("Solution:" + solution);
+		System.out.println("Optimal Solution: " + solution.getObjective(0));
 
 		long computingTime = algorithmRunner.getComputingTime();
 

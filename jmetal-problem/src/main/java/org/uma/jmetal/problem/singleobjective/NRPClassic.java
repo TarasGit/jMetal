@@ -8,8 +8,9 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.uma.jmetal.problem.impl.AbstractIntegerPermutationProblem;
+import org.uma.jmetal.problem.impl.AbstractBinaryIntegerPermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -21,7 +22,7 @@ import com.google.common.collect.Multimap;
  * http://www.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp/
  */
 @SuppressWarnings("serial")
-public class NRPClassic extends AbstractIntegerPermutationProblem {
+public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 
 //	public static void main(String[] args) {
 //
@@ -35,6 +36,8 @@ public class NRPClassic extends AbstractIntegerPermutationProblem {
 //		}
 //	}
 
+	public static final boolean COSTSORPROFIT = true; // false = profit, true = costs;
+	
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
 	private int costsOfRequirements[][] = null;
@@ -52,7 +55,7 @@ public class NRPClassic extends AbstractIntegerPermutationProblem {
 
 	public NRPClassic(String distanceFile) throws IOException {
 		readProblem(distanceFile);
-		this.costs = computeAllCosts();//tsp1.txt = 587;
+		this.costs = computeAllCosts();//tsp1.txt = 857;
 
 		setNumberOfVariables(numberOfCustoments);
 		setNumberOfObjectives(1);
@@ -135,13 +138,36 @@ public class NRPClassic extends AbstractIntegerPermutationProblem {
 
 	@Override
 	public void evaluate(PermutationSolution<Integer> solution) {
+		if(COSTSORPROFIT) {
+			solution.setObjective(0, getEvaluatedCosts(solution));
+		}else {
+			solution.setObjective(0, getEvaluatedProfit(solution));
+		}
+	}
+	
+	
+	private double getEvaluatedProfit(PermutationSolution<Integer> solution) {
+		double fitness = 0.0;
+		
+		for (int i = 0; i < numberOfCustoments; i++) {
+			if (solution.getVariableValue(i) == 0) { 
+				Customer customer = customers.get(i);
+				fitness += customer.getProfit();	
+			}//end - if
+		}
+		
+		return fitness;
+		
+	}
+
+	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
 		int counter = 0;
 		double fitness = 0.0;
 		boolean found = false;
 		
 		//look for costs for all the requirements desired by the customers in solution - start
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) % 2 == 0) { //TODO: should be binary solution with 1 or 0.
+			if (solution.getVariableValue(i) == 0) { //TODO: should be binary solution with 1 or 0.
 				Customer customer = customers.get(i);
 				int numberOfRequests = customer.getNumberOfRequests();
 				for (int j = 0; j < numberOfRequests; j++) {
@@ -165,7 +191,7 @@ public class NRPClassic extends AbstractIntegerPermutationProblem {
 		}
 		//costs for all customers - end
 		
-		solution.setObjective(0, fitness);
+		return fitness;
 	}
 
 	private int computeAllCosts() {
@@ -182,6 +208,8 @@ public class NRPClassic extends AbstractIntegerPermutationProblem {
 	public int getCosts() {
 		return this.costs;
 	}
+
+
 
 	// public void evaluate(PermutationSolution<Integer> solution) {
 	// double fitness1;

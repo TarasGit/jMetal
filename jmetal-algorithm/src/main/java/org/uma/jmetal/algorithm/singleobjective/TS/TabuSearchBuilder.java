@@ -18,18 +18,19 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 	private Problem<S> problem;
 	private PermutationSwapMutation<Integer> mutationOperator;
 	private SolutionListEvaluator<Integer> evaluator;
-	private int listSize; 
+	private int listSize;
 	private int numbOfIterations;
-	
-	private PermutationSolution<Integer> solution;
+	private boolean MinOrMax;
 
+	private PermutationSolution<Integer> solution;
 
 	/**
 	 * Builder constructor
 	 */
-	public TabuSearchBuilder(Problem<S> problem, PermutationSwapMutation<Integer> mutationOperator, int listSize, int numbOfIterations) {
+	public TabuSearchBuilder(Problem<S> problem, PermutationSwapMutation<Integer> mutationOperator, int listSize,
+			int numbOfIterations, boolean MinOrMax) {
 		this.problem = problem;
-
+		this.MinOrMax = MinOrMax;
 		this.mutationOperator = mutationOperator;
 		this.listSize = listSize;
 		this.numbOfIterations = numbOfIterations;
@@ -43,26 +44,22 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 
 		return this;
 	}
-	
-	
+
 	public TabuSearchBuilder<S> setNumberOfIterations(int numberOfIterations) {
 		this.numbOfIterations = numberOfIterations;
 
 		return this;
 	}
-	
 
 	public TabuSearchBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
 		this.evaluator = evaluator;
 
 		return this;
 	}
-	
-	
 
 	public TabuSearchAlgorithm<S> build() {
 		buildInstance();
-		return setupTS(listSize, numbOfIterations, mutationOperator);
+		return setupTS(listSize, numbOfIterations, mutationOperator, MinOrMax);
 	}
 
 	/*
@@ -72,7 +69,6 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 		return problem;
 	}
 
-
 	public PermutationSwapMutation<Integer> getMutationOperator() {
 		return mutationOperator;
 	}
@@ -81,13 +77,20 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 		return evaluator;
 	}
 
-	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations, PermutationSwapMutation<Integer> mutationOperator) {
-		return new TabuSearchAlgorithm<S>(new StaticTabuList(tabuListSize), new IterationsStopCondition(iterations),
-				new BasicNeighborSolutionLocator(),  mutationOperator, solution, problem);
+	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations,
+			PermutationSwapMutation<Integer> mutationOperator, boolean MinOrMax) {
+		if (MinOrMax) {
+			return new TabuSearchAlgorithm<S>(new StaticTabuList(tabuListSize), new IterationsStopCondition(iterations),
+					new MinNeighborSolutionLocator(), mutationOperator, solution, problem);
+		} else {
+
+			return new TabuSearchAlgorithm<S>(new StaticTabuList(tabuListSize), new IterationsStopCondition(iterations),
+					new MaxNeighborSolutionLocator(), mutationOperator, solution, problem);
+		}
 	}
 
 	public void buildInstance() {
-		this.solution = (PermutationSolution<Integer>)problem.createSolution();
+		this.solution = (PermutationSolution<Integer>) problem.createSolution();
 	}
 
 }
