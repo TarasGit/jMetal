@@ -3,15 +3,15 @@ package org.uma.jmetal.algorithm.singleobjective.TS;
 import java.util.Iterator;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.Solution;
 
-public final class StaticTabuList implements TabuList {
+public final class StaticTabuList<S extends Solution<?>> implements TabuList<S> {
 
 
-	private CircularFifoQueue<PermutationSolution<Integer>> tabuList;
+	private CircularFifoQueue<S> tabuList;
 
 	public StaticTabuList(Integer size) {
-		this.tabuList = new CircularFifoQueue<PermutationSolution<Integer>>(size);
+		this.tabuList = new CircularFifoQueue<S>(size);
 	}
 
 	public StaticTabuList() {
@@ -19,17 +19,17 @@ public final class StaticTabuList implements TabuList {
 	}
 
 	@Override
-	public void add(PermutationSolution<Integer> solution) {
+	public void add(S solution) {
 		tabuList.add(solution);
 	}
 
 	@Override
-	public Boolean contains(PermutationSolution<Integer> solution) {
+	public Boolean contains(S solution) {
 		return tabuList.contains(solution);
 	}
 
 	@Override
-	public Iterator<PermutationSolution<Integer>> iterator() {
+	public Iterator<S> iterator() {
 		return tabuList.iterator();
 	}
 }

@@ -7,26 +7,26 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.Solution;
 
-public class MinNeighborSolutionLocator implements BestNeighborSolutionLocator {
+public class MinNeighborSolutionLocator<S extends Solution<?>> implements BestNeighborSolutionLocator<S> {
 
 	@Override
-	public Optional<PermutationSolution<Integer>> findBestNeighbor(
-			List<PermutationSolution<Integer>> neighborsSolutions,
-			final List<PermutationSolution<Integer>> solutionsInTabu) {
+	public Optional<S> findBestNeighbor(
+			List<S> neighborsSolutions,
+			final List<S> solutionsInTabu) {
 		// remove any neighbor that is in tabu list
-		CollectionUtils.filterInverse(neighborsSolutions, new Predicate<PermutationSolution<Integer>>() {
+		CollectionUtils.filterInverse(neighborsSolutions, new Predicate<S>() {
 			@Override
-			public boolean evaluate(PermutationSolution<Integer> neighbor) {
+			public boolean evaluate(S neighbor) {
 				return solutionsInTabu.contains(neighbor);
 			}
 		});
 
 		// sort the neighbors
-		Collections.sort(neighborsSolutions, new Comparator<PermutationSolution<Integer>>() {
+		Collections.sort(neighborsSolutions, new Comparator<S>() {
 			@Override
-			public int compare(PermutationSolution<Integer> a, PermutationSolution<Integer> b) {
+			public int compare(S a, S b) {
 				if (a.getObjective(0) == b.getObjective(0))
 					return 0;
 				else if (a.getObjective(0) > b.getObjective(0))

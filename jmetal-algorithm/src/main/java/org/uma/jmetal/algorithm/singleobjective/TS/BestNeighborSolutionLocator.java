@@ -3,10 +3,10 @@ package org.uma.jmetal.algorithm.singleobjective.TS;
 import java.util.List;
 import java.util.Optional;
 
-import org.uma.jmetal.solution.PermutationSolution; 
+import org.uma.jmetal.solution.Solution; 
   
-public interface BestNeighborSolutionLocator { 
+public interface BestNeighborSolutionLocator<S extends Solution<?>> { 
  
- Optional<PermutationSolution<Integer>> findBestNeighbor(List<PermutationSolution<Integer>> neighborsSolutions, List<PermutationSolution<Integer>> solutionsInTabu); 
+ Optional<S> findBestNeighbor(List<S> neighborsSolutions, List<S> solutionsInTabu); 
   
 }

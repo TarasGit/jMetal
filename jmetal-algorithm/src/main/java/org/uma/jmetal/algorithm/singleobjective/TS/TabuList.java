@@ -1,10 +1,10 @@
 package org.uma.jmetal.algorithm.singleobjective.TS;
 
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.Solution;
 
-public interface TabuList extends Iterable<PermutationSolution<Integer>> { 
+public interface TabuList<S extends Solution<?>> extends Iterable<S> { 
   
- void add(PermutationSolution<Integer> solution); 
+ void add(S solution); 
   
- Boolean contains(PermutationSolution<Integer> solution); 
+ Boolean contains(S solution); 
 }

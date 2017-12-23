@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.uma.jmetal.problem.impl.AbstractBinaryIntegerPermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
-import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 
 import com.google.common.collect.ArrayListMultimap;

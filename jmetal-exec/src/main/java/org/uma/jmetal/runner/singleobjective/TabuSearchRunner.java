@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassic;
@@ -33,25 +35,27 @@ public class TabuSearchRunner {
 	public static void main(String[] args) throws Exception {
 
 		Problem<PermutationSolution<Integer>> problem;
-		PermutationSwapMutation<Integer> mutation;
+		MutationOperator<PermutationSolution<Integer>> mutation;
+		
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
-		int tabuListSize = 200;
-		int numbOfIterations = 2000;
+		int tabuListSize = 100;
+		int numbOfIterations = 200;
 
 		if (NRPORTSP) {
 			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp4.txt");
+			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");//500(Min costs),
+			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+			//mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 		} else {
 			System.out.println("Solving TSP");
 			problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
+			mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 		}
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
 		System.out.println(MINORMAX  ? "MIN" : "MAX");
-
-		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
 				numbOfIterations, MINORMAX).build();
