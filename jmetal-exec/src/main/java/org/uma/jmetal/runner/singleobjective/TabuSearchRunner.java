@@ -36,7 +36,7 @@ public class TabuSearchRunner {
 
 		Problem<PermutationSolution<Integer>> problem;
 		MutationOperator<PermutationSolution<Integer>> mutation;
-		
+
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
 		int tabuListSize = 100;
@@ -44,9 +44,9 @@ public class TabuSearchRunner {
 
 		if (NRPORTSP) {
 			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");//500(Min costs),
+			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs),
 			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
-			//mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+			// mutation = new PermutationSwapMutation<Integer>(mutationProbability); //works also, but only swaps the values.
 		} else {
 			System.out.println("Solving TSP");
 			problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
@@ -54,8 +54,8 @@ public class TabuSearchRunner {
 		}
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
-		
-		System.out.println(MINORMAX  ? "MIN" : "MAX");
+
+		System.out.println(MINORMAX ? "MIN" : "MAX");
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
 				numbOfIterations, MINORMAX).build();
