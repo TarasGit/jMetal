@@ -46,8 +46,20 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 		Integer currentIteration = 0;
 		while (!stopCondition.mustStop(++currentIteration)) {
 
-			List<S> candidateNeighbors = getNeighbors(currentSolution);
+			List<S> candidateNeighbors = getNeighbors(currentSolution);			
 			List<S> solutionsInTabu = IteratorUtils.toList(tabuList.iterator());
+			List<S> listWithoutViolations = new ArrayList<>();
+			
+			
+			for(S solution : candidateNeighbors) {
+				Double tmpAttr =(Double) solution.getObjective(0);
+				if(tmpAttr != -1.0)
+					listWithoutViolations.add(solution);
+			}
+			
+			if(listWithoutViolations.isEmpty())
+				continue;
+			
 
 			Optional<S> optionalBestNeighborFound = solutionLocator.findBestNeighbor(candidateNeighbors,
 					solutionsInTabu);
@@ -56,6 +68,11 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 				break;
 			else
 				bestNeighborFound = optionalBestNeighborFound.get();
+			
+			System.out.println("fitness: " + bestNeighborFound.getObjective(0) + " / " + "costs: " + bestNeighborFound.getAttribute(0));
+			//System.out.println(bestNeighborFound);
+
+			
 
 			if (bestNeighborFound.getObjective(0) > bestSolution.getObjective(0)) {// TODO: MIN OR MAX - < OR >
 				bestSolution = bestNeighborFound;
@@ -74,9 +91,12 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 		ArrayList<S> newList = new ArrayList<>();
 		for (int i = 0; i < numberOfNeighbors; i++) {
 			S tmpSolution = mutationOperator.execute((S) solution.copy());// TODO: how to cast properly?
+			tmpSolution.setObjective(0, 0);//reset costs to 0!
+			tmpSolution.setAttribute(0, 0);
 			problem.evaluate(tmpSolution);
+			//System.out.println("fitness: " + tmpSolution.getObjective(0) + " / " + "costs: " + tmpSolution.getAttribute(0));
 			newList.add(tmpSolution);
-			solution = tmpSolution;
+			//solution = tmpSolution;
 		}
 		return newList;
 	}

@@ -18,8 +18,8 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 	public DefaultBinaryIntegerPermutationSolution(PermutationProblem<?> problem) {
 		super(problem);
 
-		for (int i = 0; i < getNumberOfVariables(); i++) {
-			if (randomGenerator.nextDouble() > 0.5)
+		for (int i = 0; i < getNumberOfVariables(); i++) {//TODO: 0.1 set for test purposes!
+			if (randomGenerator.nextDouble() > 1)
 				setVariableValue(i, 1);
 			else
 				setVariableValue(i, 0);

@@ -18,16 +18,12 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
- * Class to configure and run a generational genetic algorithm. The target
- * problem is TSP.
+ * Class to configure and run a Tabu Search algorithm. The target
+ * problem is NRP/TSP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
 public class TabuSearchRunner {
-	/**
-	 * Usage: java
-	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
-	 */
 
 	public static final boolean NRPORTSP = true; // true = NRP, false = TSP.
 	public static final boolean MINORMAX = false; // true = MIN, false = MAX. <-> Min for TSP / Max for NRP.
@@ -39,12 +35,12 @@ public class TabuSearchRunner {
 
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
-		int tabuListSize = 50;
-		int numbOfIterations = 2000;
+		int tabuListSize = 1000;
+		int numbOfIterations = 20000;
 
 		if (NRPORTSP) {
 			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp2.txt");// 500(Min costs),
+			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 			// mutation = new PermutationSwapMutation<Integer>(mutationProbability); //works also, but only swaps the values.
 		} else {

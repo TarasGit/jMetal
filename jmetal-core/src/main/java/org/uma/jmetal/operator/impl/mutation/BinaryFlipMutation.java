@@ -50,12 +50,41 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 	 * @param solution
 	 *            The solution to mutate
 	 */
-	public void doMutation(S solution) {
-		int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfVariables());// TODO: check
-		if (((int) solution.getVariableValue(pos)) == 1)
-			solution.setVariableValue(pos, 0);
-		else
-			solution.setVariableValue(pos, 1);
+	public void doMutation(double probability, S solution) {
+		double rand = randomGenerator.getRandomValue();
+		//System.out.println(":" + rand);
+		int pos1 = 0, pos2 = 0;
+		if (rand < 0.5) {
+			int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfVariables());// TODO: check the
+																									// distribution 0 <=
+																									// x <= 1
+			if (((int) solution.getVariableValue(pos)) == 1) {
+				solution.setVariableValue(pos, 0);
+			} else {
+				solution.setVariableValue(pos, 1);
+			}
+		} else {
+			int permutationLength;
+			permutationLength = solution.getNumberOfVariables();
+
+			if ((permutationLength != 0) && (permutationLength != 1)) {
+				if (randomGenerator.getRandomValue() < mutationProbability) {
+					pos1 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+					pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+
+					while (pos1 == pos2) {
+						if (pos1 == (permutationLength - 1))
+							pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 2));
+						else
+							pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+					}
+
+					Object temp = (Object) solution.getVariableValue(pos1);
+					solution.setVariableValue(pos1, solution.getVariableValue(pos2));
+					solution.setVariableValue(pos2, temp);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -64,7 +93,7 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 			throw new JMetalException("Null parameter");
 		}
 
-		doMutation(solution);
+		doMutation(mutationProbability, solution);
 		return solution;
 	}
 }

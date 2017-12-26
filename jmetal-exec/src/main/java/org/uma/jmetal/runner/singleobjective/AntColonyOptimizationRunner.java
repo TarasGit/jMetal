@@ -13,7 +13,7 @@ import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
- * Class to configure and run a generational genetic algorithm. The target
+ * Class to configure and run a Ant Colony Optimization algorithm. The target
  * problem is TSP.
  *
  * @author Taras Iks <ikstaras@gmail.com>

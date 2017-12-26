@@ -21,9 +21,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Class representing a single-objective TSP (Traveling Salesman Problem)
- * problem. It accepts data files from TSPLIB:
- * http://www.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp/
+ * Class representing a single-objective NRP
+ * problem. 
  */
 @SuppressWarnings("serial")
 public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
@@ -32,7 +31,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	//
 	// NRPClassic nrp = null;
 	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/nrp2.txt");
+	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 	// System.out.println("All Costs: " + nrp.computeAllCosts());
 	//
 	// } catch (IOException e) {
@@ -50,9 +49,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	private int numberOfCustoments = 0;
 	private List<Customer> customers = null;
 	private int costs;
-	private int costFactor;
-
-	private Set<Integer> setOfRequirements = new HashSet<>();
+	private double costFactor;
 
 	/**
 	 * Creates a new TSP problem instance
@@ -61,7 +58,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	public NRPClassic(String distanceFile) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
-		this.costFactor = 1;
+		this.costFactor = 0.5;
 		System.out.println("All costs: " + this.costs);
 
 		setNumberOfVariables(this.numberOfCustoments);
@@ -136,11 +133,9 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			new JMetalException("NRPClassic.readProblem(): error when reading data file " + e);
 		}
 	}
-	
-	
 
 	@Override
-	public void evaluate(PermutationSolution<Integer> solution) {
+	public void evaluate(PermutationSolution<Integer> solution) {// TODO: id's stars with 1 and not with 0!!!
 		double localCosts = getEvaluatedCosts(solution);
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
@@ -158,13 +153,13 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			if (solution.getVariableValue(i) == 1) {
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
-			} 
+			}
 		}
 		return fitness;
 	}
 
-
 	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
+		Set<Integer> setOfRequirements = new HashSet<>();  
 
 		double fitness = 0.0;
 		int numberOfRequests;
@@ -175,9 +170,9 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			if (solution.getVariableValue(i) == 1) {
 				Customer customer = customers.get(i);
 				numberOfRequests = customer.getNumberOfRequests();
-				for (int j = 0; j < numberOfRequests; j++) { //TODO: check if the elemen is in the set to abort.
+				for (int j = 0; j < numberOfRequests; j++) { // TODO: check if the elemen is in the set to abort.
 					requirement = customer.getFromRequirementList(j);
-					addAllDependenciesToSetRecursively(requirement);
+					addAllDependenciesToSetRecursively(requirement, setOfRequirements);
 				}
 			} // end - if
 		}
@@ -189,24 +184,30 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		return fitness;
 	}
 
-	private	void addToSetIfUnique(int value) {
-		//if (!setOfRequirements.contains(value))
-			setOfRequirements.add(value);
+	private void addToSetIfUnique(int value, Set<Integer> setOfRequirements) {
+		// if (!setOfRequirements.contains(value))
+		setOfRequirements.add(value);
 	}
 
-	private void addAllDependenciesToSetRecursively(int requirement) {
-		int localRequirement;	
-		addToSetIfUnique(requirement);
+	private void addAllDependenciesToSetRecursively(int requirement, Set<Integer> setOfRequirements) {
+		ArrayList<Integer> tmpArrayList = new ArrayList<>();
+		int localRequirement;
+		addToSetIfUnique(requirement, setOfRequirements);
 		List<Integer> localDependencies = getDependencies(requirement);
+		
+		for(Integer i : localDependencies) { //TODO: do it by some library.
+			if(!setOfRequirements.contains(i))
+				tmpArrayList.add(i);
+		}
 
-		while (!localDependencies.isEmpty()) {//TODO: check if there is a cycle in dependencies, how to react?
-			localRequirement = localDependencies.remove(0);
-			addAllDependenciesToSetRecursively(localRequirement);
+		while (!tmpArrayList.isEmpty()) {// TODO: check if there is a cycle in dependencies, how to react?
+			localRequirement = tmpArrayList.remove(0);
+			addAllDependenciesToSetRecursively(localRequirement, setOfRequirements);
 		}
 	}
 
 	private Double getCostFromRequirement(int localRequirement) {
-		double costs = 0.0;
+		double costs = 0.0; 
 		int k, m;
 		Pair<Integer, Integer> positions;
 		Optional<Pair<Integer, Integer>> result = getRequirementPosition(localRequirement);
@@ -227,10 +228,11 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	private Optional<Pair<Integer, Integer>> getRequirementPosition(int requirement) {
+		requirement = requirement - 1; //requirement starts from 0..n, subtract 1!!!
 		int counter = 0;
 		for (int k = 0; k < levelOfRequirements; k++) {
 			for (int m = 0; m < numberOfRequirementsInLevel[k]; m++) {
-				if (requirement == counter++) {
+				if (requirement == counter++) {//TODO: why do we search for the position in this way???
 					return Optional.of(new Pair<>(k, m));
 				}
 			}
@@ -257,7 +259,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		return this.costs * costFactor;
 	}
 
-	public void setCostFactor(int costFactor) {
+	public void setCostFactor(double costFactor) {
 		this.costFactor = costFactor;
 	}
 
@@ -268,11 +270,10 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		else
 			return true;
 	}
-	
+
 	@Override
 	public int getPermutationLength() {
 		return this.numberOfCustoments;
 	}
-
 
 }
