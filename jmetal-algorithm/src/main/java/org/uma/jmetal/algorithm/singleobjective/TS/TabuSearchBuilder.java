@@ -76,13 +76,13 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 		return evaluator;
 	}
 
+	//Min for TSP, Max for NRP.
 	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations,
 			MutationOperator<S> mutationOperator, boolean MinOrMax) {
 		if (MinOrMax) {
 			return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
 					new MinNeighborSolutionLocator<S>(), mutationOperator, solution, problem);
 		} else {
-
 			return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
 					new MaxNeighborSolutionLocator<S>(), mutationOperator, solution, problem);
 		}

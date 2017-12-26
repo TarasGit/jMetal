@@ -6,8 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
+import org.uma.jmetal.problem.BudgetProblem;
 import org.uma.jmetal.problem.impl.AbstractBinaryIntegerPermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.JMetalException;
@@ -21,22 +26,20 @@ import com.google.common.collect.Multimap;
  * http://www.iwr.uni-heidelberg.de/groups/comopt/software/TSPLIB95/tsp/
  */
 @SuppressWarnings("serial")
-public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
+public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
 
-//	public static void main(String[] args) {
-//
-//		NRPClassic nrp = null;
-//		try {
-//			nrp = new NRPClassic("/nrpClassicInstances/nrp2.txt");
-//			System.out.println("All Costs: " + nrp.computeAllCosts());
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	//
+	// NRPClassic nrp = null;
+	// try {
+	// nrp = new NRPClassic("/nrpClassicInstances/nrp2.txt");
+	// System.out.println("All Costs: " + nrp.computeAllCosts());
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
-	public static final boolean COSTSORPROFIT = true; // false = profit, true = costs;
-	
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
 	private int costsOfRequirements[][] = null;
@@ -47,6 +50,9 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 	private int numberOfCustoments = 0;
 	private List<Customer> customers = null;
 	private int costs;
+	private int costFactor;
+
+	private Set<Integer> setOfRequirements = new HashSet<>();
 
 	/**
 	 * Creates a new TSP problem instance
@@ -54,9 +60,11 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 
 	public NRPClassic(String distanceFile) throws IOException {
 		readProblem(distanceFile);
-		this.costs = computeAllCosts();//tsp1.txt = 857;
+		this.costs = computeAllCosts();// tsp1.txt = 857;
+		this.costFactor = 1;
+		System.out.println("All costs: " + this.costs);
 
-		setNumberOfVariables(numberOfCustoments);
+		setNumberOfVariables(this.numberOfCustoments);
 		setNumberOfObjectives(1);
 		setName("NRPClassic");
 	}
@@ -74,8 +82,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 		StreamTokenizer token = new StreamTokenizer(br);
 		try {
 
-			token.nextToken();// TODO: check if NULL? ex. // if ((token.sval != null) &&
-								// ((token.sval.compareTo("DIMENSION") == 0)))
+			token.nextToken();// TODO: check if NULL? ex. // if ((token.sval != null)
 
 			levelOfRequirements = (int) token.nval;
 			costsOfRequirements = new int[levelOfRequirements][];
@@ -129,68 +136,106 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 			new JMetalException("NRPClassic.readProblem(): error when reading data file " + e);
 		}
 	}
-
-	@Override
-	public int getPermutationLength() {
-		return this.numberOfCustoments;
-	}
+	
+	
 
 	@Override
 	public void evaluate(PermutationSolution<Integer> solution) {
-		if(COSTSORPROFIT) {
-			solution.setObjective(0, getEvaluatedCosts(solution));
-		}else {
+		double localCosts = getEvaluatedCosts(solution);
+		double tempBudget = this.getBudget();
+		if (!violateBudget(localCosts, tempBudget)) {
 			solution.setObjective(0, getEvaluatedProfit(solution));
+			solution.setAttribute(0, localCosts);
+		} else {
+			solution.setObjective(0, -1);
 		}
-	}
-	
-	
-	private double getEvaluatedProfit(PermutationSolution<Integer> solution) {
-		double fitness = 0.0;
-		
-		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 0) { 
-				Customer customer = customers.get(i);
-				fitness += customer.getProfit();	
-			}//end - if
-		}
-		
-		return fitness;
-		
 	}
 
-	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
-		int counter = 0;
+	private double getEvaluatedProfit(PermutationSolution<Integer> solution) {
 		double fitness = 0.0;
-		boolean found = false;
-		
-		//look for costs for all the requirements desired by the customers in solution - start
+
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 0) { //TODO: should be binary solution with 1 or 0.
+			if (solution.getVariableValue(i) == 1) {
 				Customer customer = customers.get(i);
-				int numberOfRequests = customer.getNumberOfRequests();
-				for (int j = 0; j < numberOfRequests; j++) {
-					int requirement = customer.getFromRequirementList(j);
-					for (int k = 0; k < levelOfRequirements; k++) {
-						for (int m = 0; m < numberOfRequirementsInLevel[k]; m++) {
-							if (requirement == counter++) {
-								fitness += costsOfRequirements[k][m];
-								counter = 0;
-								found = true;
-								break;
-							}
-						}
-						if (found) {
-							found = false;
-							break;
-						}
-					}
-				}
-			}//end - if
+				fitness += customer.getProfit();
+			} 
 		}
-		//costs for all customers - end
-		
 		return fitness;
+	}
+
+
+	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
+
+		double fitness = 0.0;
+		int numberOfRequests;
+		int requirement;
+		// look for costs for all the requirements desired by the customers in solution
+		// - start
+		for (int i = 0; i < numberOfCustoments; i++) {
+			if (solution.getVariableValue(i) == 1) {
+				Customer customer = customers.get(i);
+				numberOfRequests = customer.getNumberOfRequests();
+				for (int j = 0; j < numberOfRequests; j++) { //TODO: check if the elemen is in the set to abort.
+					requirement = customer.getFromRequirementList(j);
+					addAllDependenciesToSetRecursively(requirement);
+				}
+			} // end - if
+		}
+
+		List<Integer> list = new ArrayList<>(setOfRequirements);
+		for (int i = 0; i < list.size(); i++) {
+			fitness += getCostFromRequirement(list.get(i));
+		}
+		return fitness;
+	}
+
+	private	void addToSetIfUnique(int value) {
+		//if (!setOfRequirements.contains(value))
+			setOfRequirements.add(value);
+	}
+
+	private void addAllDependenciesToSetRecursively(int requirement) {
+		int localRequirement;	
+		addToSetIfUnique(requirement);
+		List<Integer> localDependencies = getDependencies(requirement);
+
+		while (!localDependencies.isEmpty()) {//TODO: check if there is a cycle in dependencies, how to react?
+			localRequirement = localDependencies.remove(0);
+			addAllDependenciesToSetRecursively(localRequirement);
+		}
+	}
+
+	private Double getCostFromRequirement(int localRequirement) {
+		double costs = 0.0;
+		int k, m;
+		Pair<Integer, Integer> positions;
+		Optional<Pair<Integer, Integer>> result = getRequirementPosition(localRequirement);
+
+		if (!result.isPresent()) {
+			return 0.0;
+		}
+
+		positions = result.get();
+		k = positions.getFirst();
+		m = positions.getSecond();
+		costs += costsOfRequirements[k][m];
+		return costs;
+	}
+
+	private List<Integer> getDependencies(Integer requirement) {
+		return new ArrayList<>(dependencies.get(requirement));
+	}
+
+	private Optional<Pair<Integer, Integer>> getRequirementPosition(int requirement) {
+		int counter = 0;
+		for (int k = 0; k < levelOfRequirements; k++) {
+			for (int m = 0; m < numberOfRequirementsInLevel[k]; m++) {
+				if (requirement == counter++) {
+					return Optional.of(new Pair<>(k, m));
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	private int computeAllCosts() {
@@ -208,30 +253,26 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem{
 		return this.costs;
 	}
 
+	public double getBudget() {
+		return this.costs * costFactor;
+	}
+
+	public void setCostFactor(int costFactor) {
+		this.costFactor = costFactor;
+	}
+
+	@Override
+	public boolean violateBudget(double costs, double budget) {
+		if (costs <= budget)
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public int getPermutationLength() {
+		return this.numberOfCustoments;
+	}
 
 
-	// public void evaluate(PermutationSolution<Integer> solution) {
-	// double fitness1;
-	//
-	// fitness1 = 0.0;
-	//
-	// for (int i = 0; i < (numberOfCities - 1); i++) {
-	// int x;
-	// int y;
-	//
-	// x = solution.getVariableValue(i);
-	// y = solution.getVariableValue(i + 1);
-	//
-	// fitness1 += distanceMatrix[x][y];
-	// }
-	// int firstCity;
-	// int lastCity;
-	//
-	// firstCity = solution.getVariableValue(0);
-	// lastCity = solution.getVariableValue(numberOfCities - 1);
-	//
-	// fitness1 += distanceMatrix[firstCity][lastCity];
-	//
-	// solution.setObjective(0, fitness1);
-	// }
 }

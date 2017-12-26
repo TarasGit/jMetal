@@ -10,22 +10,21 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
-
 public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
 	private static final long serialVersionUID = 1L;
 	private TabuList<S> tabuList;
 	private StopCondition stopCondition;
 	private BestNeighborSolutionLocator<S> solutionLocator;
-	private int numberOfNeighbors = 30;
+	private int numberOfNeighbors = 10;
 	MutationOperator<S> mutationOperator;
 	S endResult;
 	S initialSolution;
 	Problem<S> problem;
 
-
-	public TabuSearchAlgorithm(TabuList<S> tabuList, StopCondition stopCondition, BestNeighborSolutionLocator<S> solutionLocator,
-			MutationOperator<S> mutationOperator, S initialSolution, Problem<S> problem) {
+	public TabuSearchAlgorithm(TabuList<S> tabuList, StopCondition stopCondition,
+			BestNeighborSolutionLocator<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution,
+			Problem<S> problem) {
 		this.tabuList = tabuList;
 		this.stopCondition = stopCondition;
 		this.solutionLocator = solutionLocator;
@@ -37,43 +36,47 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	public S run(S initialSolution) {
 		S bestSolution = initialSolution;
 		problem.evaluate(bestSolution);
+		
+		System.out.println("Initial fitness: " + bestSolution.getObjective(0) + " / " + "costs: " + bestSolution.getAttribute(0));
+		System.out.println(bestSolution);
+		
 		S currentSolution = initialSolution;
+		S bestNeighborFound = null;
 
 		Integer currentIteration = 0;
 		while (!stopCondition.mustStop(++currentIteration)) {
 
-			S bestNeighborFound = null;
 			List<S> candidateNeighbors = getNeighbors(currentSolution);
 			List<S> solutionsInTabu = IteratorUtils.toList(tabuList.iterator());
 
-			Optional<S> optionalBestNeighborFound = solutionLocator
-					.findBestNeighbor(candidateNeighbors, solutionsInTabu);
+			Optional<S> optionalBestNeighborFound = solutionLocator.findBestNeighbor(candidateNeighbors,
+					solutionsInTabu);
 
 			if (!optionalBestNeighborFound.isPresent())// Taras added.
 				break;
 			else
 				bestNeighborFound = optionalBestNeighborFound.get();
 
-
-			if (bestNeighborFound.getObjective(0) < bestSolution.getObjective(0)) {
+			if (bestNeighborFound.getObjective(0) > bestSolution.getObjective(0)) {// TODO: MIN OR MAX - < OR >
 				bestSolution = bestNeighborFound;
+				System.out.println("fitness: " + bestSolution.getObjective(0) + " / " + "costs: " + bestSolution.getAttribute(0));
 			}
 
 			tabuList.add(currentSolution);
 			currentSolution = bestNeighborFound;
-
 		}
 
+		
 		return bestSolution;
 	}
 
 	public List<S> getNeighbors(S solution) {
 		ArrayList<S> newList = new ArrayList<>();
 		for (int i = 0; i < numberOfNeighbors; i++) {
-				S tmpSolution = mutationOperator.execute((S) solution.copy());//TODO: how to cast properly?
-				problem.evaluate(tmpSolution);
-				newList.add(tmpSolution);
-				solution = tmpSolution;
+			S tmpSolution = mutationOperator.execute((S) solution.copy());// TODO: how to cast properly?
+			problem.evaluate(tmpSolution);
+			newList.add(tmpSolution);
+			solution = tmpSolution;
 		}
 		return newList;
 	}

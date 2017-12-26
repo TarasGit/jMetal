@@ -30,7 +30,7 @@ public class TabuSearchRunner {
 	 */
 
 	public static final boolean NRPORTSP = true; // true = NRP, false = TSP.
-	public static final boolean MINORMAX = true; // true = MIN, false = MAX.
+	public static final boolean MINORMAX = false; // true = MIN, false = MAX. <-> Min for TSP / Max for NRP.
 
 	public static void main(String[] args) throws Exception {
 
@@ -39,12 +39,12 @@ public class TabuSearchRunner {
 
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 1.0;
-		int tabuListSize = 100;
-		int numbOfIterations = 200;
+		int tabuListSize = 50;
+		int numbOfIterations = 2000;
 
 		if (NRPORTSP) {
 			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs),
+			problem = new NRPClassic("/nrpClassicInstances/nrp2.txt");// 500(Min costs),
 			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 			// mutation = new PermutationSwapMutation<Integer>(mutationProbability); //works also, but only swaps the values.
 		} else {
@@ -64,6 +64,11 @@ public class TabuSearchRunner {
 
 		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
 																		// instead of list.
+		
+		if(solution == null) {
+			System.out.println("No Result found");
+			System.exit(0);
+		}
 
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);

@@ -50,7 +50,7 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 	 * @param solution
 	 *            The solution to mutate
 	 */
-	public void doMutation(double probability, S solution) {
+	public void doMutation(S solution) {
 		int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfVariables());// TODO: check
 		if (((int) solution.getVariableValue(pos)) == 1)
 			solution.setVariableValue(pos, 0);
@@ -64,7 +64,7 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 			throw new JMetalException("Null parameter");
 		}
 
-		doMutation(mutationProbability, solution);
+		doMutation(solution);
 		return solution;
 	}
 }
