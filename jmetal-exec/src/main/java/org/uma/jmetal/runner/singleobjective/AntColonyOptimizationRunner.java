@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationAlgorithm;
 import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationBuilder;
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -20,18 +21,27 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class AntColonyOptimizationRunner {
 	/**
-	 * Usage: java
-	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
 	 */
+	
+	public static final int NUMBER_OF_ANTS = 10000;
+	public static final double ALPHA = 0.01;//importance of pheramon trail, x >= 0
+	public static final double BETA = 9.5;//importance between source and destination, x >= 1
+	
+	public static final double Q = 0.0005;//feramon deposited level, 0<=x<=1
+	public static final double RHO = 0.2;//feramon avapouration level, 0<=x<=1
+
+	
+
 	public static void main(String[] args) throws Exception {
-		TSP problem;
+		
+		Problem<PermutationSolution<Integer>> problem;
 		AntColonyOptimizationAlgorithm<PermutationSolution<Integer>> algorithm;
 
 		problem = new TSP("/tspInstances/kroA100.tsp");//  new TSP("/tspInstances/myKro11.tsp");*/
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
-		algorithm = new AntColonyOptimizationBuilder<PermutationSolution<Integer>>(problem).build();
+		algorithm = new AntColonyOptimizationBuilder<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

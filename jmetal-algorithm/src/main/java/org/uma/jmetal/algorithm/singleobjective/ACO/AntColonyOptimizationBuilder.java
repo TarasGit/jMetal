@@ -6,7 +6,7 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
- * Created by ajnebro on 10/12/14.
+ * Created by Taras Iks.
  */
 public class AntColonyOptimizationBuilder<S extends Solution<?>> {
   /**
@@ -14,16 +14,23 @@ public class AntColonyOptimizationBuilder<S extends Solution<?>> {
    */
   private Problem<S> problem;
   private SolutionListEvaluator<Integer> evaluator;
+  private int numberOfAnts;
+  private double alpha;
+  private double beta;
+  private double rho;
+  private double q;
   /**
    * Builder constructor
    */
-  public AntColonyOptimizationBuilder(Problem<S> problem) {
+  public AntColonyOptimizationBuilder(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
     this.problem = problem;
+    this.numberOfAnts = numberOfAnts;
     evaluator = new SequentialSolutionListEvaluator<Integer>();//TODO XXX remove it.
-
+    this.alpha = alpha;
+    this.beta = beta;
+    this.rho = rho;
+    this.q = q;
   }
-
-
 
   public AntColonyOptimizationBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
     this.evaluator = evaluator;
@@ -32,7 +39,7 @@ public class AntColonyOptimizationBuilder<S extends Solution<?>> {
   }
 
   public AntColonyOptimizationAlgorithm<S> build() {
-	  return new AntColonyOptimizationAlgorithm<S>(problem);
+	  return new AntColonyOptimizationAlgorithm<S>(problem, numberOfAnts, alpha, beta, rho, q);
   }
 
   /*

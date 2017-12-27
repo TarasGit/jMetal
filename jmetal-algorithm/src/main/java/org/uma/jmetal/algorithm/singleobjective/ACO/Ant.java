@@ -1,10 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
@@ -14,36 +12,38 @@ public class Ant<S extends Solution<?>> {
 	
 	public static final boolean D = false;//Debug
 	
-	public static final double ALPHA = 0.01;//importance of pheramon trail, x >= 0
-	public static final double BETA = 9.5;//importance between source and destination, x >= 1
-	
-	public static final double Q = 0.0005;//feramon deposited level, 0<=x<=1
-	public static final double RHO = 0.2;//feramon avapouration level, 0<=x<=1
-
 	private AntColonyOptimization<S> aco;
 	private int antNumb;
-	private DefaultIntegerPermutationSolution route = null;
+	private S route = null;
+	private double alpha;
+	private double beta;
+	private double rho;
+	private double q;
 	
-	public DefaultIntegerPermutationSolution getSolution() { return route; }
+	public S getSolution() { return route; }
 	
 	static int invalidCityIndex = -1;
 	
 	private int numbOfCities;
 	
-	public Ant(AntColonyOptimization<S> aco, int antNumb) {
+	public Ant(AntColonyOptimization<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
 		this.aco = aco;
 		this.antNumb = antNumb;
 		this.numbOfCities = aco.getProblemSize();// 1 < x < n -> [0,..10] -> 11
+		this.alpha = alpha;
+		this.beta = beta;
+		this.rho = rho;
+		this.q = q;
 		
 	}
 	
 
 	public Ant<S> run() {
 		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
-		DefaultIntegerPermutationSolution routeCities = aco.getInitialSolution();//should be null ArrayList solution
-		IntStream.range(0, numbOfCities).forEach(x -> routeCities.setVariableValue(x, 0));//TODO XXX: should be set to [null?], because otherwise some values are not valid -> result is
+		route = aco.getInitialSolution();//should be null ArrayList solution
+		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultIntegerPermutationSolution)route).setVariableValue(x, 0));//TODO XXX: should be set to [null?], because otherwise some values are not valid -> result is
 																							//smaller because some cities are not on the route. How is it solved in ACO???
-		routeCities.setObjective(0, 0);
+		route.setObjective(0, 0);
 		
 		//routeCities.setObjective(0, 0);
 		
@@ -63,7 +63,7 @@ public class Ant<S extends Solution<?>> {
 										//or more values are null!!!
 			
 			//routeCities.add(numbOfVisitedCities++, aco.getInitialSolution().getObjective(x));//.initialRoute.get(x));//? x = original
-			routeCities.setVariableValue(numbOfVisitedCities++, x);
+			((DefaultIntegerPermutationSolution)route).setVariableValue(numbOfVisitedCities++, x);
 			routeDistance += getDistance(x,y);
 			adjustPheromonLevel(x, y, routeDistance);
 			visitedCities.put(y, true);
@@ -74,8 +74,8 @@ public class Ant<S extends Solution<?>> {
 				y = invalidCityIndex;
 		}
 		routeDistance += getDistance(x,originatingCityIndex);
-		routeCities.setVariableValue(numbOfVisitedCities, x);
-		route = new DefaultIntegerPermutationSolution(routeCities);
+		((DefaultIntegerPermutationSolution)route).setVariableValue(numbOfVisitedCities, x);
+		//route = (S) new DefaultIntegerPermutationSolution((DefaultIntegerPermutationSolution) routeCities);//TODO: bad style with casts in two directions!!!
 		
 		return this;
 	}
@@ -88,12 +88,15 @@ public class Ant<S extends Solution<?>> {
 		boolean flag = false;
 		while(!flag) {
 			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
-			double updatedPheromonLevel = (1-RHO) * currentPheromonLevel + Q / routeDistance;
+			double updatedPheromonLevel = (1-rho) * currentPheromonLevel + q / routeDistance;
 			if(D)System.out.println("FeromonLevel(c/u/d): " + currentPheromonLevel + " / " + updatedPheromonLevel + " / " + (currentPheromonLevel - updatedPheromonLevel));
-			if(updatedPheromonLevel < 0.00)
-				flag = aco.getPheramonLevelMatrix()[x][y].compareAndSet(0);
-			else
-				flag = aco.getPheramonLevelMatrix()[x][y].compareAndSet(updatedPheromonLevel);
+			if(updatedPheromonLevel < 0.00) {
+				 aco.getPheramonLevelMatrix()[x][y] = 0.0;
+				 flag = false;
+			}else {
+				aco.getPheramonLevelMatrix()[x][y] = updatedPheromonLevel;
+				flag = true;
+			}
 		}
 	}
 	
@@ -152,7 +155,7 @@ public class Ant<S extends Solution<?>> {
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
 		if(pheromonLevel != 0.0)
-			numerator = Math.pow(pheromonLevel, ALPHA) * Math.pow(1 /  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y], BETA); //TODO: cast to TSP very bad solution!
+			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y], beta); //TODO: cast to TSP very bad solution!
 		if(D)System.out.println("TPNumerator: " + numerator);
 		return numerator;
 	}

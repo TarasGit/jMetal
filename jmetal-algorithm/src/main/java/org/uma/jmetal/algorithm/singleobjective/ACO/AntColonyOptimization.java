@@ -9,20 +9,20 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 public class AntColonyOptimization<S extends Solution<?>> {
 	
-	private DefaultIntegerPermutationSolution initialSolution;
+	private S initialSolution;
 	private int size;
 	private Problem<S> problem;
 	
-	public AntColonyOptimization(Problem<S> problem, DefaultIntegerPermutationSolution initialSolution ) {
+	public AntColonyOptimization(Problem<S> problem, S initialSolution ) {
 		this.size = initialSolution.getNumberOfVariables();
 		this.initialSolution = initialSolution;
 		this.problem = problem;
 		initializePheromonLevel();
 	}
 	
-	private AtomicDouble[][] pheromonLevelMatrix = null;
+	private Double[][] pheromonLevelMatrix = null;
 
-	public AtomicDouble[][] getPheramonLevelMatrix(){ 
+	public Double[][] getPheramonLevelMatrix(){ 
 		return pheromonLevelMatrix;
 	}
 	
@@ -31,9 +31,9 @@ public class AntColonyOptimization<S extends Solution<?>> {
 	}
 
 	private void initializePheromonLevel() {
-		pheromonLevelMatrix = new AtomicDouble[size][size];//rename size
+		pheromonLevelMatrix = new Double[size][size];//rename size
 		IntStream.range(0,  size).forEach(x -> {
-			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = new AtomicDouble(JMetalRandom.getInstance().nextDouble()));
+			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = new Double(JMetalRandom.getInstance().nextDouble()));
 		});
 	}
 	
@@ -41,7 +41,7 @@ public class AntColonyOptimization<S extends Solution<?>> {
 		return size;
 	}
 	
-	public DefaultIntegerPermutationSolution getInitialSolution() {
+	public S getInitialSolution() {
 		return this.initialSolution;
 	}
 	

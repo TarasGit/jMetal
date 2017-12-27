@@ -3,27 +3,34 @@ package org.uma.jmetal.algorithm.singleobjective.ACO;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 
 /**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Taras Iks <ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
-	public static final int NUMBER_OF_ANTS = 100000;
-
 	protected Problem<S> problem;
-
+	private int numberOfAnts;
 	private S currentSolution;
 	private S shortestSolution;
+	private double alpha;
+	private double beta;
+	private double rho;
+	private double q;
+	
 
 	/**
 	 * Constructor
 	 */
-	public AntColonyOptimizationAlgorithm(Problem<S> problem) {
+	public AntColonyOptimizationAlgorithm(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
 		this.problem = problem;
+		this.numberOfAnts = numberOfAnts;
 		this.shortestSolution = null;
+		this.alpha = alpha;
+		this.beta = beta;
+		this.rho = rho;
+		this.q = q;
 	}
 
 	@Override
@@ -39,15 +46,15 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 	public S findRoute(S currentSolution) {// TODO: no initial route needed, because the ant starts with zero-route.
 		this.currentSolution = currentSolution;
 		
-		Ant currentAnt;
+		Ant<S> currentAnt;
 		
 		AntColonyOptimization<S> aco = new AntColonyOptimization<S>(problem,
-				(DefaultIntegerPermutationSolution) currentSolution);
+				currentSolution);
 
 		// IntStream.range(0, NUMBER_OF_ANTS).forEach(x -> {
 
-		for (int i = 0; i < NUMBER_OF_ANTS; i++) {
-			currentAnt = new Ant(aco, i).run();
+		for (int i = 0; i < numberOfAnts; i++) {
+			currentAnt = new Ant<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
 		}
 
