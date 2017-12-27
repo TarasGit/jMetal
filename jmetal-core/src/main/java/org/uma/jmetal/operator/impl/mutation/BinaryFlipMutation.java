@@ -1,7 +1,7 @@
 package org.uma.jmetal.operator.impl.mutation;
 
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
@@ -13,8 +13,8 @@ import org.uma.jmetal.util.pseudorandom.RandomGenerator;
  *          This class implements a bit flip mutation operator.
  */
 @SuppressWarnings("serial")
-public class BinaryFlipMutation<S extends Solution> implements MutationOperator<S> {// TODO: do something with raw type
-																					// of Solution.
+public class BinaryFlipMutation<S extends PermutationSolution<Integer>> implements MutationOperator<S> {
+																				
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 
@@ -54,7 +54,8 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 		double rand = randomGenerator.getRandomValue();
 		//System.out.println(":" + rand);
 		int pos1 = 0, pos2 = 0;
-		if (rand < 0.5) {
+		if (rand > 0.5) {
+			
 			int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfVariables());// TODO: check the
 																									// distribution 0 <=
 																									// x <= 1
@@ -63,6 +64,8 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 			} else {
 				solution.setVariableValue(pos, 1);
 			}
+			
+			
 		} else {
 			int permutationLength;
 			permutationLength = solution.getNumberOfVariables();
@@ -81,7 +84,7 @@ public class BinaryFlipMutation<S extends Solution> implements MutationOperator<
 
 					Object temp = (Object) solution.getVariableValue(pos1);
 					solution.setVariableValue(pos1, solution.getVariableValue(pos2));
-					solution.setVariableValue(pos2, temp);
+					solution.setVariableValue(pos2, (Integer)temp);
 				}
 			}
 		}

@@ -34,13 +34,13 @@ public class TabuSearchRunner {
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
 		Algorithm<PermutationSolution<Integer>> algorithm;
-		double mutationProbability = 1.0;
-		int tabuListSize = 1000;
-		int numbOfIterations = 20000;
+		double mutationProbability = 0.3;
+		int tabuListSize = 100;
+		int numbOfIterations = 2000;
 
 		if (NRPORTSP) {
 			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
+			problem = new NRPClassic("/nrpClassicInstances/nrp3.txt");// 500(Min costs)//new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 			// mutation = new PermutationSwapMutation<Integer>(mutationProbability); //works also, but only swaps the values.
 		} else {

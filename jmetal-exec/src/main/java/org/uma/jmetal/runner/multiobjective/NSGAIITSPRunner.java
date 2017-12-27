@@ -47,7 +47,7 @@ public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
     MutationOperator<PermutationSolution<Integer>> mutation;
     SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
 
-    problem = new MultiobjectiveTSP("/tspInstances/kroA100.tsp", "/tspInstances/kroB100.tsp");
+    problem = new MultiobjectiveTSP("/tspInstances/myKro6.tsp", "/tspInstances/myKro6.tsp");//new MultiobjectiveTSP("/tspInstances/kroA100.tsp", "/tspInstances/kroB100.tsp");
 
     crossover = new PMXCrossover(0.9) ;
 
@@ -69,12 +69,16 @@ public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
             .setPopulationSize(100)
             .build() ;
 
+    System.out.println("start");
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
             .execute() ;
-
+    
     List<PermutationSolution<Integer>> population = algorithm.getResult() ;
     long computingTime = algorithmRunner.getComputingTime() ;
 
+
+    System.out.println("end: " + population);
+    
     new SolutionListOutput(population)
             .setSeparator("\t")
             .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

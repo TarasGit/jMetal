@@ -12,11 +12,16 @@ import org.uma.jmetal.solution.Solution;
 
 public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
+	/*
+	 * TODO: 
+	 * - check mutation operator -> mutation vs. swap operation; should be flip-mutation at the beginning and swap at the end.
+	 * -
+	 * */
 	private static final long serialVersionUID = 1L;
 	private TabuList<S> tabuList;
 	private StopCondition stopCondition;
 	private BestNeighborSolutionLocator<S> solutionLocator;
-	private int numberOfNeighbors = 10;
+	private int numberOfNeighbors = 100;
 	MutationOperator<S> mutationOperator;
 	S endResult;
 	S initialSolution;
@@ -57,9 +62,9 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 					listWithoutViolations.add(solution);
 			}
 			
-			if(listWithoutViolations.isEmpty())
-				continue;
-			
+			if(listWithoutViolations.isEmpty()) {
+				continue;												//TODO: break, if we get invalid solutions-> better computation time, worse quality of results.
+			}
 
 			Optional<S> optionalBestNeighborFound = solutionLocator.findBestNeighbor(candidateNeighbors,
 					solutionsInTabu);
@@ -91,12 +96,11 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 		ArrayList<S> newList = new ArrayList<>();
 		for (int i = 0; i < numberOfNeighbors; i++) {
 			S tmpSolution = mutationOperator.execute((S) solution.copy());// TODO: how to cast properly?
-			tmpSolution.setObjective(0, 0);//reset costs to 0!
+			tmpSolution.setObjective(0, 0);//TODO: reset costs to 0?
 			tmpSolution.setAttribute(0, 0);
 			problem.evaluate(tmpSolution);
 			//System.out.println("fitness: " + tmpSolution.getObjective(0) + " / " + "costs: " + tmpSolution.getAttribute(0));
 			newList.add(tmpSolution);
-			//solution = tmpSolution;
 		}
 		return newList;
 	}
