@@ -31,7 +31,7 @@ public class SimulatedAnnealingRunner {
 		SimulatedAnnealingAlgorithm<PermutationSolution<Integer>> algorithm;
 		PermutationSwapMutation<Integer> mutation;
 
-		problem = new TSP("/tspInstances/myKro11.tsp"); /* new TSP("/tspInstances/kroA100.tsp"); */
+		problem =  new TSP("/tspInstances/kroA100.tsp"); //new TSP("/tspInstances/myKro11.tsp"); /*  */
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);

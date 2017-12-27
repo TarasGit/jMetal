@@ -1,16 +1,16 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
+import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
+public class Ant<S extends Solution<?>> {
 	
 	public static final boolean D = false;//Debug
 	
@@ -33,17 +33,19 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 	public Ant(AntColonyOptimization<S> aco, int antNumb) {
 		this.aco = aco;
 		this.antNumb = antNumb;
-		this.numbOfCities = aco.getProblemSize();
+		this.numbOfCities = aco.getProblemSize();// 1 < x < n -> [0,..10] -> 11
 		
 	}
 	
-	@Override
-	public Ant<S> call() throws Exception {
-		int originatingCityIndex = ThreadLocalRandom.current().nextInt(numbOfCities);
+
+	public Ant<S> run() {
+		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
 		DefaultIntegerPermutationSolution routeCities = aco.getInitialSolution();//should be null ArrayList solution
-		//IntStream.range(0, numbOfCities).forEach(x -> routeCities.setVariableValue(x, null));//TODO XXX: should be set to [null?], because otherwise some values are not valid -> result is
+		IntStream.range(0, numbOfCities).forEach(x -> routeCities.setVariableValue(x, 0));//TODO XXX: should be set to [null?], because otherwise some values are not valid -> result is
 																							//smaller because some cities are not on the route. How is it solved in ACO???
 		routeCities.setObjective(0, 0);
+		
+		//routeCities.setObjective(0, 0);
 		
 		HashMap<Integer, Boolean> visitedCities = new HashMap<Integer, Boolean>(numbOfCities);
 		IntStream.range(0, numbOfCities).forEach(x -> visitedCities.put(x, false)); //visitedCities.put(Driver.initialRoute.get(x).getName(), false));
@@ -52,7 +54,10 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 		double routeDistance = 0.0;
 		int x = originatingCityIndex;
 		int y = invalidCityIndex;
-		if( numbOfVisitedCities != numbOfCities)
+		
+		//System.out.println("numbOfCities " + numbOfCities);
+		
+		if(numbOfVisitedCities < numbOfCities)
 			y = getY(x, visitedCities);
 		while(y != invalidCityIndex) {//TODO XXX: if y == invalidCityIdex then no while loop - route is full of null values, and if y == invalidCity Index and end loop, one 
 										//or more values are null!!!
@@ -63,7 +68,7 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 			adjustPheromonLevel(x, y, routeDistance);
 			visitedCities.put(y, true);
 			x = y;
-			if(numbOfVisitedCities != numbOfCities)
+			if(numbOfVisitedCities < numbOfCities)
 				y = getY(x, visitedCities);
 			else
 				y = invalidCityIndex;
@@ -71,6 +76,7 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 		routeDistance += getDistance(x,originatingCityIndex);
 		routeCities.setVariableValue(numbOfVisitedCities, x);
 		route = new DefaultIntegerPermutationSolution(routeCities);
+		
 		return this;
 	}
 	
@@ -92,15 +98,18 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 	}
 	
 	private int getY(int x, HashMap<Integer, Boolean> visitedCities) {
+		
+		//System.err.println("-->" + x);
+		
 		int returnY = invalidCityIndex;
 		double random = JMetalRandom.getInstance().nextDouble();
-		ArrayList<Double> transitionProbabilities = getTransitionProbabilities(x, visitedCities);	
+		ArrayList<Double> transitionProbabilities = getTransitionProbabilities(x, visitedCities); //TODO: sum of all transitionProbabities should be 1!!!! not 0.9998!!
 		for(int y=0;y<numbOfCities;y++) {
 			if(transitionProbabilities.get(y) > random) {
 				returnY = y;
 				break;
-			}else
-				random -= transitionProbabilities.get(y);
+			}else {
+				random -= transitionProbabilities.get(y);}
 		}
 		return returnY;
 	}
@@ -138,6 +147,9 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 	//Zähler
 	private double getTPNumerator(int x, int y) {
 		double numerator = 0.0;
+		
+		//System.out.println("x/y:" + x + "/" + y);
+		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
 		if(pheromonLevel != 0.0)
 			numerator = Math.pow(pheromonLevel, ALPHA) * Math.pow(1 /  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y], BETA); //TODO: cast to TSP very bad solution!
@@ -146,4 +158,9 @@ public class Ant<S extends Solution<?>> implements Callable<Ant<S>> {
 	}
 
 	public int getAntNumb() { return antNumb; }
+	
+	@Override
+	public String toString() {
+		return " " + this.getSolution();
+	}
 }

@@ -27,7 +27,7 @@ public class AntColonyOptimizationRunner {
 		TSP problem;
 		AntColonyOptimizationAlgorithm<PermutationSolution<Integer>> algorithm;
 
-		problem = new TSP("/tspInstances/myKro11.tsp");// *new TSP("/tspInstances/kroA100.tsp");*/
+		problem = new TSP("/tspInstances/kroA100.tsp");//  new TSP("/tspInstances/myKro11.tsp");*/
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
@@ -40,7 +40,7 @@ public class AntColonyOptimizationRunner {
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);
 
-		System.out.println("Solution:" + solution);
+		System.out.println("End Solution: " + solution);
 
 		long computingTime = algorithmRunner.getComputingTime();
 		
