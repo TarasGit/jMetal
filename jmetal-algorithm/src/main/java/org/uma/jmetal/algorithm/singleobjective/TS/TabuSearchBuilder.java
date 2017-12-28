@@ -5,7 +5,7 @@ import java.util.Comparator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.comparator.BestNeighborSolutionLocator;
+import org.uma.jmetal.util.comparator.BestNeighborSolutionFinder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
@@ -23,7 +23,7 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 	private int listSize;
 	private int numbOfIterations;
 	private Comparator<Double> comparator;
-	private BestNeighborSolutionLocator<S> locator;
+	private BestNeighborSolutionFinder<S> locator;
 
 	private S solution;
 
@@ -31,7 +31,7 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 	 * Builder constructor
 	 */
 	public TabuSearchBuilder(Problem<S> problem, MutationOperator<S> mutationOperator, int listSize,
-			int numbOfIterations, Comparator<Double> comparator, BestNeighborSolutionLocator<S> locator) {
+			int numbOfIterations, Comparator<Double> comparator, BestNeighborSolutionFinder<S> locator) {
 		this.problem = problem;
 		this.comparator = comparator;
 		this.mutationOperator = mutationOperator;

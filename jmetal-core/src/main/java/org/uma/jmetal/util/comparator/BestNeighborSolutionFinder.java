@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.uma.jmetal.solution.Solution; 
   
-public interface BestNeighborSolutionLocator<S extends Solution<?>> { 
+public interface BestNeighborSolutionFinder<S extends Solution<?>> { 
  
  Optional<S> findBestNeighbor(List<S> neighborsSolutions, List<S> solutionsInTabu); 
   

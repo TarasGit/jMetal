@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
  * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
+public class NRPClassicACO extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
 
 	// public static void main(String[] args) {
 	//
@@ -49,13 +49,15 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	private List<Customer> customers = null;
 	private int costs;
 	private double costFactor;
+	private double[][] distance;
 
 	/**
 	 * Creates a new TSP problem instance
 	 */
 
-	public NRPClassic(String distanceFile) throws IOException {
+	public NRPClassicACO(String distanceFile) throws IOException {
 		readProblem(distanceFile);
+		this.distance = new double[numberOfCustoments][numberOfCustoments];
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = 0.5;
 		System.out.println("All costs: " + this.costs);
@@ -149,7 +151,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {//TODO: should it be a binary Solution?
+			if (solution.getVariableValue(i) == 1) {// TODO: should it be a binary Solution?
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
 			}
@@ -161,17 +163,11 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		Set<Integer> setOfRequirements = new HashSet<>();
 
 		double fitness = 0.0;
-		int numberOfRequests;
-		int requirement;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
 			if (solution.getVariableValue(i) == 1) {
 				Customer customer = customers.get(i);
-				numberOfRequests = customer.getNumberOfRequests();
-				for (int j = 0; j < numberOfRequests; j++) {
-					requirement = customer.getFromRequirementList(j);
-					addAllDependenciesToSetRecursively(requirement, setOfRequirements);
-				}
+				setOfRequirements.addAll(getAllRequirementsFromCustomer(customer));
 			}
 		}
 
@@ -181,18 +177,37 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		}
 		return fitness;
 	}
+	
+	public Set<Integer> getAllRequirementsFromCustomer(Customer customer){
+		Set<Integer> setOfRequirements = new HashSet<>();
+		int numberOfRequests = customer.getNumberOfRequests();
+		for (int j = 0; j < numberOfRequests; j++) {
+			int requirement = customer.getFromRequirementList(j);
+			setOfRequirements = addAllDependenciesToSetRecursively(requirement, setOfRequirements);
+		}
+		return setOfRequirements;
+	}
+
+	private void fillDistanceMatrix() {
+		for(int i=0; i<numberOfCustoments;i++) {
+			
+		}
+	}
 
 	private void addToSetIfUnique(int value, Set<Integer> setOfRequirements) {
 		setOfRequirements.add(value);
 	}
 
-	private void addAllDependenciesToSetRecursively(int requirement, Set<Integer> setOfRequirements) {
+	private Set<Integer> addAllDependenciesToSetRecursively(int requirement, Set<Integer> setOfRequirements) {//TODO: set as parameter vs. set as return parameter.
 		ArrayList<Integer> tmpArrayList = new ArrayList<>();
 		int localRequirement;
 		addToSetIfUnique(requirement, setOfRequirements);
 		List<Integer> localDependencies = getDependencies(requirement);
 
-		/*To remove a possible cycle in dependencies, check if this dependency is already in HashSet*/
+		/*
+		 * To remove a possible cycle in dependencies, check if this dependency is
+		 * already in HashSet
+		 */
 		for (Integer i : localDependencies) { // TODO: do it by some library.
 			if (!setOfRequirements.contains(i))
 				tmpArrayList.add(i);
@@ -202,6 +217,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			localRequirement = tmpArrayList.remove(0);
 			addAllDependenciesToSetRecursively(localRequirement, setOfRequirements);
 		}
+		return setOfRequirements;
 	}
 
 	private Double getCostFromRequirement(int localRequirement) {
@@ -275,6 +291,6 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	public double getCostsOfRequirement(int x, int y) {
-		return costsOfRequirements[x][y];
+		return 0;/// TODO: return costs of distance between customer(i) and customer(j).
 	}
 }

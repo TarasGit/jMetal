@@ -12,7 +12,7 @@ import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.comparator.MinNeighborSolutionLocator;
+import org.uma.jmetal.util.comparator.MinNeighborSolutionFinder;
 import org.uma.jmetal.util.comparator.SimpleMinDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -40,7 +40,7 @@ public class TabuSearchRunnerTSP {
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
-				numbOfIterations, new SimpleMinDoubleComparator(), new MinNeighborSolutionLocator<>()).build();
+				numbOfIterations, new SimpleMinDoubleComparator(), new MinNeighborSolutionFinder<>()).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

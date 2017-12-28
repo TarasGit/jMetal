@@ -3,10 +3,10 @@ package org.uma.jmetal.runner.singleobjective.ACO;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationAlgorithmNRP;
 import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationBuilderNRP;
-import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationAlgorithmTSP;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.TSP;
+import org.uma.jmetal.problem.singleobjective.NRPClassicACO;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -15,7 +15,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
  * Class to configure and run a Ant Colony Optimization algorithm. The target
- * problem is TSP.
+ * problem is NRP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
@@ -31,9 +31,9 @@ public class AntColonyOptimizationRunnerNRP {
 	public static void main(String[] args) throws Exception {
 
 		Problem<PermutationSolution<Integer>> problem;
-		AntColonyOptimizationAlgorithmTSP<PermutationSolution<Integer>> algorithm;
+		AntColonyOptimizationAlgorithmNRP<PermutationSolution<Integer>> algorithm;
 
-		problem = new TSP("/tspInstances/kroA100.tsp");// new TSP("/tspInstances/myKro11.tsp");*/
+		problem = new NRPClassicACO("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 

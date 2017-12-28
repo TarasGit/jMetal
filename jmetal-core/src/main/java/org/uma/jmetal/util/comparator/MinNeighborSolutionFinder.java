@@ -9,7 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.uma.jmetal.solution.Solution;
 
-public class MaxNeighborSolutionLocator<S extends Solution<?>> implements BestNeighborSolutionLocator<S> {
+public class MinNeighborSolutionFinder<S extends Solution<?>> implements BestNeighborSolutionFinder<S> {
 
 	@Override
 	public Optional<S> findBestNeighbor(
@@ -30,9 +30,9 @@ public class MaxNeighborSolutionLocator<S extends Solution<?>> implements BestNe
 				if (a.getObjective(0) == b.getObjective(0))
 					return 0;
 				else if (a.getObjective(0) > b.getObjective(0))
-					return -1;
-				else
 					return 1;
+				else
+					return -1;
 			}
 		});
 

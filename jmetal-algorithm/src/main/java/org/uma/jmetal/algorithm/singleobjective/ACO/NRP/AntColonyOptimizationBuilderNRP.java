@@ -39,8 +39,8 @@ public class AntColonyOptimizationBuilderNRP<S extends Solution<?>> {
     return this;
   }
 
-  public AntColonyOptimizationAlgorithmTSP<S> build() {
-	  return new AntColonyOptimizationAlgorithmTSP<S>(problem, numberOfAnts, alpha, beta, rho, q);
+  public AntColonyOptimizationAlgorithmNRP<S> build() {
+	  return new AntColonyOptimizationAlgorithmNRP<S>(problem, numberOfAnts, alpha, beta, rho, q);
   }
 
   /*

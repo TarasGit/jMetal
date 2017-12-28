@@ -12,7 +12,7 @@ import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.comparator.MaxNeighborSolutionLocator;
+import org.uma.jmetal.util.comparator.MaxNeighborSolutionFinder;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -41,7 +41,7 @@ public class TabuSearchRunnerNRP {
 		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
-				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionLocator<>()).build();
+				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

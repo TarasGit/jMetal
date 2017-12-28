@@ -3,8 +3,8 @@ package org.uma.jmetal.runner.singleobjective.ACO;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationBuilderNRP;
 import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationAlgorithmTSP;
+import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationBuilderTSP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -37,7 +37,7 @@ public class AntColonyOptimizationRunnerTSP {
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
-		algorithm = new AntColonyOptimizationBuilderNRP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
+		algorithm = new AntColonyOptimizationBuilderTSP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
 				RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

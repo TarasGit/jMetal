@@ -1,8 +1,6 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO.NRP;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationTSP;
-import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntTSP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 
@@ -48,15 +46,15 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 	public S findRoute(S currentSolution) {// TODO: no initial route needed, because the ant starts with zero-route.
 		this.currentSolution = currentSolution;
 		
-		AntTSP<S> currentAnt;
+		AntNRP<S> currentAnt;
 		
-		AntColonyOptimizationTSP<S> aco = new AntColonyOptimizationTSP<S>(problem,
+		AntColonyOptimizationNRP<S> aco = new AntColonyOptimizationNRP<S>(problem,
 				currentSolution);
 
 		// IntStream.range(0, NUMBER_OF_ANTS).forEach(x -> {
 
 		for (int i = 0; i < numberOfAnts; i++) {
-			currentAnt = new AntTSP<S>(aco, i, alpha, beta, rho, q).run();
+			currentAnt = new AntNRP<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
 		}
 
@@ -64,7 +62,7 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 		return shortestSolution;
 	}
 
-	private void processAnts(AntTSP ant) {
+	private void processAnts(AntNRP ant) {
 		try {
 			currentSolution = (S) ant.getSolution();
 			problem.evaluate(currentSolution);

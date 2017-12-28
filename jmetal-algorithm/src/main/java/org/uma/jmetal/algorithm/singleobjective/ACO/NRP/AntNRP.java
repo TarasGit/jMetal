@@ -3,15 +3,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationTSP;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.impl.DefaultBinaryIntegerPermutationSolution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 public class AntNRP<S extends Solution<?>> {
 	
-	private AntColonyOptimizationTSP<S> aco;
+	private AntColonyOptimizationNRP<S> aco;
 	private int antNumb;
 	private S route = null;
 	private double alpha;
@@ -25,7 +26,7 @@ public class AntNRP<S extends Solution<?>> {
 	
 	private int numbOfCities;
 	
-	public AntNRP(AntColonyOptimizationTSP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
+	public AntNRP(AntColonyOptimizationNRP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
 		this.aco = aco;
 		this.antNumb = antNumb;
 		this.numbOfCities = aco.getProblemSize();// 1 < x < n -> [0,..10] -> 11
@@ -39,8 +40,8 @@ public class AntNRP<S extends Solution<?>> {
 
 	public AntNRP<S> run() {
 		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
-		route = aco.getInitialSolution();//TODO: should get an empty solution -> new abstract class?
-		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultIntegerPermutationSolution)route).setVariableValue(x, 0));
+		route = aco.getInitialSolution();//TODO: should get an empty solution -> new abstract class? TODO: we get already an 0-verctor??????? as initial solution?
+		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultBinaryIntegerPermutationSolution)route).setVariableValue(x, 0));
 		route.setObjective(0, 0);//TODO: if solution is empty remove this line.
 		
 		HashMap<Integer, Boolean> visitedCities = new HashMap<Integer, Boolean>(numbOfCities);
@@ -142,7 +143,7 @@ public class AntNRP<S extends Solution<?>> {
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
 		if(pheromonLevel != 0.0)
-			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y], beta); //TODO: cast to TSP very bad solution!
+			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /  ((NRPClassic)aco.getProblem()).getCostsOfRequirement(x, y), beta); //TODO: cast to TSP very bad solution!
 		return numerator;
 	}
 

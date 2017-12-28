@@ -10,7 +10,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.comparator.BestNeighborSolutionLocator;
+import org.uma.jmetal.util.comparator.BestNeighborSolutionFinder;
 
 public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
@@ -22,7 +22,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	private static final long serialVersionUID = 1L;
 	private TabuList<S> tabuList;
 	private StopCondition stopCondition;
-	private BestNeighborSolutionLocator<S> solutionLocator;
+	private BestNeighborSolutionFinder<S> solutionLocator;
 	private int numberOfNeighbors = 100;
 	private MutationOperator<S> mutationOperator;
 	private S endResult;
@@ -31,7 +31,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	Problem<S> problem;
 
 	public TabuSearchAlgorithm(TabuList<S> tabuList, StopCondition stopCondition,
-			BestNeighborSolutionLocator<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution, Comparator<Double> comparator,
+			BestNeighborSolutionFinder<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution, Comparator<Double> comparator,
 			Problem<S> problem) {
 		this.tabuList = tabuList;
 		this.stopCondition = stopCondition;
@@ -103,7 +103,6 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 			tmpSolution.setObjective(0, 0);//TODO: reset costs to 0?
 			tmpSolution.setAttribute(0, 0);
 			problem.evaluate(tmpSolution);
-			//System.out.println("fitness: " + tmpSolution.getObjective(0) + " / " + "costs: " + tmpSolution.getAttribute(0));
 			newList.add(tmpSolution);
 		}
 		return newList;
@@ -122,7 +121,6 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	@Override
 	public void run() {
 		endResult = run(initialSolution);
-		System.out.println("EndResult" + endResult);
 	}
 
 	@Override
