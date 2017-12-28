@@ -8,7 +8,7 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 /**
  * Created by Taras Iks.
  */
-public class AntColonyOptimizationBuilder<S extends Solution<?>> {
+public class AntColonyOptimizationBuilderTSP<S extends Solution<?>> {
   /**
    * Builder class
    */
@@ -22,7 +22,7 @@ public class AntColonyOptimizationBuilder<S extends Solution<?>> {
   /**
    * Builder constructor
    */
-  public AntColonyOptimizationBuilder(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
+  public AntColonyOptimizationBuilderTSP(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
     this.problem = problem;
     this.numberOfAnts = numberOfAnts;
     evaluator = new SequentialSolutionListEvaluator<Integer>();//TODO XXX remove it.
@@ -32,14 +32,14 @@ public class AntColonyOptimizationBuilder<S extends Solution<?>> {
     this.q = q;
   }
 
-  public AntColonyOptimizationBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
+  public AntColonyOptimizationBuilderTSP<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
     this.evaluator = evaluator;
 
     return this;
   }
 
-  public AntColonyOptimizationAlgorithm<S> build() {
-	  return new AntColonyOptimizationAlgorithm<S>(problem, numberOfAnts, alpha, beta, rho, q);
+  public AntColonyOptimizationAlgorithmTSP<S> build() {
+	  return new AntColonyOptimizationAlgorithmTSP<S>(problem, numberOfAnts, alpha, beta, rho, q);
   }
 
   /*

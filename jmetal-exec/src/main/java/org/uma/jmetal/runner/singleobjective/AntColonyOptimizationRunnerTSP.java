@@ -3,8 +3,8 @@ package org.uma.jmetal.runner.singleobjective;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationAlgorithm;
-import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationBuilder;
+import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationAlgorithmTSP;
+import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationBuilderTSP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -19,29 +19,26 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunner {
-	/**
-	 */
-	
-	public static final int NUMBER_OF_ANTS = 10000;
-	public static final double ALPHA = 0.01;//importance of pheramon trail, x >= 0
-	public static final double BETA = 9.5;//importance between source and destination, x >= 1
-	
-	public static final double Q = 0.0005;//feramon deposited level, 0<=x<=1
-	public static final double RHO = 0.2;//feramon avapouration level, 0<=x<=1
+public class AntColonyOptimizationRunnerTSP {
 
-	
+	public static final int 	NUMBER_OF_ANTS = 10000;
+	public static final double 	ALPHA = 0.01;// importance of pheramon trail, x >= 0
+	public static final double 	BETA = 9.5;// importance between source and destination, x >= 1
+
+	public static final double 	Q = 0.0005;// feramon deposited level, 0<=x<=1
+	public static final double 	RHO = 0.2;// feramon avapouration level, 0<=x<=1
 
 	public static void main(String[] args) throws Exception {
-		
-		Problem<PermutationSolution<Integer>> problem;
-		AntColonyOptimizationAlgorithm<PermutationSolution<Integer>> algorithm;
 
-		problem = new TSP("/tspInstances/kroA100.tsp");//  new TSP("/tspInstances/myKro11.tsp");*/
+		Problem<PermutationSolution<Integer>> problem;
+		AntColonyOptimizationAlgorithmTSP<PermutationSolution<Integer>> algorithm;
+
+		problem = new TSP("/tspInstances/kroA100.tsp");// new TSP("/tspInstances/myKro11.tsp");*/
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
-		algorithm = new AntColonyOptimizationBuilder<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO, Q).build();
+		algorithm = new AntColonyOptimizationBuilderTSP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
+				RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -53,7 +50,7 @@ public class AntColonyOptimizationRunner {
 		System.out.println("End Solution: " + solution);
 
 		long computingTime = algorithmRunner.getComputingTime();
-		
+
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();

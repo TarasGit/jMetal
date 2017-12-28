@@ -8,7 +8,7 @@ import org.uma.jmetal.solution.Solution;
  * @author Taras Iks <ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
-public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Algorithm<S> {
+public class AntColonyOptimizationAlgorithmTSP<S extends Solution<?>> implements Algorithm<S> {
 
 	protected Problem<S> problem;
 	private int numberOfAnts;
@@ -23,7 +23,7 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 	/**
 	 * Constructor
 	 */
-	public AntColonyOptimizationAlgorithm(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
+	public AntColonyOptimizationAlgorithmTSP(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
 		this.problem = problem;
 		this.numberOfAnts = numberOfAnts;
 		this.shortestSolution = null;
@@ -46,15 +46,15 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 	public S findRoute(S currentSolution) {// TODO: no initial route needed, because the ant starts with zero-route.
 		this.currentSolution = currentSolution;
 		
-		Ant<S> currentAnt;
+		AntTSP<S> currentAnt;
 		
-		AntColonyOptimization<S> aco = new AntColonyOptimization<S>(problem,
+		AntColonyOptimizationTSP<S> aco = new AntColonyOptimizationTSP<S>(problem,
 				currentSolution);
 
 		// IntStream.range(0, NUMBER_OF_ANTS).forEach(x -> {
 
 		for (int i = 0; i < numberOfAnts; i++) {
-			currentAnt = new Ant<S>(aco, i, alpha, beta, rho, q).run();
+			currentAnt = new AntTSP<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
 		}
 
@@ -62,7 +62,7 @@ public class AntColonyOptimizationAlgorithm<S extends Solution<?>> implements Al
 		return shortestSolution;
 	}
 
-	private void processAnts(Ant ant) {
+	private void processAnts(AntTSP ant) {
 		try {
 			currentSolution = (S) ant.getSolution();
 			problem.evaluate(currentSolution);

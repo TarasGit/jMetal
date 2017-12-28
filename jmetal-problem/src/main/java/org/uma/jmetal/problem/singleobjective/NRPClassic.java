@@ -21,8 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Class representing a single-objective NRP
- * problem. 
+ * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
 public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
@@ -79,7 +78,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		StreamTokenizer token = new StreamTokenizer(br);
 		try {
 
-			token.nextToken();// TODO: check if NULL? ex. // if ((token.sval != null)
+			token.nextToken();// TODO: check if NULL? ex. if ((token.sval != null)
 
 			levelOfRequirements = (int) token.nval;
 			costsOfRequirements = new int[levelOfRequirements][];
@@ -135,7 +134,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	@Override
-	public void evaluate(PermutationSolution<Integer> solution) {// TODO: id's stars with 1 and not with 0!!!
+	public void evaluate(PermutationSolution<Integer> solution) {
 		double localCosts = getEvaluatedCosts(solution);
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
@@ -150,7 +149,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {
+			if (solution.getVariableValue(i) == 1) {//TODO: should it be a binary Solution?
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
 			}
@@ -159,22 +158,21 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
-		Set<Integer> setOfRequirements = new HashSet<>();  
+		Set<Integer> setOfRequirements = new HashSet<>();
 
 		double fitness = 0.0;
 		int numberOfRequests;
 		int requirement;
-		// look for costs for all the requirements desired by the customers in solution
-		// - start
+
 		for (int i = 0; i < numberOfCustoments; i++) {
 			if (solution.getVariableValue(i) == 1) {
 				Customer customer = customers.get(i);
 				numberOfRequests = customer.getNumberOfRequests();
-				for (int j = 0; j < numberOfRequests; j++) { // TODO: check if the elemen is in the set to abort.
+				for (int j = 0; j < numberOfRequests; j++) {
 					requirement = customer.getFromRequirementList(j);
 					addAllDependenciesToSetRecursively(requirement, setOfRequirements);
 				}
-			} // end - if
+			}
 		}
 
 		List<Integer> list = new ArrayList<>(setOfRequirements);
@@ -185,7 +183,6 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	private void addToSetIfUnique(int value, Set<Integer> setOfRequirements) {
-		// if (!setOfRequirements.contains(value))
 		setOfRequirements.add(value);
 	}
 
@@ -194,20 +191,21 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		int localRequirement;
 		addToSetIfUnique(requirement, setOfRequirements);
 		List<Integer> localDependencies = getDependencies(requirement);
-		
-		for(Integer i : localDependencies) { //TODO: do it by some library.
-			if(!setOfRequirements.contains(i))
+
+		/*To remove a possible cycle in dependencies, check if this dependency is already in HashSet*/
+		for (Integer i : localDependencies) { // TODO: do it by some library.
+			if (!setOfRequirements.contains(i))
 				tmpArrayList.add(i);
 		}
 
-		while (!tmpArrayList.isEmpty()) {// TODO: check if there is a cycle in dependencies, how to react?
+		while (!tmpArrayList.isEmpty()) {
 			localRequirement = tmpArrayList.remove(0);
 			addAllDependenciesToSetRecursively(localRequirement, setOfRequirements);
 		}
 	}
 
 	private Double getCostFromRequirement(int localRequirement) {
-		double costs = 0.0; 
+		double costs = 0.0;
 		int k, m;
 		Pair<Integer, Integer> positions;
 		Optional<Pair<Integer, Integer>> result = getRequirementPosition(localRequirement);
@@ -228,11 +226,11 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	private Optional<Pair<Integer, Integer>> getRequirementPosition(int requirement) {
-		requirement = requirement - 1; //requirement starts from 0..n, subtract 1!!!
+		requirement = requirement - 1; // requirement starts from 0..n -> subtract 1.
 		int counter = 0;
 		for (int k = 0; k < levelOfRequirements; k++) {
 			for (int m = 0; m < numberOfRequirementsInLevel[k]; m++) {
-				if (requirement == counter++) {//TODO: why do we search for the position in this way???
+				if (requirement == counter++) {// TODO: why do I search for the position in this way???
 					return Optional.of(new Pair<>(k, m));
 				}
 			}

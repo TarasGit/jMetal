@@ -4,16 +4,15 @@ import java.util.stream.IntStream;
 
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class AntColonyOptimization<S extends Solution<?>> {
+public class AntColonyOptimizationTSP<S extends Solution<?>> {
 	
 	private S initialSolution;
 	private int size;
 	private Problem<S> problem;
 	
-	public AntColonyOptimization(Problem<S> problem, S initialSolution ) {
+	public AntColonyOptimizationTSP(Problem<S> problem, S initialSolution ) {
 		this.size = initialSolution.getNumberOfVariables();
 		this.initialSolution = initialSolution;
 		this.problem = problem;
@@ -26,7 +25,7 @@ public class AntColonyOptimization<S extends Solution<?>> {
 		return pheromonLevelMatrix;
 	}
 	
-	public AntColonyOptimization() throws IOException{
+	public AntColonyOptimizationTSP() throws IOException{
 		initializePheromonLevel();
 	}
 
