@@ -1,4 +1,4 @@
-package org.uma.jmetal.algorithm.singleobjective.TS;
+package org.uma.jmetal.util.comparator;
  
 import java.util.List;
 import java.util.Optional;

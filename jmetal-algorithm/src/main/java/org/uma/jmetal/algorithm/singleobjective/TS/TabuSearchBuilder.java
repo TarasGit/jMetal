@@ -1,8 +1,11 @@
 package org.uma.jmetal.algorithm.singleobjective.TS;
 
+import java.util.Comparator;
+
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.comparator.BestNeighborSolutionLocator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
@@ -19,20 +22,22 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 	private SolutionListEvaluator<Integer> evaluator;
 	private int listSize;
 	private int numbOfIterations;
-	private boolean MinOrMax;
+	private Comparator<Double> comparator;
+	private BestNeighborSolutionLocator<S> locator;
 
 	private S solution;
 
 	/**
 	 * Builder constructor
 	 */
-	public TabuSearchBuilder(Problem<S> problem, MutationOperator<S> mutationOperator,
-			int listSize, int numbOfIterations, boolean MinOrMax) {
+	public TabuSearchBuilder(Problem<S> problem, MutationOperator<S> mutationOperator, int listSize,
+			int numbOfIterations, Comparator<Double> comparator, BestNeighborSolutionLocator<S> locator) {
 		this.problem = problem;
-		this.MinOrMax = MinOrMax;
+		this.comparator = comparator;
 		this.mutationOperator = mutationOperator;
 		this.listSize = listSize;
 		this.numbOfIterations = numbOfIterations;
+		this.locator = locator;
 
 		evaluator = new SequentialSolutionListEvaluator<Integer>();// TODO XXX remove it.
 
@@ -58,7 +63,7 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 
 	public TabuSearchAlgorithm<S> build() {
 		buildInstance();
-		return setupTS(listSize, numbOfIterations, mutationOperator, MinOrMax);
+		return setupTS(listSize, numbOfIterations, mutationOperator, comparator);
 	}
 
 	/*
@@ -76,20 +81,16 @@ public class TabuSearchBuilder<S extends Solution<?>> {
 		return evaluator;
 	}
 
-	//Min for TSP, Max for NRP.
+	// Min for TSP, Max for NRP.
 	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations,
-			MutationOperator<S> mutationOperator, boolean MinOrMax) {
-		if (MinOrMax) {
-			return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
-					new MinNeighborSolutionLocator<S>(), mutationOperator, solution, problem);
-		} else {
-			return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
-					new MaxNeighborSolutionLocator<S>(), mutationOperator, solution, problem);
-		}
+			MutationOperator<S> mutationOperator, Comparator<Double> comparator) {
+		return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
+				locator, mutationOperator, solution, comparator, problem);
+
 	}
 
 	public void buildInstance() {
-		this.solution =  problem.createSolution();
+		this.solution = problem.createSolution();
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.uma.jmetal.runner.singleobjective;
+package org.uma.jmetal.runner.singleobjective.TS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,31 +6,24 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.comparator.MinNeighborSolutionLocator;
+import org.uma.jmetal.util.comparator.SimpleMinDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
- * Class to configure and run a Tabu Search algorithm. The target
- * problem is NRP/TSP.
+ * Class to configure and run a Tabu Search algorithm. The target problem is
+ * NRP/TSP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class TabuSearchRunner {
-	/*
-	 * TODO: 
-	 * - split this class into two, one for TSP one for NRP. Comparator should be the parameter for different problems, instead of < or > sign.
-	 * */
-
-	public static final boolean NRPORTSP = true; // true = NRP, false = TSP.
-	public static final boolean MINORMAX = false; // true = MIN, false = MAX. <-> Min for TSP / Max for NRP.
+public class TabuSearchRunnerTSP {
 
 	public static void main(String[] args) throws Exception {
 
@@ -42,25 +35,19 @@ public class TabuSearchRunner {
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
 
-		if (NRPORTSP) {
-			System.out.println("Solving NRP");
-			problem = new NRPClassic("/nrpClassicInstances/nrp3.txt");// 500(Min costs)//new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-			mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
-		} else {
-			System.out.println("Solving TSP");
-			problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
-			mutation = new PermutationSwapMutation<Integer>(mutationProbability);
-		}
+		System.out.println("Solving TSP");
+		problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
+		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
-				numbOfIterations, MINORMAX).build();
+				numbOfIterations, new SimpleMinDoubleComparator(), new MinNeighborSolutionLocator<>()).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
 																		// instead of list.
-		
-		if(solution == null) {//TODO: check whether the result if no solution found equals null.
+
+		if (solution == null) {// TODO: check whether the result if no solution found equals null.
 			System.out.println("No Result found");
 			System.exit(0);
 		}

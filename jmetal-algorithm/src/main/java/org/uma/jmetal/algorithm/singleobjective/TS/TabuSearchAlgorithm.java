@@ -1,6 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.TS;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.comparator.BestNeighborSolutionLocator;
 
 public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
@@ -22,19 +24,21 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	private StopCondition stopCondition;
 	private BestNeighborSolutionLocator<S> solutionLocator;
 	private int numberOfNeighbors = 100;
-	MutationOperator<S> mutationOperator;
-	S endResult;
-	S initialSolution;
+	private MutationOperator<S> mutationOperator;
+	private S endResult;
+	private S initialSolution;
+	private Comparator<Double> comparator;
 	Problem<S> problem;
 
 	public TabuSearchAlgorithm(TabuList<S> tabuList, StopCondition stopCondition,
-			BestNeighborSolutionLocator<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution,
+			BestNeighborSolutionLocator<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution, Comparator<Double> comparator,
 			Problem<S> problem) {
 		this.tabuList = tabuList;
 		this.stopCondition = stopCondition;
 		this.solutionLocator = solutionLocator;
 		this.mutationOperator = mutationOperator;
 		this.initialSolution = initialSolution;
+		this.comparator = comparator;
 		this.problem = problem;
 	}
 
@@ -78,8 +82,8 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 			//System.out.println(bestNeighborFound);
 
 			
-
-			if (bestNeighborFound.getObjective(0) > bestSolution.getObjective(0)) {// TODO: MIN OR MAX - < OR >
+			/* minComparator == 1 if a < b, maxComparator == 1, if a > b */
+			if (comparator.compare(bestNeighborFound.getObjective(0), bestSolution.getObjective(0)) == 1) {
 				bestSolution = bestNeighborFound;
 				System.out.println("fitness: " + bestSolution.getObjective(0) + " / " + "costs: " + bestSolution.getAttribute(0));
 			}
@@ -118,6 +122,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	@Override
 	public void run() {
 		endResult = run(initialSolution);
+		System.out.println("EndResult" + endResult);
 	}
 
 	@Override

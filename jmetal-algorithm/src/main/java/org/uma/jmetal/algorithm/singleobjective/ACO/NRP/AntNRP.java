@@ -1,14 +1,15 @@
-package org.uma.jmetal.algorithm.singleobjective.ACO;
+package org.uma.jmetal.algorithm.singleobjective.ACO.NRP;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
+import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationTSP;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-public class AntTSP<S extends Solution<?>> {
+public class AntNRP<S extends Solution<?>> {
 	
 	private AntColonyOptimizationTSP<S> aco;
 	private int antNumb;
@@ -24,7 +25,7 @@ public class AntTSP<S extends Solution<?>> {
 	
 	private int numbOfCities;
 	
-	public AntTSP(AntColonyOptimizationTSP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
+	public AntNRP(AntColonyOptimizationTSP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
 		this.aco = aco;
 		this.antNumb = antNumb;
 		this.numbOfCities = aco.getProblemSize();// 1 < x < n -> [0,..10] -> 11
@@ -36,7 +37,7 @@ public class AntTSP<S extends Solution<?>> {
 	}
 	
 
-	public AntTSP<S> run() {
+	public AntNRP<S> run() {
 		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
 		route = aco.getInitialSolution();//TODO: should get an empty solution -> new abstract class?
 		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultIntegerPermutationSolution)route).setVariableValue(x, 0));

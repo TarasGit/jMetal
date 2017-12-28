@@ -1,4 +1,4 @@
-package org.uma.jmetal.algorithm.singleobjective.ACO;
+package org.uma.jmetal.algorithm.singleobjective.ACO.TSP;
 
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;

@@ -1,4 +1,4 @@
-package org.uma.jmetal.algorithm.singleobjective.ACO;
+package org.uma.jmetal.algorithm.singleobjective.ACO.TSP;
 import java.io.IOException;
 import java.util.stream.IntStream;
 

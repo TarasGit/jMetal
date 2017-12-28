@@ -1,10 +1,10 @@
-package org.uma.jmetal.runner.singleobjective;
+package org.uma.jmetal.runner.singleobjective.ACO;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationAlgorithmTSP;
-import org.uma.jmetal.algorithm.singleobjective.ACO.AntColonyOptimizationBuilderTSP;
+import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationBuilderNRP;
+import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationAlgorithmTSP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
@@ -19,7 +19,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunnerTSP {
+public class AntColonyOptimizationRunnerNRP {
 
 	public static final int 	NUMBER_OF_ANTS = 10000;
 	public static final double 	ALPHA = 0.01;// importance of pheramon trail, x >= 0
@@ -37,7 +37,7 @@ public class AntColonyOptimizationRunnerTSP {
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
-		algorithm = new AntColonyOptimizationBuilderTSP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
+		algorithm = new AntColonyOptimizationBuilderNRP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
 				RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
