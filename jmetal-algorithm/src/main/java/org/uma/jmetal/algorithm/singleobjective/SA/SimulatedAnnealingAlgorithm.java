@@ -1,13 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.SA;
 
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.IntStream;
-
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
+import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
@@ -17,14 +12,13 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 @SuppressWarnings("serial")
 public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<S> {
 
-	public static final double RATE_OF_COOLING = 0.01;
-	public static final double INITIAL_TEMPERATURE = 2;
-	public static final double MIN_TEMPERATURE = 0.99;
+	private double rateOfCooling;
+	private int initialTemperature;
+	private int minimalTemperature;
 	private int count = 0;
 
 	protected Problem<S> problem;
-	protected PermutationSwapMutation<Integer> mutationOperator;
-	private int temperature;
+	protected MutationOperator<S> mutationOperator;
 
 	private S adjacentSolution;
 	private S shortestSolution;
@@ -32,10 +26,14 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	/**
 	 * Constructor
 	 */
-	public SimulatedAnnealingAlgorithm(Problem<S> problem, int temperature, PermutationSwapMutation<Integer> mutationOperator) {
+	public SimulatedAnnealingAlgorithm(final Problem<S> problem,
+			final MutationOperator<S> mutationOperator, final double rateOfCooling,
+			final int initialTemperature, final int minimalTemperature) {
 		this.problem = problem;
-		this.temperature = temperature;
 		this.mutationOperator = mutationOperator;
+		this.rateOfCooling = rateOfCooling;
+		this.initialTemperature = initialTemperature;
+		this.minimalTemperature = minimalTemperature;
 	}
 
 	@Override
@@ -47,44 +45,34 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	public String getDescription() {
 		return "Generational Genetic Algorithm";
 	}
-	
 
-
-	@SuppressWarnings("unchecked")
-	public S findRoute(double temperature, S currentSolution) {
-		shortestSolution = (S)currentSolution.copy();
+	public S findRoute(S currentSolution) {
+		shortestSolution = (S) currentSolution.copy();
 		problem.evaluate(shortestSolution);
+		int temperature = this.initialTemperature;
 
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
-		while (temperature > MIN_TEMPERATURE) {
-			adjacentSolution =   (S) mutationOperator.execute((PermutationSolution<Integer>)currentSolution.copy());//obtainAdjacentRoute(new Route(currentRoute));// permutationSwapMutation Operator.
+		while (temperature > minimalTemperature) {
+			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());
 			problem.evaluate(adjacentSolution);
 			problem.evaluate(currentSolution);
 			problem.evaluate(shortestSolution);
 			if (currentSolution.getObjective(0) < shortestSolution.getObjective(0))
-				shortestSolution = (S)currentSolution.copy();//copy???
+				shortestSolution = (S) currentSolution.copy();// copy???
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
-				currentSolution = (S)adjacentSolution.copy();//copy???
-			temperature *= 1 - RATE_OF_COOLING;
+				currentSolution = (S) adjacentSolution.copy();// copy???
+			temperature *= 1 - rateOfCooling;
 
 			count++;
 		}
-		
+
 		System.out.println("Shortes tSolution Size:" + shortestSolution.getNumberOfVariables());
 		problem.evaluate(shortestSolution);
-		//Test Start - only unique values in the set.
-		Set<Integer> intSet = new TreeSet<>();
-	
-		IntStream.range(0, shortestSolution.getNumberOfVariables()).forEach(v -> {
-			intSet.add(v);
-		});
-		System.out.println("Set Size: " + intSet.size());
-		//Test End
-		
+
 		System.out.print(">Sortest Solution:");
 		System.out.println(shortestSolution.getObjective(0));
 		System.out.println("Count: " + count);
-		
+
 		return shortestSolution;
 	}
 
@@ -102,10 +90,9 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		return acceptRouteFlag;
 	}
 
-
 	@Override
 	public void run() {
-		findRoute(this.temperature,  problem.createSolution());
+		findRoute(problem.createSolution());
 	}
 
 	@Override
