@@ -28,9 +28,9 @@ public class SimulatedAnnealingRunnerNRP {
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
 
-	public static final double RATE_OF_COOLING = 0.00001;
-	public static final int INITIAL_TEMPERATURE = 1000000;
-	public static final int MINIMAL_TEMPERATURE = 0;
+	public static final double RATE_OF_COOLING = 0.001;
+	public static final int INITIAL_TEMPERATURE = 100;
+	public static final int MINIMAL_TEMPERATURE = 1;
 
 	public static void main(String[] args) throws Exception {
 		double mutationProbability = 0.5;

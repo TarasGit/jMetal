@@ -30,7 +30,7 @@ public class SimulatedAnnealingRunnerTSP {
 
 	public static final double RATE_OF_COOLING = 0.01;
 	public static final int INITIAL_TEMPERATURE = 1000;
-	public static final int MINIMAL_TEMPERATURE = 0;
+	public static final int MINIMAL_TEMPERATURE = 1;
 
 	public static void main(String[] args) throws Exception {
 		double mutationProbability = 1.0;

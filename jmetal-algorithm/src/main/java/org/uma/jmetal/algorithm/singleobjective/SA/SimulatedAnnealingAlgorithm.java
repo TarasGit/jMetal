@@ -49,11 +49,11 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	public S findRoute(S currentSolution) {
 		shortestSolution = (S) currentSolution.copy();
 		problem.evaluate(shortestSolution);
-		int temperature = this.initialTemperature;
+		double temperature = this.initialTemperature;
 
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
 		while (temperature > minimalTemperature) {
-			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());
+			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());//currentSolution.copy(); -> Taras changed.
 				
 			problem.evaluate(adjacentSolution);
 			problem.evaluate(currentSolution);
@@ -70,7 +70,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
 				currentSolution = (S) adjacentSolution.copy();// copy???
 			temperature *= 1 - rateOfCooling;
-			System.out.println(">" + shortestSolution.getObjective(0) + " + " + adjacentSolution.getObjective(0));
+			//System.out.println(">" + shortestSolution.getObjective(0) + " + " + adjacentSolution.getObjective(0));
 			count++;
 		}
 
@@ -87,9 +87,17 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	private boolean acceptRoute(double currentDistance, double adjacentDistance, double temperature) {
 		boolean acceptRouteFlag = false;
 		double acceptanceProbability = 1.0;
-
+		double delta = 0;
 		if (adjacentDistance <= currentDistance) {
-			acceptanceProbability = Math.exp(-(adjacentDistance - currentDistance) / temperature);
+			delta = Math.abs(adjacentDistance - currentDistance);
+			acceptanceProbability = Math.exp(-(delta / (2 * temperature)));
+			//System.out.println(">" +acceptanceProbability + " D: " + delta + " T: " + temperature);
+			try {
+				Thread.sleep(0);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		double randomNumb = JMetalRandom.getInstance().nextDouble();
