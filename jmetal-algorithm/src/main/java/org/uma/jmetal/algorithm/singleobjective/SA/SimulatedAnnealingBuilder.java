@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.SA;
 
+import java.util.Comparator;
+
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -21,17 +23,20 @@ public class SimulatedAnnealingBuilder<S extends Solution<?>> {
 	private double rateOfCooling;
 	private int initialTemperature;
 	private int minimalTemperature;
-
+	private Comparator<Double> comparator;
+	
 	/**
 	 * Builder constructor
 	 */
-	public SimulatedAnnealingBuilder(Problem<S> problem, MutationOperator<S> mutationOperator) {
+	public SimulatedAnnealingBuilder(Problem<S> problem, MutationOperator<S> mutationOperator, Comparator<Double> comparator) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
 		this.evaluator = new SequentialSolutionListEvaluator<Integer>();// TODO XXX remove it.
 		this.rateOfCooling = RATE_OF_COOLING;
 		this.initialTemperature = INITIAL_TEMPERATURE;
 		this.minimalTemperature = MINIMAL_TEMPERATURE;
+		this.comparator = comparator;
+		
 	}
 
 	public SimulatedAnnealingBuilder<S> setInitialTemperature(int initialTemperature) {
@@ -56,7 +61,7 @@ public class SimulatedAnnealingBuilder<S extends Solution<?>> {
 
 	public SimulatedAnnealingAlgorithm<S> build() {
 		return new SimulatedAnnealingAlgorithm<S>(problem, mutationOperator, rateOfCooling, initialTemperature,
-				minimalTemperature);
+				minimalTemperature, comparator);
 	}
 
 	/*

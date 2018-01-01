@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.SA;
 
+import java.util.Comparator;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
@@ -18,8 +20,10 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	private int count = 0;
 
 	protected Problem<S> problem;
-	protected MutationOperator<S> mutationOperator;
+	protected MutationOperator<S> mutationOperator;//TODO: protected????
+	private Comparator<Double> comparator;
 
+	
 	private S adjacentSolution;
 	private S shortestSolution;
 
@@ -28,12 +32,13 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	 */
 	public SimulatedAnnealingAlgorithm(final Problem<S> problem,
 			final MutationOperator<S> mutationOperator, final double rateOfCooling,
-			final int initialTemperature, final int minimalTemperature) {
+			final int initialTemperature, final int minimalTemperature, Comparator<Double> comparator) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
 		this.rateOfCooling = rateOfCooling;
 		this.initialTemperature = initialTemperature;
 		this.minimalTemperature = minimalTemperature;
+		this.comparator = comparator;
 	}
 
 	@Override
@@ -64,8 +69,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 				continue;
 			}
 		
-			
-			if (currentSolution.getObjective(0) > shortestSolution.getObjective(0))
+			if (comparator.compare(currentSolution.getObjective(0), shortestSolution.getObjective(0)) == 1)
 				shortestSolution = (S) currentSolution.copy();// copy???
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
 				currentSolution = (S) adjacentSolution.copy();// copy???
@@ -85,25 +89,19 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	}
 
 	private boolean acceptRoute(double currentDistance, double adjacentDistance, double temperature) {
-		boolean acceptRouteFlag = false;
-		double acceptanceProbability = 1.0;
-		double delta = 0;
-		if (adjacentDistance <= currentDistance) {
+		double acceptanceProbability;
+		double delta;
+		if (comparator.compare(currentDistance, adjacentDistance) == 1) {
 			delta = Math.abs(adjacentDistance - currentDistance);
 			acceptanceProbability = Math.exp(-(delta / (2 * temperature)));
-			//System.out.println(">" +acceptanceProbability + " D: " + delta + " T: " + temperature);
-			try {
-				Thread.sleep(0);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		}else {
+			acceptanceProbability = 1.0;
 		}
 
-		double randomNumb = JMetalRandom.getInstance().nextDouble();
-		if (acceptanceProbability >= randomNumb)
-			acceptRouteFlag = true;
-		return acceptRouteFlag;
+		if (acceptanceProbability >= JMetalRandom.getInstance().nextDouble())
+			return true;
+		else 
+			return false;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.comparator.SimpleMinDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -27,13 +28,19 @@ public class SimulatedAnnealingRunnerTSP {
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
-
-	public static final double RATE_OF_COOLING = 0.01;
-	public static final int INITIAL_TEMPERATURE = 1000;
+	public static final double RATE_OF_COOLING = 0.001;
+	/*
+	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
+	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
+	 * 
+	 * SOLUTION: change  RATE OF COOLING to be smaller to get better solution quality OR multiply temperature
+	 * in SA with some factor, to be able to use another temperatures.
+	 * */
+	public static final int INITIAL_TEMPERATURE = 100;
 	public static final int MINIMAL_TEMPERATURE = 1;
+	public static final double MUTATION_PROBABILITY = 1;//1 = swap the values in each iteration.
 
 	public static void main(String[] args) throws Exception {
-		double mutationProbability = 1.0;
 		Problem<PermutationSolution<Integer>> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
@@ -44,9 +51,9 @@ public class SimulatedAnnealingRunnerTSP {
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
-		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+		mutation = new PermutationSwapMutation<Integer>(MUTATION_PROBABILITY);
 
-		algorithm = new SimulatedAnnealingBuilder<PermutationSolution<Integer>>(problem, mutation)
+		algorithm = new SimulatedAnnealingBuilder<PermutationSolution<Integer>>(problem, mutation, new SimpleMinDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
 				.setRateOfCooling(RATE_OF_COOLING).build();
 
