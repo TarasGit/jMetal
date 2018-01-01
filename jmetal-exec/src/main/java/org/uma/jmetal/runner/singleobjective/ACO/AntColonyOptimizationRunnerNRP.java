@@ -8,6 +8,7 @@ import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationBui
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicACO;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -32,6 +33,8 @@ public class AntColonyOptimizationRunnerNRP {
 
 		Problem<PermutationSolution<Integer>> problem;
 		AntColonyOptimizationAlgorithmNRP<PermutationSolution<Integer>> algorithm;
+		
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
 
 		problem = new NRPClassicACO("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.uma.jmetal.problem.PermutationProblem;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 
 /**
  * Defines an implementation of solution composed of a permuation of integers
@@ -18,11 +19,18 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 	public DefaultBinaryIntegerPermutationSolution(PermutationProblem<?> problem) {
 		super(problem);
 
-		for (int i = 0; i < getNumberOfVariables(); i++) {//TODO: 0.1 set for test purposes!
-			if (randomGenerator.nextDouble() > 1)
-				setVariableValue(i, 1);
-			else
+		boolean empty = DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().isEmpty();
+		if (!empty) {
+			for (int i = 0; i < getNumberOfVariables(); i++) {
+				if (randomGenerator.nextDouble() > 0.5)
+					setVariableValue(i, 1);
+				else
+					setVariableValue(i, 0);
+			}
+		} else {
+			for (int i = 0; i < getNumberOfVariables(); i++) {
 				setVariableValue(i, 0);
+			}
 		}
 	}
 
@@ -36,7 +44,6 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 		for (int i = 0; i < problem.getNumberOfVariables(); i++) {
 			setVariableValue(i, solution.getVariableValue(i));
 		}
-
 		attributes = new HashMap<Object, Object>(solution.attributes);
 	}
 

@@ -52,20 +52,17 @@ public class BinaryFlipMutation<S extends PermutationSolution<Integer>> implemen
 	 */
 	public void doMutation(double probability, S solution) {
 		double rand = randomGenerator.getRandomValue();
-		//System.out.println(":" + rand);
+
 		int pos1 = 0, pos2 = 0;
-		if (rand > 0.5) {
+		if (rand > probability) {
 			
 			int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfVariables());// TODO: check the
-																									// distribution 0 <=
-																									// x <= 1
+			
 			if (((int) solution.getVariableValue(pos)) == 1) {
 				solution.setVariableValue(pos, 0);
 			} else {
 				solution.setVariableValue(pos, 1);
 			}
-			
-			
 		} else {
 			int permutationLength;
 			permutationLength = solution.getNumberOfVariables();

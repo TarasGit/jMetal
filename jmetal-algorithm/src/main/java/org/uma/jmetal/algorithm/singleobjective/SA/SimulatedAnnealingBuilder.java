@@ -45,7 +45,7 @@ public class SimulatedAnnealingBuilder<S extends Solution<?>> {
 	}
 	
 	public SimulatedAnnealingBuilder<S> setRateOfCooling(double rateOfCooling) {
-		this.rateOfCooling = rateOfCooling;;
+		this.rateOfCooling = rateOfCooling;
 		return this;
 	}
 

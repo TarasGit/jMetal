@@ -10,6 +10,7 @@ import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MaxNeighborSolutionFinder;
@@ -34,9 +35,12 @@ public class TabuSearchRunnerNRP {
 		double mutationProbability = 0.3;
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
+		
+		//Initial Solution  of Tabu Search must be zero.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
 
 		System.out.println("Solving NRP");
-		problem = new NRPClassic("/nrpClassicInstances/nrp3.txt");// 500(Min costs)//new
+		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
 																	// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 

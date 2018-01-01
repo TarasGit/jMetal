@@ -8,6 +8,7 @@ import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationBui
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -32,7 +33,9 @@ public class AntColonyOptimizationRunnerTSP {
 
 		Problem<PermutationSolution<Integer>> problem;
 		AntColonyOptimizationAlgorithmTSP<PermutationSolution<Integer>> algorithm;
-
+		
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
+		
 		problem = new TSP("/tspInstances/kroA100.tsp");// new TSP("/tspInstances/myKro11.tsp");*/
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras

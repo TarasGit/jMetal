@@ -6,10 +6,11 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.SA.SimulatedAnnealingBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
+import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.TSP;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -27,21 +28,23 @@ public class SimulatedAnnealingRunnerNRP {
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
 
-	public static final double RATE_OF_COOLING = 0.01;
-	public static final int INITIAL_TEMPERATURE = 1000;
+	public static final double RATE_OF_COOLING = 0.00001;
+	public static final int INITIAL_TEMPERATURE = 1000000;
 	public static final int MINIMAL_TEMPERATURE = 0;
 
 	public static void main(String[] args) throws Exception {
-		double mutationProbability = 1.0;
+		double mutationProbability = 0.5;
 		Problem<PermutationSolution<Integer>> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
+		
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
 
-		problem = new TSP("/tspInstances/kroA100.tsp"); // new TSP("/tspInstances/myKro11.tsp"); /* */
+		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
-		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);// new PermutationSwapMutation<Integer>(mutationProbability);
 
 		algorithm = new SimulatedAnnealingBuilder<PermutationSolution<Integer>>(problem, mutation)
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)

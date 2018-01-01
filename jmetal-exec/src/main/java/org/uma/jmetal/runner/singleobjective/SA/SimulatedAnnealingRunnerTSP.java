@@ -10,6 +10,7 @@ import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -37,6 +38,8 @@ public class SimulatedAnnealingRunnerTSP {
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
+		
 		problem = new TSP("/tspInstances/kroA100.tsp"); // new TSP("/tspInstances/myKro11.tsp"); /* */
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras

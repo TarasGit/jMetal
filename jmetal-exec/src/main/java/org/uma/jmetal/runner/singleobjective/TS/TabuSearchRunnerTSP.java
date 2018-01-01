@@ -10,6 +10,7 @@ import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.TSP;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MinNeighborSolutionFinder;
@@ -19,7 +20,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
  * Class to configure and run a Tabu Search algorithm. The target problem is
- * NRP/TSP.
+ * NRP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
@@ -35,6 +36,8 @@ public class TabuSearchRunnerTSP {
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
 
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
+		
 		System.out.println("Solving TSP");
 		problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);

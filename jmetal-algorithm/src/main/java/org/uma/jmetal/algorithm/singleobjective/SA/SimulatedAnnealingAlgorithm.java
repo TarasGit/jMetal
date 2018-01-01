@@ -54,15 +54,23 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
 		while (temperature > minimalTemperature) {
 			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());
+				
 			problem.evaluate(adjacentSolution);
 			problem.evaluate(currentSolution);
 			problem.evaluate(shortestSolution);
-			if (currentSolution.getObjective(0) < shortestSolution.getObjective(0))
+			
+			
+			if(adjacentSolution.getObjective(0) == -1) {
+				continue;
+			}
+		
+			
+			if (currentSolution.getObjective(0) > shortestSolution.getObjective(0))
 				shortestSolution = (S) currentSolution.copy();// copy???
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
 				currentSolution = (S) adjacentSolution.copy();// copy???
 			temperature *= 1 - rateOfCooling;
-
+			System.out.println(">" + shortestSolution.getObjective(0) + " + " + adjacentSolution.getObjective(0));
 			count++;
 		}
 
@@ -80,7 +88,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		boolean acceptRouteFlag = false;
 		double acceptanceProbability = 1.0;
 
-		if (adjacentDistance >= currentDistance) {
+		if (adjacentDistance <= currentDistance) {
 			acceptanceProbability = Math.exp(-(adjacentDistance - currentDistance) / temperature);
 		}
 
