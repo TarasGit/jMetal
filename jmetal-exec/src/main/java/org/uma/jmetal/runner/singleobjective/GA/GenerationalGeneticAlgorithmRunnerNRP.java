@@ -1,5 +1,5 @@
 
-package org.uma.jmetal.runner.singleobjective;
+package org.uma.jmetal.runner.singleobjective.GA;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithmBuilder;
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class GenerationalGeneticAlgorithmTSPRunner {
+public class GenerationalGeneticAlgorithmRunnerNRP {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
