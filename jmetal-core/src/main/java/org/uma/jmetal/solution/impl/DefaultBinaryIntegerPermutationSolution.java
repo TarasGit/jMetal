@@ -19,19 +19,15 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 	public DefaultBinaryIntegerPermutationSolution(PermutationProblem<?> problem) {
 		super(problem);
 
-		boolean empty = DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().isEmpty();
-		if (!empty) {
-			for (int i = 0; i < getNumberOfVariables(); i++) {
-				if (randomGenerator.nextDouble() > 0.9)//TODO XXX: change to 0.5.
-					setVariableValue(i, 1);
-				else
-					setVariableValue(i, 0);
-			}
-		} else {
-			for (int i = 0; i < getNumberOfVariables(); i++) {
+		double probability = DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().getProbability();
+
+		for (int i = 0; i < getNumberOfVariables(); i++) {
+			if (randomGenerator.nextDouble() > probability)
+				setVariableValue(i, 1);
+			else
 				setVariableValue(i, 0);
-			}
 		}
+
 	}
 
 	/** Copy Constructor */

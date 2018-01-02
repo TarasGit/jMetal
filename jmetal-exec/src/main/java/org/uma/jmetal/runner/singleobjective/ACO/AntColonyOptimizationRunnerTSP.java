@@ -34,7 +34,7 @@ public class AntColonyOptimizationRunnerTSP {
 		Problem<PermutationSolution<Integer>> problem;
 		AntColonyOptimizationAlgorithmTSP<PermutationSolution<Integer>> algorithm;
 		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 		
 		problem = new TSP("/tspInstances/kroA100.tsp");// new TSP("/tspInstances/myKro11.tsp");*/
 

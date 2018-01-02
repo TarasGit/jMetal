@@ -36,10 +36,10 @@ public class TabuSearchRunnerTSP {
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 		
 		System.out.println("Solving TSP");
-		problem = new TSP("/tspInstances/myKro11.tsp"); // TSP("/tspInstances/kroA100.tsp");//**/
+		problem = new TSP("/tspInstances/kroA100.tsp");
 		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,

@@ -28,7 +28,7 @@ public class SimulatedAnnealingRunnerTSP {
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
-	public static final double RATE_OF_COOLING = 0.0000001;
+	public static final double RATE_OF_COOLING = 0.0001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
 	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
@@ -45,7 +45,7 @@ public class SimulatedAnnealingRunnerTSP {
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.5);
 		
 		problem = new TSP("/tspInstances/kroA100.tsp"); // new TSP("/tspInstances/myKro11.tsp"); /* */
 

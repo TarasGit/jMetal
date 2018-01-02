@@ -31,13 +31,12 @@ public class GenerationalGeneticAlgorithmRunnerNRP {
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
 	 */
-	
+
 	/*
-	 * TODO:
-	 * - generation of initial Solution changed!
-	 * - comparator changed -> add an configuration for NRP/TSP.
+	 * TODO: - generation of initial Solution changed! - comparator changed -> add
+	 * an configuration for NRP/TSP.
 	 * 
-	 * */
+	 */
 	public static void main(String[] args) throws Exception {
 		PermutationProblem<PermutationSolution<Integer>> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
@@ -47,24 +46,25 @@ public class GenerationalGeneticAlgorithmRunnerNRP {
 		Ordering ordering = Ordering.DESCENDING;
 
 		double costFactor = 0.5;
-		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
-		
-		
 
-		
+		/*
+		 * The initial solution for GA should not be 0 but also smaller than factor *
+		* costs, otherwise unvalid solutions -> 0.9 for zero ist ok.
+		*/
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
+
 		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
 
-		crossover = new BinarySinglePointCrossover(0.9);//new PMXCrossover(0.9);
+		crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
 
 		double mutationProbability = 0.3;
-		//double mutationProbability = 1.0 / problem.getNumberOfVariables();
+		// double mutationProbability = 1.0 / problem.getNumberOfVariables();
 		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
-		//mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+		// mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(
 				new SimpleMaxSolutionComparator<PermutationSolution<Integer>>());
-				//new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
+		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
 		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
 				.setMaxEvaluations(100000).setSelectionOperator(selection).build();

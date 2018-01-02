@@ -4,18 +4,18 @@ public class DefaultBinaryIntegerPermutationSolutionConfiguration {
 
 	private static final DefaultBinaryIntegerPermutationSolutionConfiguration instance = new DefaultBinaryIntegerPermutationSolutionConfiguration();
 	
-	private boolean empty;
+	private double probability;
 	
 	public DefaultBinaryIntegerPermutationSolutionConfiguration() {
-		this.empty = false;
+		this.probability = 0.5;
 	}
 
-	public boolean isEmpty() {
-		return empty;
+	public double getProbability() {
+		return probability;
 	}
 
-	public void setEmpty(boolean empty) {
-		this.empty = empty;
+	public void setProbability(double probability) {
+		this.probability = probability;
 	}
 
 	public static DefaultBinaryIntegerPermutationSolutionConfiguration getInstance() {

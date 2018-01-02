@@ -34,7 +34,7 @@ public class AntColonyOptimizationRunnerNRP {
 		Problem<PermutationSolution<Integer>> problem;
 		AntColonyOptimizationAlgorithmNRP<PermutationSolution<Integer>> algorithm;
 		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability = 1 for 0 -> zero initial solution.
 
 		problem = new NRPClassicACO("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
 

@@ -51,7 +51,6 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 		AntColonyOptimizationNRP<S> aco = new AntColonyOptimizationNRP<S>(problem,
 				currentSolution);
 
-		// IntStream.range(0, NUMBER_OF_ANTS).forEach(x -> {
 
 		for (int i = 0; i < numberOfAnts; i++) {
 			currentAnt = new AntNRP<S>(aco, i, alpha, beta, rho, q).run();

@@ -40,14 +40,14 @@ public class SimulatedAnnealingRunnerNRP {
 	public static final int INITIAL_TEMPERATURE = 100;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double MUTATION_PROBABILITY = 0.5;//50% bit mutation and 50% swap mutation.
-	public static final double COST_FACTOR = 0.3;
+	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
 		Problem<PermutationSolution<Integer>> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//1 = probability for 0.
 
 		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR);// 500(Min costs)//new
 
