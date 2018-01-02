@@ -53,13 +53,8 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R>  implements Algorithm<
   @Override public void run() {
     List<S> offspringPopulation;
     List<S> matingPopulation;
-
     population = createInitialPopulation();
     population = evaluatePopulation(population);
-    for(S s : population) {
-    	System.out.print("|" + ((PermutationSolution<Integer>)s).getObjective(0));
-    }
-    System.out.println();
     initProgress();
     while (!isStoppingConditionReached()) {
       matingPopulation = selection(population);

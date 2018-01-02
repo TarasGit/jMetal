@@ -49,7 +49,7 @@ public class SolutionUtils {
     } else if (flag == 1) {
       result = solution2;
     } else {
-      result = solution1.getObjective(0) > solution2.getObjective(0) ? solution1 : solution2;//result = equalityPolicy.apply(solution1, solution2);//TODO XXX: reset to original.
+      result = equalityPolicy.apply(solution1, solution2);
     }
 
     return result;

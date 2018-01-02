@@ -18,27 +18,33 @@ import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
+import org.uma.jmetal.util.comparator.SimpleMaxSolutionComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
-/**
- * Class to configure and run a generational genetic algorithm. The target
- * problem is OneMax.
- *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+/*
+ * @author Taras Iks <ikstaras@gmail.com>
  */
 public class GenerationalGeneticAlgorithmRunnerNRP {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
 	 */
+	
+	/*
+	 * TODO:
+	 * - generation of initial Solution changed!
+	 * - comparator changed -> add an configuration for NRP/TSP.
+	 * 
+	 * */
 	public static void main(String[] args) throws Exception {
 		PermutationProblem<PermutationSolution<Integer>> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		CrossoverOperator<PermutationSolution<Integer>> crossover;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
+		Ordering ordering = Ordering.DESCENDING;
 
 		double costFactor = 0.5;
 		
@@ -57,10 +63,11 @@ public class GenerationalGeneticAlgorithmRunnerNRP {
 		//mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(
-				new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
+				new SimpleMaxSolutionComparator<PermutationSolution<Integer>>());
+				//new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation).setPopulationSize(1000)
-				.setMaxEvaluations(1000000).setSelectionOperator(selection).build();
+		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
+				.setMaxEvaluations(100000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

@@ -12,6 +12,7 @@ import org.uma.jmetal.problem.BinaryProblem;
 import org.uma.jmetal.problem.singleobjective.OneMax;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.AlgorithmRunner;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 
 import java.util.List;
 
@@ -31,8 +32,10 @@ public class SteadyStateGeneticAlgorithmTestIT {
     CrossoverOperator<BinarySolution> crossoverOperator = new SinglePointCrossover(0.9) ;
     MutationOperator<BinarySolution> mutationOperator = new BitFlipMutation(1.0 / problem.getNumberOfBits(0)) ;
     SelectionOperator<List<BinarySolution>, BinarySolution> selectionOperator = new BinaryTournamentSelection<BinarySolution>();
+	Ordering ordering = Ordering.ASCENDING;
 
-    algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator)
+    
+    algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator, ordering)
             .setVariant(GeneticAlgorithmBuilder.GeneticAlgorithmVariant.STEADY_STATE)
             .setPopulationSize(50)
             .setMaxEvaluations(25000)

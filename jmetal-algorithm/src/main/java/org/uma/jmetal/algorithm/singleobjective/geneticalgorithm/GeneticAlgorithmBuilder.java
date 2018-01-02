@@ -1,5 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.geneticalgorithm;
 
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -8,10 +10,9 @@ import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-
-import java.util.List;
 
 /**
  * Created by ajnebro on 10/12/14.
@@ -28,7 +29,7 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
   private MutationOperator<S> mutationOperator;
   private SelectionOperator<List<S>, S> selectionOperator;
   private SolutionListEvaluator<S> evaluator;
-
+  private Ordering ordering;
   private GeneticAlgorithmVariant variant ;
   private SelectionOperator<List<S>, S> defaultSelectionOperator = new BinaryTournamentSelection<S>() ;
 
@@ -37,13 +38,15 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
    */
   public GeneticAlgorithmBuilder(Problem<S> problem,
       CrossoverOperator<S> crossoverOperator,
-      MutationOperator<S> mutationOperator) {
+      MutationOperator<S> mutationOperator, Ordering ordering) {
     this.problem = problem;
     maxEvaluations = 25000;
     populationSize = 100;
     this.mutationOperator = mutationOperator ;
     this.crossoverOperator = crossoverOperator ;
-    this.selectionOperator = defaultSelectionOperator ;
+    this.selectionOperator = defaultSelectionOperator;
+    this.ordering = ordering;
+    
 
     evaluator = new SequentialSolutionListEvaluator<S>();
 
@@ -83,7 +86,7 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
   public Algorithm<S> build() {
     if (variant == GeneticAlgorithmVariant.GENERATIONAL) {
       return new GenerationalGeneticAlgorithm<S>(problem, maxEvaluations, populationSize,
-          crossoverOperator, mutationOperator, selectionOperator, evaluator);
+          crossoverOperator, mutationOperator, selectionOperator, evaluator, ordering);
     } else if (variant == GeneticAlgorithmVariant.STEADY_STATE) {
       return new SteadyStateGeneticAlgorithm<S>(problem, maxEvaluations, populationSize,
           crossoverOperator, mutationOperator, selectionOperator);

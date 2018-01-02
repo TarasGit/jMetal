@@ -1,5 +1,9 @@
 package org.uma.jmetal.algorithm.singleobjective.geneticalgorithm;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -7,11 +11,8 @@ import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.ObjectiveComparator;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -29,7 +30,7 @@ public class GenerationalGeneticAlgorithm<S extends Solution<?>> extends Abstrac
    */
   public GenerationalGeneticAlgorithm(Problem<S> problem, int maxEvaluations, int populationSize,
       CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-      SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator) {
+      SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator, Ordering ordering) {
     super(problem);
     this.maxEvaluations = maxEvaluations;
     this.setMaxPopulationSize(populationSize);
@@ -40,7 +41,7 @@ public class GenerationalGeneticAlgorithm<S extends Solution<?>> extends Abstrac
 
     this.evaluator = evaluator;
 
-    comparator = new ObjectiveComparator<S>(0);
+    comparator = new ObjectiveComparator<S>(0, ordering);
   }
 
   @Override protected boolean isStoppingConditionReached() {

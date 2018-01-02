@@ -15,6 +15,7 @@ import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -38,6 +39,8 @@ public class GenerationalGeneticAlgorithmRunnerTSP {
 		CrossoverOperator<PermutationSolution<Integer>> crossover;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
+		Ordering ordering = Ordering.ASCENDING;
+
 
 		problem = new TSP("/tspInstances/kroA100.tsp");
 
@@ -49,7 +52,7 @@ public class GenerationalGeneticAlgorithmRunnerTSP {
 		selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(
 				new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation).setPopulationSize(100)
+		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
 				.setMaxEvaluations(2500000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

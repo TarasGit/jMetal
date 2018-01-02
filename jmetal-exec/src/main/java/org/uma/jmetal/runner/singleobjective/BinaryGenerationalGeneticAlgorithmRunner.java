@@ -26,6 +26,7 @@ import org.uma.jmetal.problem.singleobjective.OneMax;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -44,12 +45,14 @@ public class BinaryGenerationalGeneticAlgorithmRunner {
   public static void main(String[] args) throws Exception {
     Algorithm<BinarySolution> algorithm;
     BinaryProblem problem = new OneMax(512) ;
+	Ordering ordering = Ordering.ASCENDING;
+
 
     CrossoverOperator<BinarySolution> crossoverOperator = new SinglePointCrossover(0.9) ;
     MutationOperator<BinarySolution> mutationOperator = new BitFlipMutation(1.0 / problem.getNumberOfBits(0)) ;
     SelectionOperator<List<BinarySolution>, BinarySolution> selectionOperator = new BinaryTournamentSelection<BinarySolution>();
 
-    algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator)
+    algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossoverOperator, mutationOperator, ordering)
             .setPopulationSize(100)
             .setMaxEvaluations(25000)
             .setSelectionOperator(selectionOperator)

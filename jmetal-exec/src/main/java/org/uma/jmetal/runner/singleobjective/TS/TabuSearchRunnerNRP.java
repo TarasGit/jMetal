@@ -35,7 +35,7 @@ public class TabuSearchRunnerNRP {
 		double mutationProbability = 0.3;
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
-		double costFactor = 0.5;
+		double costFactor = 0.3;
 		
 		//Initial Solution  of Tabu Search must be zero.
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);

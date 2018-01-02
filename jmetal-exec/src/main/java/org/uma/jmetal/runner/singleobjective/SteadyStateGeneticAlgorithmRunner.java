@@ -26,6 +26,7 @@ import org.uma.jmetal.problem.singleobjective.Sphere;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
+import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
@@ -44,14 +45,15 @@ public class SteadyStateGeneticAlgorithmRunner {
   public static void main(String[] args) throws Exception {
     Algorithm<DoubleSolution> algorithm;
     DoubleProblem problem = new Sphere(20) ;
-
+	Ordering ordering = Ordering.ASCENDING;
+    
     CrossoverOperator<DoubleSolution> crossoverOperator =
         new SBXCrossover(0.9, 20.0) ;
     MutationOperator<DoubleSolution> mutationOperator =
         new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0) ;
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selectionOperator = new BinaryTournamentSelection<DoubleSolution>() ;
 
-    algorithm = new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator)
+    algorithm = new GeneticAlgorithmBuilder<DoubleSolution>(problem, crossoverOperator, mutationOperator,ordering)
         .setPopulationSize(100)
         .setMaxEvaluations(25000)
         .setSelectionOperator(selectionOperator)
