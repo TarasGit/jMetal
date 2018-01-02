@@ -2,6 +2,7 @@ package org.uma.jmetal.algorithm.impl;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.PermutationSolution;
 
 import java.util.List;
 
@@ -55,13 +56,19 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R>  implements Algorithm<
 
     population = createInitialPopulation();
     population = evaluatePopulation(population);
+    for(S s : population) {
+    	System.out.print("|" + ((PermutationSolution<Integer>)s).getObjective(0));
+    }
+    System.out.println();
     initProgress();
     while (!isStoppingConditionReached()) {
       matingPopulation = selection(population);
       offspringPopulation = reproduction(matingPopulation);
       offspringPopulation = evaluatePopulation(offspringPopulation);
+      System.out.println(offspringPopulation.get(0));
       population = replacement(population, offspringPopulation);
       updateProgress();
     }
+    System.out.println("End");
   }
 }

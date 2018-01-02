@@ -25,7 +25,8 @@ public class ObjectiveComparator<S extends Solution<?>> implements Comparator<S>
    */
   public ObjectiveComparator(int objectiveId) {
     this.objectiveId = objectiveId;
-    order = Ordering.ASCENDING;
+    //order = Ordering.ASCENDING;//TODO: set back.
+    order = Ordering.DESCENDING;
   }
 
   /**

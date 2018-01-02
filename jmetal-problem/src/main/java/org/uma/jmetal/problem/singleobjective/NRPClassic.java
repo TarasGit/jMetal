@@ -54,10 +54,10 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	 * Creates a new TSP problem instance
 	 */
 
-	public NRPClassic(String distanceFile) throws IOException {
+	public NRPClassic(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
-		this.costFactor = 0.5;
+		this.costFactor = costFactor;
 		System.out.println("All costs: " + this.costs);
 
 		setNumberOfVariables(this.numberOfCustoments);

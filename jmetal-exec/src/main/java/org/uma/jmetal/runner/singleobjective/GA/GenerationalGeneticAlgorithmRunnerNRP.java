@@ -1,25 +1,26 @@
 
 package org.uma.jmetal.runner.singleobjective.GA;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorithmBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
-import org.uma.jmetal.operator.impl.crossover.PMXCrossover;
-import org.uma.jmetal.operator.impl.mutation.PermutationSwapMutation;
+import org.uma.jmetal.operator.impl.crossover.BinarySinglePointCrossover;
+import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.PermutationProblem;
-import org.uma.jmetal.problem.singleobjective.TSP;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class to configure and run a generational genetic algorithm. The target
@@ -39,18 +40,27 @@ public class GenerationalGeneticAlgorithmRunnerNRP {
 		MutationOperator<PermutationSolution<Integer>> mutation;
 		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
 
-		problem = new TSP("/tspInstances/kroA100.tsp");
+		double costFactor = 0.5;
+		
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(false);
+		
+		
 
-		crossover = new PMXCrossover(0.9);
+		
+		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
 
-		double mutationProbability = 1.0 / problem.getNumberOfVariables();
-		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+		crossover = new BinarySinglePointCrossover(0.9);//new PMXCrossover(0.9);
+
+		double mutationProbability = 0.3;
+		//double mutationProbability = 1.0 / problem.getNumberOfVariables();
+		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+		//mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
 		selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(
 				new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation).setPopulationSize(100)
-				.setMaxEvaluations(250000).setSelectionOperator(selection).build();
+		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation).setPopulationSize(1000)
+				.setMaxEvaluations(1000000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -58,6 +68,7 @@ public class GenerationalGeneticAlgorithmRunnerNRP {
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);
 
+		System.out.println("End Result: " + solution);
 		long computingTime = algorithmRunner.getComputingTime();
 
 		new SolutionListOutput(population).setSeparator("\t")

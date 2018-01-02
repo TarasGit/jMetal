@@ -29,7 +29,7 @@ public class SimulatedAnnealingRunnerNRP {
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
 
-	public static final double RATE_OF_COOLING = 0.00001;
+	public static final double RATE_OF_COOLING = 0.0001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
 	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
@@ -40,6 +40,7 @@ public class SimulatedAnnealingRunnerNRP {
 	public static final int INITIAL_TEMPERATURE = 100;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double MUTATION_PROBABILITY = 0.5;//50% bit mutation and 50% swap mutation.
+	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
 		Problem<PermutationSolution<Integer>> problem;
@@ -48,7 +49,7 @@ public class SimulatedAnnealingRunnerNRP {
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setEmpty(true);
 
-		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
+		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR);// 500(Min costs)//new
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		

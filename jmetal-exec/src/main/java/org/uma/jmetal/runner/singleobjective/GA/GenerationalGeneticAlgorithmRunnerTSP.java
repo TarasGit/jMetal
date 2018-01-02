@@ -50,7 +50,7 @@ public class GenerationalGeneticAlgorithmRunnerTSP {
 				new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
 		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation).setPopulationSize(100)
-				.setMaxEvaluations(250000).setSelectionOperator(selection).build();
+				.setMaxEvaluations(2500000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -58,6 +58,7 @@ public class GenerationalGeneticAlgorithmRunnerTSP {
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);
 
+		System.out.println(solution.getObjective(0));
 		long computingTime = algorithmRunner.getComputingTime();
 
 		new SolutionListOutput(population).setSeparator("\t")

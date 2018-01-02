@@ -22,7 +22,7 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 		boolean empty = DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().isEmpty();
 		if (!empty) {
 			for (int i = 0; i < getNumberOfVariables(); i++) {
-				if (randomGenerator.nextDouble() > 0.5)
+				if (randomGenerator.nextDouble() > 0.9)//TODO XXX: change to 0.5.
 					setVariableValue(i, 1);
 				else
 					setVariableValue(i, 0);
