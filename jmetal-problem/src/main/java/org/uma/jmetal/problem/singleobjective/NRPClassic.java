@@ -49,20 +49,22 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	private List<Customer> customers = null;
 	private int costs;
 	private double costFactor;
+	private double distancePrifitMatrix[][];// for ACO: difference of the profit between the neighbors.
 
 	/**
 	 * Creates a new TSP problem instance
 	 */
-
 	public NRPClassic(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = costFactor;
-		System.out.println("All costs: " + this.costs);
-
+		System.out.println("All costs: " + this.costs);//TODO: remove.
+		
 		setNumberOfVariables(this.numberOfCustoments);
 		setNumberOfObjectives(1);
 		setName("NRPClassic");
+		computeProfitMatrix();
+
 	}
 
 	/** Evaluate() method */
@@ -145,11 +147,37 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		}
 	}
 
+	// TODO: this method will be needed for multiple-objective optimization, to
+	// compute the distance of costs for two neighbor customers.
+	private void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
+										// compute costs difference, not profit.
+		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
+		PermutationSolution<Integer> initialSolution1 = this.createSolution();
+		PermutationSolution<Integer> initialSolution2 = this.createSolution();
+		for (int i = 0; i < numberOfCustoments; i++) {
+			initialSolution1.setVariableValue(i, 1);
+			for (int j = 0; j < numberOfCustoments; j++) {
+				if (i == j) {
+					distancePrifitMatrix[i][j] = 0;
+				} else {
+					initialSolution2.setVariableValue(j, 1);
+					distancePrifitMatrix[i][j] = Math.abs(getEvaluatedProfit(initialSolution2));
+					initialSolution2.setVariableValue(j, 0);
+				}
+			}
+			initialSolution1.setVariableValue(i, 0);
+		}
+	}
+
+	public double getDistanceProfit(int i, int j) {
+		return distancePrifitMatrix[i][j];
+	}
+
 	private double getEvaluatedProfit(PermutationSolution<Integer> solution) {
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {//TODO: should it be a binary Solution?
+			if (solution.getVariableValue(i) == 1) {// TODO: should it be a binary Solution?
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
 			}
@@ -192,12 +220,16 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		addToSetIfUnique(requirement, setOfRequirements);
 		List<Integer> localDependencies = getDependencies(requirement);
 
-		/*To remove a possible cycle in dependencies, check if this dependency is already in HashSet*/
+		/*
+		 * To remove a possible cycle in dependencies, check if this dependency is
+		 * already in HashSet
+		 */
+		/*
 		for (Integer i : localDependencies) { // TODO: do it by some library.
 			if (!setOfRequirements.contains(i))
 				tmpArrayList.add(i);
 		}
-
+		*/
 		while (!tmpArrayList.isEmpty()) {
 			localRequirement = tmpArrayList.remove(0);
 			addAllDependenciesToSetRecursively(localRequirement, setOfRequirements);

@@ -6,7 +6,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationAlgorithmNRP;
 import org.uma.jmetal.algorithm.singleobjective.ACO.NRP.AntColonyOptimizationBuilderNRP;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPClassicACO;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -23,11 +23,12 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 public class AntColonyOptimizationRunnerNRP {
 
 	public static final int 	NUMBER_OF_ANTS = 10000;
-	public static final double 	ALPHA = 0.01;// importance of pheramon trail, x >= 0
-	public static final double 	BETA = 9.5;// importance between source and destination, x >= 1
+	public static final double 	ALPHA = 100;// importance of pheramon trail, x >= 0, TODO: what is the value of ALPHA????
+	public static final double 	BETA = 100;// importance between source and destination, x >= 1
 
-	public static final double 	Q = 0.0005;// feramon deposited level, 0<=x<=1
-	public static final double 	RHO = 0.2;// feramon avapouration level, 0<=x<=1
+	public static final double 	Q = 0.001;// feramon deposited level, 0<=x<=1
+	public static final double 	RHO = 0.01;// feramon avapouration level, 0<=x<=1
+	public static final double COST_FACTOR = 0.7;
 
 	public static void main(String[] args) throws Exception {
 
@@ -36,7 +37,7 @@ public class AntColonyOptimizationRunnerNRP {
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability = 1 for 0 -> zero initial solution.
 
-		problem = new NRPClassicACO("/nrpClassicInstances/nrp1.txt");// 500(Min costs)//new
+		problem =  new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR);//new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt", COST_FACTOR); //500(Min costs)//new
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 

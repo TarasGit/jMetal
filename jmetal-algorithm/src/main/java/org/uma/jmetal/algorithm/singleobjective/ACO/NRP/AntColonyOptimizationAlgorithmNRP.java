@@ -18,12 +18,12 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 	private double beta;
 	private double rho;
 	private double q;
-	
 
 	/**
 	 * Constructor
 	 */
-	public AntColonyOptimizationAlgorithmNRP(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
+	public AntColonyOptimizationAlgorithmNRP(Problem<S> problem, int numberOfAnts, double alpha, double beta,
+			double rho, double q) {
 		this.problem = problem;
 		this.numberOfAnts = numberOfAnts;
 		this.shortestSolution = null;
@@ -43,20 +43,17 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 		return "Ant Colony Optimizatio Algorithm";
 	}
 
-	public S findRoute(S currentSolution) {// TODO: no initial route needed, because the ant starts with zero-route.
+	public S findRoute(S currentSolution) {
 		this.currentSolution = currentSolution;
-		
-		AntNRP<S> currentAnt;
-		
-		AntColonyOptimizationNRP<S> aco = new AntColonyOptimizationNRP<S>(problem,
-				currentSolution);
 
+		AntNRP<S> currentAnt;
+
+		AntColonyOptimizationNRP<S> aco = new AntColonyOptimizationNRP<S>(problem, currentSolution);
 
 		for (int i = 0; i < numberOfAnts; i++) {
 			currentAnt = new AntNRP<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
 		}
-
 
 		return shortestSolution;
 	}
@@ -65,11 +62,12 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 		try {
 			currentSolution = (S) ant.getSolution();
 			problem.evaluate(currentSolution);
-			if (shortestSolution == null || currentSolution.getObjective(0) < shortestSolution.getObjective(0)) {
+			if (shortestSolution == null || currentSolution.getObjective(0) > shortestSolution.getObjective(0)) {
 				shortestSolution = (S) currentSolution.copy();// copy?
-				System.out.println( shortestSolution.getObjective(0));
+				System.out.println("shortest Solution: " + shortestSolution.getObjective(0) + "Costs: " +  shortestSolution.getAttribute(0));
 			}
-			//System.out.println("CS: " + currentSolution.getObjective(0));
+			// System.out.println("CS: " + currentSolution.getObjective(0));
+			//System.out.println("> " + shortestSolution.getObjective(0) + "Costs: " +  shortestSolution.getAttribute(0));
 
 		} catch (Exception e) {
 			e.printStackTrace();

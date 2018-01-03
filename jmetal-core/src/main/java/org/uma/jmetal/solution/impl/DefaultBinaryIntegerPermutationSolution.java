@@ -20,8 +20,8 @@ public class DefaultBinaryIntegerPermutationSolution extends AbstractGenericSolu
 		super(problem);
 
 		double probability = DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().getProbability();
-
-		for (int i = 0; i < getNumberOfVariables(); i++) {
+		
+		for (int i = 0; i < this.getNumberOfVariables(); i++) {
 			if (randomGenerator.nextDouble() > probability)
 				setVariableValue(i, 1);
 			else

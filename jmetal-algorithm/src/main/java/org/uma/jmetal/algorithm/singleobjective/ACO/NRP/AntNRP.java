@@ -4,10 +4,8 @@ import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.problem.singleobjective.NRPClassic;
-import org.uma.jmetal.problem.singleobjective.TSP;
+import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.impl.DefaultBinaryIntegerPermutationSolution;
-import org.uma.jmetal.solution.impl.DefaultIntegerPermutationSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 public class AntNRP<S extends Solution<?>> {
@@ -40,9 +38,7 @@ public class AntNRP<S extends Solution<?>> {
 
 	public AntNRP<S> run() {
 		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
-		route = aco.getInitialSolution();//TODO: should get an empty solution -> new abstract class? TODO: we get already an 0-verctor??????? as initial solution?
-		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultBinaryIntegerPermutationSolution)route).setVariableValue(x, 0));
-		route.setObjective(0, 0);//TODO: if solution is empty remove this line.
+		route = aco.getInitialSolution();
 		
 		HashMap<Integer, Boolean> visitedCities = new HashMap<Integer, Boolean>(numbOfCities);
 		IntStream.range(0, numbOfCities).forEach(x -> visitedCities.put(x, false)); 
@@ -51,12 +47,21 @@ public class AntNRP<S extends Solution<?>> {
 		double routeDistance = 0.0;
 		int x = originatingCityIndex;
 		int y = invalidCityIndex;
+		S tmpCopy;
 		
 		if(numbOfVisitedCities < numbOfCities)
 			y = getY(x, visitedCities);
 		while(y != invalidCityIndex) {
-			
-			((DefaultIntegerPermutationSolution)route).setVariableValue(numbOfVisitedCities++, x);
+			numbOfVisitedCities++;
+			tmpCopy = (S) route.copy();
+			((PermutationSolution<Integer>)route).setVariableValue(x, 1);
+			aco.getProblem().evaluate(route);
+			//System.out.println(">"+ route.getObjective(0) + " / " + route.getAttribute(0));
+
+			if(route.getObjective(0) == -1) {
+				route = tmpCopy;
+				return this;
+			}
 			routeDistance += getDistance(x,y);
 			adjustPheromonLevel(x, y, routeDistance);
 			visitedCities.put(y, true);
@@ -66,14 +71,14 @@ public class AntNRP<S extends Solution<?>> {
 			else
 				y = invalidCityIndex;
 		}
-		routeDistance += getDistance(x,originatingCityIndex);
-		((DefaultIntegerPermutationSolution)route).setVariableValue(numbOfVisitedCities, x);//TODO: how to setVariable in Solution interface, cast to DefaultSolution?
+		//routeDistance += getDistance(x,originatingCityIndex);
+		((PermutationSolution<Integer>)route).setVariableValue(x, 1);//TODO: how to setVariable in Solution interface, cast to DefaultSolution?
 		
 		return this;
 	}
 	
 	private double getDistance(int x, int y) {
-		double result =  ((TSP)aco.getProblem()).getDistanceMatrix()[x][y]; //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
+		double result = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y); //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
 		return result;
 	}
 	
@@ -142,8 +147,11 @@ public class AntNRP<S extends Solution<?>> {
 		double numerator = 0.0;
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
-		if(pheromonLevel != 0.0)
-			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /  ((NRPClassic)aco.getProblem()).getCostsOfRequirement(x, y), beta); //TODO: cast to TSP very bad solution!
+		double distanceLevel = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
+		if(pheromonLevel != 0.0) {
+			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /distanceLevel, beta); 
+		}
+		//System.out.println("-------:" + aco.getPheramonLevelMatrix()[0][0]);
 		return numerator;
 	}
 

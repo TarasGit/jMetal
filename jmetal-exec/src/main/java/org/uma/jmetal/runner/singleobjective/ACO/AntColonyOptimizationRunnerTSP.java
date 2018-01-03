@@ -22,8 +22,8 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class AntColonyOptimizationRunnerTSP {
 
-	public static final int 	NUMBER_OF_ANTS = 10000;
-	public static final double 	ALPHA = 0.01;// importance of pheramon trail, x >= 0
+	public static final int 	NUMBER_OF_ANTS = 4;
+	public static final double 	ALPHA = 9;// importance of pheramon trail, x >= 0 TODO: what is the value of ALPHA????
 	public static final double 	BETA = 9.5;// importance between source and destination, x >= 1
 
 	public static final double 	Q = 0.0005;// feramon deposited level, 0<=x<=1
@@ -36,7 +36,7 @@ public class AntColonyOptimizationRunnerTSP {
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 		
-		problem = new TSP("/tspInstances/kroA100.tsp");// new TSP("/tspInstances/myKro11.tsp");*/
+		problem =  new TSP("/tspInstances/myKro11.tsp");//new TSP("/tspInstances/kroA100.tsp");
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 

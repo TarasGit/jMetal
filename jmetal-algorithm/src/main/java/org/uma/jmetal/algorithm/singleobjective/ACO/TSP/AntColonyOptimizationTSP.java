@@ -41,7 +41,7 @@ public class AntColonyOptimizationTSP<S extends Solution<?>> {
 	}
 	
 	public S getInitialSolution() {
-		return this.initialSolution;
+		return problem.createSolution();
 	}
 	
 	public Problem<S> getProblem() {

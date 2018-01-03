@@ -35,12 +35,13 @@ public class TabuSearchRunnerNRP {
 		double mutationProbability = 0.3;
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
-		double costFactor = 0.5;
+		double costFactor = 0.7;
 		
 		//Initial Solution  of Tabu Search must be zero.
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 
 		System.out.println("Solving NRP");
+		//problem =  new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);//new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR); //500(Min costs)//new
 		problem = new NRPClassic("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
 																	// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);

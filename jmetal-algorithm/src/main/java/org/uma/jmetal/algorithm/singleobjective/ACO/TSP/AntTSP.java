@@ -38,7 +38,7 @@ public class AntTSP<S extends Solution<?>> {
 
 	public AntTSP<S> run() {
 		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities-1); 
-		route = aco.getInitialSolution();//TODO: should get an empty solution -> new abstract class?
+		route = aco.getInitialSolution();
 		IntStream.range(0, numbOfCities).forEach(x -> ((DefaultIntegerPermutationSolution)route).setVariableValue(x, 0));
 		route.setObjective(0, 0);//TODO: if solution is empty remove this line.
 		
