@@ -22,7 +22,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class AntColonyOptimizationRunnerTSP {
 
-	public static final int 	NUMBER_OF_ANTS = 4;
+	public static final int 	NUMBER_OF_ANTS = 1000;
 	public static final double 	ALPHA = 9;// importance of pheramon trail, x >= 0
 	public static final double 	BETA = 9.5;// importance between source and destination, x >= 1
 

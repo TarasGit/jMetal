@@ -32,7 +32,7 @@ public class AntColonyOptimizationNRP<S extends Solution<?>> {
 	private void initializePheromonLevel() {
 		pheromonLevelMatrix = new Double[size][size];//rename size
 		IntStream.range(0,  size).forEach(x -> {
-			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = new Double(JMetalRandom.getInstance().nextDouble()));
+			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = JMetalRandom.getInstance().nextDouble());
 		});
 	}
 	

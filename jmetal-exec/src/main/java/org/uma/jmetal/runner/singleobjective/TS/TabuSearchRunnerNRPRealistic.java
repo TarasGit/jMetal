@@ -42,7 +42,7 @@ public class TabuSearchRunnerNRPRealistic {
 
 		System.out.println("Solving NRP");
 		//problem =  new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);//new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR); //500(Min costs)//new
-		problem = new NRPRealistic("/nrpRealisticInstances/nrp-m2.txt", costFactor);// 500(Min costs)//new
+		problem = new NRPRealistic("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
 																	// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 
@@ -52,12 +52,7 @@ public class TabuSearchRunnerNRPRealistic {
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
-																		// instead of list.
-
-		if (solution == null) {// TODO: check whether the result if no solution found equals null.
-			System.out.println("No Result found");
-			System.exit(0);
-		}
+																		// instead of list
 
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);

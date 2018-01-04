@@ -22,8 +22,12 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class AntColonyOptimizationRunnerNRPClassic {
 
+	/*TODO: 
+	 * - Ant has a cast to Realistic or ClassicNRP. Solve it.
+	 * 
+	 * */
 	public static final int 	NUMBER_OF_ANTS = 10000;
-	public static final double 	ALPHA = 1000;// importance of pheramon trail, x >= 0, 
+	public static final double 	ALPHA = 20;// importance of pheramon trail, x >= 0, 
 	public static final double 	BETA = 1;// importance between source and destination, x >= 1
 
 	public static final double 	Q = 0.002;// feramon deposited level, 0<=x<=1

@@ -3,8 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-import org.uma.jmetal.problem.singleobjective.NRPClassic;
-import org.uma.jmetal.problem.singleobjective.NRPRealistic;
+import org.uma.jmetal.problem.singleobjective.NRP;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -72,6 +71,13 @@ public class AntNRP<S extends Solution<?>> {
 			else
 				y = invalidCityIndex;
 		}
+		System.out.println("-->" + aco.getPheramonLevelMatrix());
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//routeDistance += getDistance(x,originatingCityIndex);
 		((PermutationSolution<Integer>)route).setVariableValue(x, 1);//TODO: how to setVariable in Solution interface, cast to DefaultSolution?
 		
@@ -79,7 +85,7 @@ public class AntNRP<S extends Solution<?>> {
 	}
 	
 	private double getDistance(int x, int y) {
-		double result = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y); //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
+		double result = ((NRP)aco.getProblem()).getDistanceProfit(x, y); //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
 		return result;
 	}
 	
@@ -148,7 +154,7 @@ public class AntNRP<S extends Solution<?>> {
 		double numerator = 0.0;
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
-		double distanceLevel = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
+		double distanceLevel = ((NRP)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
 		if(pheromonLevel != 0.0) {
 			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /distanceLevel, beta); 
 		}

@@ -13,7 +13,6 @@ import org.uma.jmetal.operator.impl.crossover.BinarySinglePointCrossover;
 import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.PermutationProblem;
-import org.uma.jmetal.problem.singleobjective.NRPClassic;
 import org.uma.jmetal.problem.singleobjective.NRPRealistic;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
@@ -68,7 +67,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
 		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
-				.setMaxEvaluations(100000).setSelectionOperator(selection).build();
+				.setMaxEvaluations(10000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
  * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem {
+public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
 
 	// public static void main(String[] args) {
 	//
@@ -66,7 +66,7 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 
 	/** Evaluate() method */
 
-	private void readProblem(String file) throws IOException {
+	public void readProblem(String file) throws IOException {
 
 		InputStream in = getClass().getResourceAsStream(file);
 		InputStreamReader isr = new InputStreamReader(in);
@@ -134,7 +134,7 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 
 	// TODO: this method will be needed for multiple-objective optimization, to
 	// compute the distance of costs for two neighbor customers.
-	private void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
+	public void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
 										// compute costs difference, not profit.
 		
 		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
@@ -162,7 +162,7 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		return distancePrifitMatrix[i][j];
 	}
 
-	private double getEvaluatedProfit(PermutationSolution<Integer> solution) {
+	public double getEvaluatedProfit(PermutationSolution<Integer> solution) {
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
@@ -174,7 +174,7 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		return fitness;
 	}
 
-	private double getEvaluatedCosts(PermutationSolution<Integer> solution) {
+	public double getEvaluatedCosts(PermutationSolution<Integer> solution) {
 		Set<Integer> setOfRequirements = new HashSet<>();
 
 		double fitness = 0.0;
@@ -199,11 +199,11 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		return fitness;
 	}
 
-	private void addToSetIfUnique(int value, Set<Integer> setOfRequirements) {
+	public void addToSetIfUnique(int value, Set<Integer> setOfRequirements) {
 		setOfRequirements.add(value);
 	}
 
-	private void addAllDependenciesToSetRecursively(int requirement, Set<Integer> setOfRequirements) {
+	public void addAllDependenciesToSetRecursively(int requirement, Set<Integer> setOfRequirements) {
 		ArrayList<Integer> tmpArrayList = new ArrayList<>();
 		int localRequirement;
 		addToSetIfUnique(requirement, setOfRequirements);
@@ -213,19 +213,19 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		 * To remove a possible cycle in dependencies, check if this dependency is
 		 * already in HashSet
 		 */
-		/*
+		
 		for (Integer i : localDependencies) { // TODO: do it by some library.
 			if (!setOfRequirements.contains(i))
 				tmpArrayList.add(i);
 		}
-		*/
+		
 		while (!tmpArrayList.isEmpty()) {
 			localRequirement = tmpArrayList.remove(0);
 			addAllDependenciesToSetRecursively(localRequirement, setOfRequirements);
 		}
 	}
 
-	private Double getCostFromRequirement(int localRequirement) {
+	public Double getCostFromRequirement(int localRequirement) {
 		double costs = 0.0;
 		int k, m;
 		Pair<Integer, Integer> positions;
@@ -242,11 +242,11 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		return costs;
 	}
 
-	private List<Integer> getDependencies(Integer requirement) {
+	public List<Integer> getDependencies(Integer requirement) {
 		return new ArrayList<>(dependencies.get(requirement));
 	}
 
-	private Optional<Pair<Integer, Integer>> getRequirementPosition(int requirement) {
+	public Optional<Pair<Integer, Integer>> getRequirementPosition(int requirement) {
 		requirement = requirement - 1; // requirement starts from 0..n -> subtract 1.
 		int counter = 0;
 		for (int k = 0; k < levelOfRequirements; k++) {
@@ -259,7 +259,7 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 		return Optional.empty();
 	}
 
-	private int computeAllCosts() {
+	public int computeAllCosts() {
 		int sum = 0;
 		for (int i = 0; i < levelOfRequirements; i++) {
 			int k = numberOfRequirementsInLevel[i];

@@ -29,7 +29,7 @@ public class RandomSearchNRPRealistic {
 		//MutationOperator<PermutationSolution<Integer>> mutation;
 
 		Algorithm<PermutationSolution<Integer>> algorithm;
-		double mutationProbability = 0.3;
+		//double mutationProbability = 0.3;
 		double costFactor = 0.5;
 		
 		//Initial Solution  of Tabu Search must be zero.

@@ -35,7 +35,7 @@ public class TabuSearchRunnerNRPClassic {
 		double mutationProbability = 0.3;
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
-		double costFactor = 0.7;
+		double costFactor = 0.5;
 		
 		//Initial Solution  of Tabu Search must be zero.
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);//probability for 0.
@@ -53,11 +53,6 @@ public class TabuSearchRunnerNRPClassic {
 
 		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
 																		// instead of list.
-
-		if (solution == null) {// TODO: check whether the result if no solution found equals null.
-			System.out.println("No Result found");
-			System.exit(0);
-		}
 
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);

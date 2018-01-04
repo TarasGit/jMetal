@@ -45,7 +45,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
 		Ordering ordering = Ordering.DESCENDING;
 
-		double costFactor = 1;
+		double costFactor = 0.5;
 
 		/*
 		 * The initial solution for GA should not be 0 but also smaller than factor *
