@@ -24,7 +24,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class TabuSearchRunnerNRP {
+public class TabuSearchRunnerNRPClassic {
 
 	public static void main(String[] args) throws Exception {
 
@@ -38,7 +38,7 @@ public class TabuSearchRunnerNRP {
 		double costFactor = 0.7;
 		
 		//Initial Solution  of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);//probability for 0.
 
 		System.out.println("Solving NRP");
 		//problem =  new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);//new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR); //500(Min costs)//new

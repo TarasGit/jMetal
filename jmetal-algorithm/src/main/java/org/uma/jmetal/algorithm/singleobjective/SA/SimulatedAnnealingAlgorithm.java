@@ -74,7 +74,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
 				currentSolution = (S) adjacentSolution.copy();// copy???
 			temperature *= 1 - rateOfCooling;
-			//System.out.println(">" + shortestSolution.getObjective(0) + " + " + adjacentSolution.getObjective(0));
+			System.out.println(">" + shortestSolution.getObjective(0) + " + " + shortestSolution.getAttribute(0));
 			count++;
 		}
 

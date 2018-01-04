@@ -20,14 +20,14 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunnerNRP {
+public class AntColonyOptimizationRunnerNRPClassic {
 
 	public static final int 	NUMBER_OF_ANTS = 10000;
-	public static final double 	ALPHA = 100;// importance of pheramon trail, x >= 0, TODO: what is the value of ALPHA????
-	public static final double 	BETA = 100;// importance between source and destination, x >= 1
+	public static final double 	ALPHA = 5;// importance of pheramon trail, x >= 0, 
+	public static final double 	BETA = 1;// importance between source and destination, x >= 1
 
-	public static final double 	Q = 0.001;// feramon deposited level, 0<=x<=1
-	public static final double 	RHO = 0.01;// feramon avapouration level, 0<=x<=1
+	public static final double 	Q = 0.03;// feramon deposited level, 0<=x<=1
+	public static final double 	RHO = 0.02;// feramon avapouration level, 0<=x<=1
 	public static final double COST_FACTOR = 0.7;
 
 	public static void main(String[] args) throws Exception {

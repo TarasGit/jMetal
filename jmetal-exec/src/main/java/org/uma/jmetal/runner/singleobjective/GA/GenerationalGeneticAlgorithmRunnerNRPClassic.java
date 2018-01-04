@@ -26,7 +26,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 /*
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class GenerationalGeneticAlgorithmRunnerNRP {
+public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.problem.singleobjective.NRPClassic;
+import org.uma.jmetal.problem.singleobjective.NRPRealistic;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -78,7 +79,7 @@ public class AntNRP<S extends Solution<?>> {
 	}
 	
 	private double getDistance(int x, int y) {
-		double result = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y); //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
+		double result = ((NRPRealistic)aco.getProblem()).getDistanceProfit(x, y); //TODO: should the interface get an public method getDistanceMatrix or are there other solutions?
 		return result;
 	}
 	
@@ -147,7 +148,7 @@ public class AntNRP<S extends Solution<?>> {
 		double numerator = 0.0;
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
-		double distanceLevel = ((NRPClassic)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
+		double distanceLevel = ((NRPRealistic)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
 		if(pheromonLevel != 0.0) {
 			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /distanceLevel, beta); 
 		}
