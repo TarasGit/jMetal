@@ -19,9 +19,10 @@ public class AntColonyOptimizationNRP<S extends Solution<?>> {
 		initializePheromonLevel();
 	}
 	
-	private Double[][] pheromonLevelMatrix = null;
+	private double[][] pheromonLevelMatrix = null;
 
-	public Double[][] getPheramonLevelMatrix(){ 
+	public double[][] getPheramonLevelMatrix(){ 
+		//System.out.println("PheromonM: " + this.pheromonLevelMatrix[0][0]);
 		return pheromonLevelMatrix;
 	}
 	
@@ -30,10 +31,11 @@ public class AntColonyOptimizationNRP<S extends Solution<?>> {
 	}
 
 	private void initializePheromonLevel() {
-		pheromonLevelMatrix = new Double[size][size];//rename size
+		pheromonLevelMatrix = new double[size][size];//rename size
 		IntStream.range(0,  size).forEach(x -> {
 			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = JMetalRandom.getInstance().nextDouble());
 		});
+		System.out.println("Initialized PM:"  + this.pheromonLevelMatrix[0][0]);
 	}
 	
 	public int getProblemSize() {

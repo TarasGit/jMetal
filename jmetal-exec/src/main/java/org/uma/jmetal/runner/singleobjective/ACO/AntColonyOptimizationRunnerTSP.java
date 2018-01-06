@@ -36,7 +36,7 @@ public class AntColonyOptimizationRunnerTSP {
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 		
-		problem =  new TSP("/tspInstances/myKro11.tsp");//new TSP("/tspInstances/kroA100.tsp");
+		problem =  new TSP("/tspInstances/kroA100.tsp");//new TSP("/tspInstances/myKro11.tsp");//
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 

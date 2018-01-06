@@ -23,6 +23,7 @@ public class AntNRP<S extends Solution<?>> {
 	static int invalidCityIndex = -1;
 	
 	private int numbOfCities;
+	int _x = 0, _y = 0;
 	
 	public AntNRP(AntColonyOptimizationNRP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
 		this.aco = aco;
@@ -60,6 +61,8 @@ public class AntNRP<S extends Solution<?>> {
 
 			if(route.getObjective(0) == -1) {
 				route = tmpCopy;
+				aco.getPheramonLevelMatrix()[_x][_y] = 0; // last pheromon level update should be set to 0, because it caused invalid solution!
+				//System.out.println("Unvalid");
 				return this;
 			}
 			routeDistance += getDistance(x,y);
@@ -71,7 +74,7 @@ public class AntNRP<S extends Solution<?>> {
 			else
 				y = invalidCityIndex;
 		}
-		System.out.println("-->" + aco.getPheramonLevelMatrix());
+		//System.out.println("-->" + aco.getPheramonLevelMatrix());
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -89,17 +92,24 @@ public class AntNRP<S extends Solution<?>> {
 		return result;
 	}
 	
+	public static int count = 0;//remove
 	private void adjustPheromonLevel(int x, int y, double routeDistance) {
 		boolean flag = false;
 		while(!flag) {
-			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
+			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y];
 			double updatedPheromonLevel = (1-rho) * currentPheromonLevel + q / routeDistance;
 			
 			if(updatedPheromonLevel < 0.00) {
 				 aco.getPheramonLevelMatrix()[x][y] = 0.0;
 				 flag = false;
 			}else {
+//				if(count++ % 99999 == 0) {
+//					System.out.println("PM " + x + "/" + y + " changed from" + aco.getPheramonLevelMatrix()[x][y] + " to " + updatedPheromonLevel);
+//				}
 				aco.getPheramonLevelMatrix()[x][y] = updatedPheromonLevel;
+				_x = x; 
+				_y = y;
+
 				flag = true;
 			}
 		}
@@ -153,10 +163,12 @@ public class AntNRP<S extends Solution<?>> {
 	private double getTPNumerator(int x, int y) {
 		double numerator = 0.0;
 		
-		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y].doubleValue();
+		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y];
 		double distanceLevel = ((NRP)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
 		if(pheromonLevel != 0.0) {
 			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /distanceLevel, beta); 
+			
+			//System.out.println("Numerator"  + numerator);
 		}
 		//System.out.println("-------:" + aco.getPheramonLevelMatrix()[0][0]);
 		return numerator;

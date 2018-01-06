@@ -27,11 +27,12 @@ public class AntColonyOptimizationRunnerNRPClassic {
 	 * 
 	 * */
 	public static final int 	NUMBER_OF_ANTS = 10000;
-	public static final double 	ALPHA = 20;// importance of pheramon trail, x >= 0, 
+	public static final double 	ALPHA = 9;// importance of pheramon trail, x >= 0, 
 	public static final double 	BETA = 1;// importance between source and destination, x >= 1
 
-	public static final double 	Q = 0.002;// feramon deposited level, 0<=x<=1
-	public static final double 	RHO = 0.001;// feramon avapouration level, 0<=x<=1
+	public static final double 	Q = 0.3;// feramon deposited level, 0<=x<=1
+	public static final double 	RHO = 0.1;// feramon avapouration level, 0<=x<=1
+
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
