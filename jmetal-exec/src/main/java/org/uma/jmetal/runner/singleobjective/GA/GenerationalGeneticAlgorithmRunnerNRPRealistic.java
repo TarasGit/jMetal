@@ -67,7 +67,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
 		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
-				.setMaxEvaluations(10000).setSelectionOperator(selection).build();
+				.setMaxEvaluations(30000).setSelectionOperator(selection).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

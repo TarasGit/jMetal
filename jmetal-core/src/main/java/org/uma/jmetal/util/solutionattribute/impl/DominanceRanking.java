@@ -78,10 +78,10 @@ public class DominanceRanking <S extends Solution<?>>
         if (flagDominate == 0) {
           flagDominate = DOMINANCE_COMPARATOR.compare(solutionSet.get(p), solutionSet.get(q));
         }
-        if (flagDominate == -1) {
+        if (flagDominate == 1) {//TODO XXX: Taras changed: -1 -> 1
           iDominate.get(p).add(q);
           dominateMe[q]++;
-        } else if (flagDominate == 1) {
+        } else if (flagDominate == -1) {//Taras changed: 1 -> -1
           iDominate.get(q).add(p);
           dominateMe[p]++;
         }

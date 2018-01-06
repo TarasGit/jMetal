@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.Random.NRPRandomSearchBuilder;
-import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealistic;
 import org.uma.jmetal.solution.PermutationSolution;

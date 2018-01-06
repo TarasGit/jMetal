@@ -34,7 +34,7 @@ public class TabuSearchRunnerNRPRealistic {
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		double mutationProbability = 0.3;
 		int tabuListSize = 50;
-		int numbOfIterations = 1000;
+		int numbOfIterations = 300;
 		double costFactor = 0.5;
 		
 		//Initial Solution  of Tabu Search must be zero.

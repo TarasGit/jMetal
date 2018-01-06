@@ -57,6 +57,8 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R>  implements Algorithm<
     population = evaluatePopulation(population);
     initProgress();
     while (!isStoppingConditionReached()) {
+    	
+        System.out.println(population);
       matingPopulation = selection(population);
       offspringPopulation = reproduction(matingPopulation);
       offspringPopulation = evaluatePopulation(offspringPopulation);

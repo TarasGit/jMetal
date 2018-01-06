@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
  * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
+public class MultiobjectiveNRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
 	// TODO: should use abstract class to protect the method
 
 	// public static void main(String[] args) {
@@ -55,14 +55,14 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	/**
 	 * Creates a new TSP problem instance
 	 */
-	public NRPClassic(String distanceFile, double costFactor) throws IOException {
+	public MultiobjectiveNRPClassic(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = costFactor;
 		System.out.println("All costs: " + this.costs);// TODO: remove.
 
 		setNumberOfVariables(this.numberOfCustoments);
-		setNumberOfObjectives(1);
+		setNumberOfObjectives(2);
 		setName("NRPClassic");
 
 	}
@@ -141,9 +141,11 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
 			solution.setObjective(0, getEvaluatedProfit(solution));
-			solution.setAttribute(0, localCosts);
+		    solution.setObjective(1, localCosts);
 		} else {
 			solution.setObjective(0, -1);
+			solution.setObjective(1, -1);
+			
 		}
 	}
 

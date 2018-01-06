@@ -61,7 +61,7 @@ public class AntNRP<S extends Solution<?>> {
 
 			if(route.getObjective(0) == -1) {
 				route = tmpCopy;
-				aco.getPheramonLevelMatrix()[_x][_y] = 0; // last pheromon level update should be set to 0, because it caused invalid solution!
+				aco.getPheramonLevelMatrix()[_x][_y] = 0.0001; // last pheromon level update should be set to 0 or very small value, because it caused invalid solution!
 				//System.out.println("Unvalid");
 				return this;
 			}
