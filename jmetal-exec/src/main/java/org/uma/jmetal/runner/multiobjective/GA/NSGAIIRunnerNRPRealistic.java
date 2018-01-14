@@ -32,7 +32,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 
-public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
+public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
   /**
    * @param args Command line arguments.
    * @throws java.io.IOException
@@ -50,20 +50,19 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
     MutationOperator<PermutationSolution<Integer>> mutation;
     SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
     
-    double costFactor = 0.7;
+    double costFactor = 0.5;
 
-	problem = new MultiobjectiveNRP("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
-	//problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);// 500(Min costs)//new
+	problem = new MultiobjectiveNRP("/nrpRealisticInstances/nrp-e1.txt", costFactor);
 	
 	
     //crossover = new PMXCrossover(0.9) ;
 	crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
 
 
-    double mutationProbability = 0.3;
+    double mutationProbability = 0.3;// 0 -> 100% bit flip mutation, 1 -> 100% swap mutation.
     
     
-	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
+	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.5);// 1 -> all 0.
 
     //mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
 	mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);

@@ -21,10 +21,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Class representing a single-objective NRP problem.
+ * Class representing a multi-objective NRP problem for classic and realistic NRP.
  */
 @SuppressWarnings("serial")
-public class MultiobjectiveNRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
+public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
 	// TODO: should use abstract class to protect the method
 
 	// public static void main(String[] args) {
@@ -55,7 +55,7 @@ public class MultiobjectiveNRPClassic extends AbstractBinaryIntegerPermutationPr
 	/**
 	 * Creates a new TSP problem instance
 	 */
-	public MultiobjectiveNRPClassic(String distanceFile, double costFactor) throws IOException {
+	public MultiobjectiveNRP(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = costFactor;
