@@ -43,7 +43,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 		CrossoverOperator<PermutationSolution<Integer>> crossover;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
-		Ordering ordering = Ordering.DESCENDING;
+		Ordering ordering = Ordering.DESCENDING;//TODO: add description.
 
 		double costFactor = 0.5;
 

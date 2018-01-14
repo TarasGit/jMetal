@@ -9,7 +9,6 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.BinarySinglePointCrossover;
-import org.uma.jmetal.operator.impl.crossover.PMXCrossover;
 import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.PermutationProblem;
@@ -49,10 +48,10 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
     MutationOperator<PermutationSolution<Integer>> mutation;
     SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
     
-    double costFactor = 0.5;
+    double costFactor = 0.7;
 
-	//problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
-	problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);// 500(Min costs)//new
+	problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
+	//problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);// 500(Min costs)//new
 	
 	
     //crossover = new PMXCrossover(0.9) ;
@@ -79,8 +78,8 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
  */
     algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation)
             .setSelectionOperator(selection)
-            .setMaxEvaluations(100)
-            .setPopulationSize(10)
+            .setMaxEvaluations(250000)
+            .setPopulationSize(1000)
             .build() ;
 
     System.out.println("start");
@@ -92,6 +91,8 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
 
 
     System.out.println("end: " + population);
+    
+    System.out.println(population);
     
     new SolutionListOutput(population)
             .setSeparator("\t")

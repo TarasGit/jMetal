@@ -141,7 +141,7 @@ public class MultiobjectiveNRPClassic extends AbstractBinaryIntegerPermutationPr
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
 			solution.setObjective(0, getEvaluatedProfit(solution));
-		    solution.setObjective(1, localCosts);
+		    solution.setObjective(1, localCosts * -1);
 		} else {
 			solution.setObjective(0, -1);
 			solution.setObjective(1, -1);
