@@ -1,6 +1,5 @@
 package org.uma.jmetal.runner.singleobjective.TS;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;

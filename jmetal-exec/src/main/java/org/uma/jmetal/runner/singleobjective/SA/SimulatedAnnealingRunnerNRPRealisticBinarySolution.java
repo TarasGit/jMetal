@@ -5,10 +5,10 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.SA.SimulatedAnnealingBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPRealistic;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -22,7 +22,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail>
  */
-public class SimulatedAnnealingRunnerNRPRealistic {
+public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
@@ -42,25 +42,25 @@ public class SimulatedAnnealingRunnerNRPRealistic {
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
-		Problem<PermutationSolution<Integer>> problem;
-		Algorithm<List<PermutationSolution<Integer>>> algorithm;
-		MutationOperator<PermutationSolution<Integer>> mutation;
+		Problem<BinarySolution> problem;
+		Algorithm<List<BinarySolution>> algorithm;
+		MutationOperator<BinarySolution> mutation;
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//1 = probability for 0.
 
-		problem = new NRPRealistic("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);// 500(Min costs)//new
+		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
-		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(MUTATION_PROBABILITY);// new PermutationSwapMutation<Integer>(mutationProbability);
+		mutation = new MyBitFlipMutation(MUTATION_PROBABILITY);
 
-		algorithm = new SimulatedAnnealingBuilder<PermutationSolution<Integer>>(problem, mutation, new SimpleMaxDoubleComparator())
+		algorithm = new SimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
 				.setRateOfCooling(RATE_OF_COOLING).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<PermutationSolution<Integer>> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
+		List<BinarySolution> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
 																		// solution = algorithm.getResult() ;
 
 		long computingTime = algorithmRunner.getComputingTime();

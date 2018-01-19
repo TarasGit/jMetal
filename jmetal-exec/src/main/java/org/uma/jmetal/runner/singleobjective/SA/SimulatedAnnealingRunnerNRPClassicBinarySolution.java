@@ -1,13 +1,15 @@
 package org.uma.jmetal.runner.singleobjective.SA;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.SA.SimulatedAnnealingBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPRealistic;
+import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -22,13 +24,13 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail>
  */
-public class SimulatedAnnealingRunnerNRPRealistic {
+public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
 	 */
 
-	public static final double RATE_OF_COOLING = 0.001;
+	public static final double RATE_OF_COOLING = 0.0001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
 	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
@@ -42,31 +44,32 @@ public class SimulatedAnnealingRunnerNRPRealistic {
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
-		Problem<PermutationSolution<Integer>> problem;
-		Algorithm<List<PermutationSolution<Integer>>> algorithm;
-		MutationOperator<PermutationSolution<Integer>> mutation;
+		Problem<BinarySolution> problem;
+		Algorithm<List<BinarySolution>> algorithm;
+		MutationOperator<BinarySolution> mutation;
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//1 = probability for 0.
 
-		problem = new NRPRealistic("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);// 500(Min costs)//new
+		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);// 500(Min costs)//new
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
-		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(MUTATION_PROBABILITY);// new PermutationSwapMutation<Integer>(mutationProbability);
-
-		algorithm = new SimulatedAnnealingBuilder<PermutationSolution<Integer>>(problem, mutation, new SimpleMaxDoubleComparator())
+		mutation = new MyBitFlipMutation(MUTATION_PROBABILITY);
+		
+		algorithm = new SimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
 				.setRateOfCooling(RATE_OF_COOLING).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<PermutationSolution<Integer>> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
+		List<BinarySolution> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
 																		// solution = algorithm.getResult() ;
 
 		long computingTime = algorithmRunner.getComputingTime();
 
 		System.out.println("Solution:");
-		System.out.println(population.get(0).getObjective(0));
+		System.out.println(population.get(0));
+
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

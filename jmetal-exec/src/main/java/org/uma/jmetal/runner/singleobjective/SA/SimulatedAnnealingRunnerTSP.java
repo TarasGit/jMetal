@@ -42,7 +42,7 @@ public class SimulatedAnnealingRunnerTSP {
 
 	public static void main(String[] args) throws Exception {
 		Problem<PermutationSolution<Integer>> problem;
-		Algorithm<PermutationSolution<Integer>> algorithm;
+		Algorithm<List<PermutationSolution<Integer>>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.5);
@@ -59,16 +59,13 @@ public class SimulatedAnnealingRunnerTSP {
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		PermutationSolution<Integer> solution = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
+		List<PermutationSolution<Integer>> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
 																		// solution = algorithm.getResult() ;
 
 		long computingTime = algorithmRunner.getComputingTime();
 
 		System.out.println("Solution:");
-		System.out.println(solution);
-
-		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-		population.add(solution);
+		System.out.println(population.get(0));
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

@@ -1,6 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.SA;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
@@ -12,7 +14,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
  * @author Taras Iks <ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
-public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<S> {
+public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
 
 	private double rateOfCooling;
 	private int initialTemperature;
@@ -110,7 +112,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	}
 
 	@Override
-	public S getResult() {
-		return this.shortestSolution;
+	public List<S> getResult() {
+		return Arrays.asList(this.shortestSolution);
 	}
 }

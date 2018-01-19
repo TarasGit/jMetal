@@ -5,13 +5,14 @@ import java.util.Comparator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
  * Created by Taras Iks.
  */
-public class SimulatedAnnealingBuilder<S extends Solution<?>> {
+public class SimulatedAnnealingBuilder<S extends Solution<?>> implements AlgorithmBuilder<SimulatedAnnealingAlgorithm<S>> {
 	
 	public static final double RATE_OF_COOLING = 0.01;
 	public static final int INITIAL_TEMPERATURE = 1000;

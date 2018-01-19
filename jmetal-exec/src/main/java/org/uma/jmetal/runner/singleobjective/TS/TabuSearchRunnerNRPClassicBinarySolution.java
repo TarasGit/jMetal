@@ -47,7 +47,6 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 
 		algorithm = new TabuSearchBuilder<BinarySolution>(problem, mutation, tabuListSize,
 				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
-
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult(); // TODO: set ACO, SA to this single
