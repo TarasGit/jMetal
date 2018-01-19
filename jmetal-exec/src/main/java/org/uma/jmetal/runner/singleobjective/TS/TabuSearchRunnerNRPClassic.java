@@ -31,7 +31,7 @@ public class TabuSearchRunnerNRPClassic {
 		Problem<PermutationSolution<Integer>> problem;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
-		Algorithm<PermutationSolution<Integer>> algorithm;
+		Algorithm<List<PermutationSolution<Integer>>> algorithm;
 		double mutationProbability = 0.3;
 		int tabuListSize = 100;
 		int numbOfIterations = 2000;
@@ -51,14 +51,12 @@ public class TabuSearchRunnerNRPClassic {
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
+		List<PermutationSolution<Integer>> population = algorithm.getResult(); // TODO: set ACO, SA to this single result
 																		// instead of list.
 
-		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-		population.add(solution);
 
-		System.out.println("Solution:" + solution);
-		System.out.println("Optimal Solution: " + solution.getObjective(0));
+		System.out.println("Solution:" + population.get(0));
+		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));
 
 		long computingTime = algorithmRunner.getComputingTime();
 

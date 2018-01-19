@@ -5,6 +5,7 @@ import java.util.Comparator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.comparator.BestNeighborSolutionFinder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
@@ -12,7 +13,7 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 /**
  * Taras Iks.
  */
-public class TabuSearchBuilder<S extends Solution<?>> {
+public class TabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuilder<TabuSearchAlgorithm<S>> {//TODO: add Algorithm interface to all classes.
 
 	/**
 	 * Builder class

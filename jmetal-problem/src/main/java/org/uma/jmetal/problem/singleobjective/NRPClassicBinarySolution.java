@@ -13,18 +13,15 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.uma.jmetal.problem.BudgetProblem;
-import org.uma.jmetal.problem.impl.AbstractBinaryIntegerPermutationProblem;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.problem.impl.MyAbstractBinaryProblem;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.JMetalException;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-
-/**
- * Class representing a single-objective NRP problem.
- */
+ 
 @SuppressWarnings("serial")
-public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
+public class NRPClassicBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRPBinarySolution {//TODO: change name of My*.
 	// TODO: should use abstract class to protect the method
 
 	// public static void main(String[] args) {
@@ -55,13 +52,13 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	/**
 	 * Creates a new TSP problem instance
 	 */
-	public NRPClassic(String distanceFile, double costFactor) throws IOException {
+	public NRPClassicBinarySolution(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = costFactor;
 		System.out.println("All costs: " + this.costs);// TODO: remove.
 
-		setNumberOfVariables(this.numberOfCustoments);
+		setNumberOfVariables(1);
 		setNumberOfObjectives(1);
 		setName("NRPClassic");
 
@@ -136,7 +133,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 
 	@Override
-	public void evaluate(PermutationSolution<Integer> solution) {
+	public void evaluate(BinarySolution solution) {
 		double localCosts = getEvaluatedCosts(solution);
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
@@ -153,28 +150,28 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	public void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
 										// compute costs difference, not profit.
 		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
-		PermutationSolution<Integer> initialSolution1 = this.createSolution();
-		PermutationSolution<Integer> initialSolution2 = this.createSolution();
+		BinarySolution initialSolution1 = this.createSolution();
+		BinarySolution initialSolution2 = this.createSolution();
 		for (int i = 0; i < numberOfCustoments; i++) {
-			initialSolution1.setVariableValue(i, 1);
+			initialSolution1.getVariableValue(0).set(i);
 			for (int j = 0; j < numberOfCustoments; j++) {
 				if (i == j) {
 					distancePrifitMatrix[i][j] = 0;
 				} else {
-					initialSolution2.setVariableValue(j, 1);
+					initialSolution2.getVariableValue(0).set(i);
 					distancePrifitMatrix[i][j] = Math.abs(getEvaluatedProfit(initialSolution2));
-					initialSolution2.setVariableValue(j, 0);
+					initialSolution2.getVariableValue(0).clear(0);
 				}
 			}
-			initialSolution1.setVariableValue(i, 0);
+			initialSolution1.getVariableValue(0).clear(i);
 		}
 	}
 
-	public double getEvaluatedProfit(PermutationSolution<Integer> solution) {
+	public double getEvaluatedProfit(BinarySolution solution) {
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {// TODO: should it be a binary Solution?
+			if (solution.getVariableValue(0).get(i)) {// TODO: should it be a binary Solution?
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
 			}
@@ -182,7 +179,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		return fitness;
 	}
 
-	public double getEvaluatedCosts(PermutationSolution<Integer> solution) {
+	public double getEvaluatedCosts(BinarySolution solution) {
 		Set<Integer> setOfRequirements = new HashSet<>();
 
 		double fitness = 0.0;
@@ -190,7 +187,7 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 		int requirement;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {
+			if (solution.getVariableValue(0).get(i)) {
 				Customer customer = customers.get(i);
 				numberOfRequests = customer.getNumberOfRequests();
 				for (int j = 0; j < numberOfRequests; j++) {
@@ -298,11 +295,6 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			return true;
 	}
 
-	@Override
-	public int getPermutationLength() {
-		return this.numberOfCustoments;
-	}
-
 	public double getCostsOfRequirement(int x, int y) {
 		return costsOfRequirements[x][y];
 	}
@@ -312,6 +304,13 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 			computeProfitMatrix();
 		
 		return distancePrifitMatrix[i][j];
+	}
+
+
+	@Override
+	protected int getBitsPerVariable(int index) {
+		// TODO Auto-generated method stub
+		return this.numberOfCustoments;
 	}
 
 }

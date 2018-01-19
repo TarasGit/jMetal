@@ -25,14 +25,15 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class for configuring and running the NSGA-II algorithm to solve the bi-objective TSP
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Taras Iks.
  */
 
-public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
+public class NSGAIIRunnerNRPRealisticScatterPlot extends AbstractAlgorithmRunner {
   /**
    * @param args Command line arguments.
    * @throws java.io.IOException
@@ -50,20 +51,19 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
     MutationOperator<PermutationSolution<Integer>> mutation;
     SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
     
-    double costFactor = 0.7;
+    double costFactor = 0.5;
 
-	problem = new MultiobjectiveNRP("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
-	//problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);// 500(Min costs)//new
+	problem = new MultiobjectiveNRP("/nrpRealisticInstances/nrp-e1.txt", costFactor);
 	
 	
     //crossover = new PMXCrossover(0.9) ;
 	crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
 
 
-    double mutationProbability = 0.3;
+    double mutationProbability = 0.3;// 0 -> 100% bit flip mutation, 1 -> 100% swap mutation.
     
     
-	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
+	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 1 -> all 0.
 
     //mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
 	mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
@@ -99,19 +99,22 @@ public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
     int size = population.size();
     double data1[] = new double[size];
     double data2[] = new double[size];
+
+    double data3[] = new double[size];
+    double data4[] = new double[size];
     
     for(int i=0; i<size;i++) {
     	data1[i] = population.get(i).getObjective(0);
     	data2[i] = population.get(i).getObjective(1) * -1;
     }
     
-    /*Create Chart*/
-    ScatterPlotExample example = new ScatterPlotExample("Scatter Chart",data1, data2);
+//    /*Create Chart*/
+    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart",data1, data2, data3, data4);
     example.setSize(1000, 600);
     example.setLocationRelativeTo(null);
     example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     example.setVisible(true);
-    
+//    
     
     new SolutionListOutput(population)
             .setSeparator("\t")

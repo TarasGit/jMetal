@@ -1,6 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.TS;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -12,12 +13,12 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.BestNeighborSolutionFinder;
 
-public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> {
+public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
 
 	/*
 	 * TODO: 
 	 * - check mutation operator -> mutation vs. swap operation; should be flip-mutation at the beginning and swap at the end.
-	 * -
+	 * - move numberOfNeighbors to TabuSearchRunner.
 	 * */
 	private static final long serialVersionUID = 1L;
 	private TabuList<S> tabuList;
@@ -45,7 +46,8 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	public S run(S initialSolution) {
 		S bestSolution = initialSolution;
 		problem.evaluate(bestSolution);
-		
+
+		System.out.println(bestSolution.getVariableValueString(0));
 		System.out.println("Initial fitness: " + bestSolution.getObjective(0) + " / " + "costs: " + bestSolution.getAttribute(0));
 		System.out.println(bestSolution);
 		
@@ -78,9 +80,6 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 			else
 				bestNeighborFound = optionalBestNeighborFound.get();
 			
-			System.out.println("fitness: " + bestNeighborFound.getObjective(0) + " / " + "costs: " + bestNeighborFound.getAttribute(0));
-			//System.out.println(bestNeighborFound);
-
 			
 			/* minComparator == 1 if a < b, maxComparator == 1, if a > b */
 			if (comparator.compare(bestNeighborFound.getObjective(0), bestSolution.getObjective(0)) == 1) {
@@ -124,8 +123,8 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<S> 
 	}
 
 	@Override
-	public S getResult() {
-		return (S) endResult;
+	public List<S> getResult() {
+		return Arrays.asList(endResult);
 	}
 
 }

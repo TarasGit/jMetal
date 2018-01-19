@@ -1,15 +1,14 @@
 package org.uma.jmetal.runner.singleobjective.TS;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPRealistic;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -24,35 +23,36 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class TabuSearchRunnerNRPRealistic {
+public class TabuSearchRunnerNRPClassicBinarySolution {
 
 	public static void main(String[] args) throws Exception {
 
-		Problem<PermutationSolution<Integer>> problem;
-		MutationOperator<PermutationSolution<Integer>> mutation;
+		Problem<BinarySolution> problem;
+		MutationOperator<BinarySolution> mutation;
 
-		Algorithm<List<PermutationSolution<Integer>>> algorithm;
+		Algorithm<List<BinarySolution>> algorithm;
 		double mutationProbability = 0.3;
-		int tabuListSize = 50;
-		int numbOfIterations = 300;
+		int tabuListSize = 2000;
+		int numbOfIterations = 2000;
 		double costFactor = 0.5;
-		
-		//Initial Solution  of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);//probability for 0.
+
+		// Initial Solution of Tabu Search must be zero.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
 
 		System.out.println("Solving NRP");
-		//problem =  new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);//new NRPClassic("/nrpClassicInstances/nrp1.txt", COST_FACTOR); //500(Min costs)//new
-		problem = new NRPRealistic("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
-																	// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+		
+		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);
+		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
+		mutation = new MyBitFlipMutation(mutationProbability);
 
-		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
+		algorithm = new TabuSearchBuilder<BinarySolution>(problem, mutation, tabuListSize,
 				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<PermutationSolution<Integer>> population = algorithm.getResult(); // TODO: set ACO, SA to this single result
-																		// instead of list
+		List<BinarySolution> population = algorithm.getResult(); // TODO: set ACO, SA to this single
+																				// result
+		// instead of list.
 
 		System.out.println("Solution:" + population.get(0));
 		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));

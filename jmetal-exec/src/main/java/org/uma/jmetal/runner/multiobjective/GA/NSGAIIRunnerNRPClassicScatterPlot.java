@@ -22,17 +22,16 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
-import org.uma.jmetal.util.fileoutput.SolutionListOutput;
-import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class for configuring and running the NSGA-II algorithm to solve the bi-objective TSP
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Taras Iks
  */
 
-public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
+public class NSGAIIRunnerNRPClassicScatterPlot extends AbstractAlgorithmRunner {
   /**
    * @param args Command line arguments.
    * @throws java.io.IOException
@@ -52,20 +51,19 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
     
     double costFactor = 0.5;
 
-	problem = new MultiobjectiveNRP("/nrpRealisticInstances/nrp-e1.txt", costFactor);
+	problem = new MultiobjectiveNRP("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
+	//problem = new MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt", costFactor);// 500(Min costs)//new
 	
 	
     //crossover = new PMXCrossover(0.9) ;
-	crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
+	crossover = new BinarySinglePointCrossover(0.5);// new PMXCrossover(0.9);
 
-
-    double mutationProbability = 0.3;// 0 -> 100% bit flip mutation, 1 -> 100% swap mutation.
+	AlgorithmRunner algorithmRunner = null;
     
     
-	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.5);// 1 -> all 0.
+	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
 
     //mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
-	mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 
     
     selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
@@ -77,6 +75,22 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
  algorithm = new RNSGAIIBuilder<>(problem, crossover, mutation,inters,epsilon)
 
  */
+    
+    double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
+    double mutationProbability = 0.1;
+    
+    for(int ii=0; ii<2;ii++) {
+    if(ii == 0) {
+    	mutationProbability = 0.1;
+		crossover = new BinarySinglePointCrossover(0.1);// new PMXCrossover(0.9);
+	
+    }else { 
+    	mutationProbability = 0.9;
+    	crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
+    }
+
+	mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+    	
     algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation)
             .setSelectionOperator(selection)
             .setMaxEvaluations(250000)
@@ -84,11 +98,10 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
             .build() ;
 
     System.out.println("start");
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+    algorithmRunner = new AlgorithmRunner.Executor(algorithm)
             .execute() ;
     
     List<PermutationSolution<Integer>> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
 
 
     System.out.println("end: " + population);
@@ -96,27 +109,41 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
     System.out.println(population);
     
     int size = population.size();
-    double data1[] = new double[size];
-    double data2[] = new double[size];
-    
-    for(int i=0; i<size;i++) {
-    	data1[i] = population.get(i).getObjective(0);
-    	data2[i] = population.get(i).getObjective(1) * -1;
+    if(ii==0) {
+    	data1 = new double[size];
+    	data2= new double[size];
+    	for(int i=0; i<size;i++) {
+        	data1[i] = population.get(i).getObjective(0);
+        	data2[i] = population.get(i).getObjective(1) * -1;
+        }
+    }else {
+    	data3 = new double[size];
+    	data4= new double[size];
+    	for(int i=0; i<size;i++) {
+        	data3[i] = population.get(i).getObjective(0);
+        	data4[i] = population.get(i).getObjective(1) * -1;
+        }
     }
     
+    
+    
+    }
     /*Create Chart*/
-    ScatterPlotExample example = new ScatterPlotExample("Scatter Chart",data1, data2);
-    example.setSize(1000, 600);
+    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart",data1, data2, data3, data4);
+    example.setSize(1200, 800);
     example.setLocationRelativeTo(null);
     example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     example.setVisible(true);
     
     
-    new SolutionListOutput(population)
-            .setSeparator("\t")
-            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-            .print();
+    
+    long computingTime = algorithmRunner.getComputingTime() ;
+
+//    new SolutionListOutput(population)
+//            .setSeparator("\t")
+//            .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+//            .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
+//            .print();
 
     JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
     JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());
