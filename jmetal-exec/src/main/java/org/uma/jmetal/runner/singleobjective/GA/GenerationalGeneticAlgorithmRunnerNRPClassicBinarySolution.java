@@ -9,13 +9,12 @@ import org.uma.jmetal.algorithm.singleobjective.geneticalgorithm.GeneticAlgorith
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
-import org.uma.jmetal.operator.impl.crossover.BinarySinglePointCrossover;
+import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
 import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -40,8 +39,8 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
 	 */
 	public static void main(String[] args) throws Exception {
 		Problem<BinarySolution> problem;
-		Algorithm<PermutationSolution<Integer>> algorithm;
-		CrossoverOperator<PermutationSolution<Integer>> crossover;
+		Algorithm<BinarySolution> algorithm;
+		CrossoverOperator<BinarySolution> crossover;
 		MutationOperator<BinarySolution> mutation;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selection;
 		Ordering ordering = Ordering.DESCENDING;// TODO: add description.
@@ -56,7 +55,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
 
 		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
 
-		crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
+		crossover = new SinglePointCrossover(0.5);//new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
 
 		double mutationProbability = 0.3;
 		// double mutationProbability = 1.0 / problem.getNumberOfVariables();
@@ -68,24 +67,24 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
 		selection = new BinaryTournamentSelection<BinarySolution>(new SimpleMaxSolutionComparator<BinarySolution>());
 		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-//		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering).setPopulationSize(100)
-//				.setMaxEvaluations(100000).setSelectionOperator(selection).build();
-//
-//		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-//
-//		PermutationSolution<Integer> solution = algorithm.getResult();
-//		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-//		population.add(solution);
-//
-//		System.out.println("End Result: " + solution);
-//		long computingTime = algorithmRunner.getComputingTime();
-//
-//		new SolutionListOutput(population).setSeparator("\t")
-//				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-//				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
-//
-//		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-//		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering).setPopulationSize(100)
+				.setMaxEvaluations(40000).setSelectionOperator(selection).build();
+
+		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+
+		BinarySolution solution = algorithm.getResult();
+		List<BinarySolution> population = new ArrayList<>(1);
+		population.add(solution);
+
+		System.out.println("End Result: " + solution);
+		long computingTime = algorithmRunner.getComputingTime();
+
+		new SolutionListOutput(population).setSeparator("\t")
+				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
+
+		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
 	}

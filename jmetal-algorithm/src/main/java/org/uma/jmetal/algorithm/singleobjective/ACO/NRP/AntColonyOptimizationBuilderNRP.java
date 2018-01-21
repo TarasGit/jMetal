@@ -2,13 +2,14 @@ package org.uma.jmetal.algorithm.singleobjective.ACO.NRP;
 
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
  * Created by Taras Iks.
  */
-public class AntColonyOptimizationBuilderNRP<S extends Solution<?>> {
+public class AntColonyOptimizationBuilderNRP<S extends Solution<?>> implements AlgorithmBuilder<AntColonyOptimizationAlgorithmNRP<S>> {
   /**
    * Builder class
    */
