@@ -21,20 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
  
 @SuppressWarnings("serial")
-public class NRPClassicBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRPBinarySolution {//TODO: change name of My*.
-	// TODO: should use abstract class to protect the method
-
-	// public static void main(String[] args) {
-	//
-	// NRPClassic nrp = null;
-	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-	// System.out.println("All Costs: " + nrp.computeAllCosts());
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
+public class NRPClassicBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRP {//TODO: change name of My*.
 
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
@@ -311,6 +298,12 @@ public class NRPClassicBinarySolution extends MyAbstractBinaryProblem implements
 	protected int getBitsPerVariable(int index) {
 		// TODO Auto-generated method stub
 		return this.numberOfCustoments;
+	}
+
+	@Override
+	public int getNumberOfBitInVariable(int index) {
+		// TODO Auto-generated method stub
+		return this.getBitsPerVariable(index);
 	}
 
 }

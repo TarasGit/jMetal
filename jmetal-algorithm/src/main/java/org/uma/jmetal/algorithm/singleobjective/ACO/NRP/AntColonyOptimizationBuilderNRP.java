@@ -1,6 +1,5 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO.NRP;
 
-import org.uma.jmetal.algorithm.singleobjective.ACO.TSP.AntColonyOptimizationAlgorithmTSP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
@@ -36,7 +35,7 @@ public class AntColonyOptimizationBuilderNRP<S extends Solution<?>> {
   public AntColonyOptimizationBuilderNRP<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
     this.evaluator = evaluator;
 
-    return this;
+    return this;			
   }
 
   public AntColonyOptimizationAlgorithmNRP<S> build() {

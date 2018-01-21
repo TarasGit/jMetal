@@ -26,7 +26,7 @@ public class AntColonyOptimizationRunnerNRPClassic {
 	 * - Ant has a cast to Realistic or ClassicNRP. Solve it.
 	 * 
 	 * */
-	public static final int 	NUMBER_OF_ANTS = 10000;
+	public static final int 	NUMBER_OF_ANTS = 2000;
 	public static final double 	ALPHA = 100;// importance of pheramon trail, x >= 0, 
 	public static final double 	BETA = 2;// importance between source and destination, x >= 1
 
@@ -51,12 +51,9 @@ public class AntColonyOptimizationRunnerNRPClassic {
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		PermutationSolution<Integer> solution = algorithm.getResult();
+		List<PermutationSolution<Integer>> population = algorithm.getResult();
 
-		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-		population.add(solution);
-
-		System.out.println("End Solution: " + solution);
+		System.out.println("End Solution: " + population.get(0));
 
 		long computingTime = algorithmRunner.getComputingTime();
 

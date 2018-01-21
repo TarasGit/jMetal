@@ -24,20 +24,8 @@ import com.google.common.collect.Multimap;
  * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class NRPRealisticBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRPBinarySolution {//TODO: Change name of My*
+public class NRPRealisticBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRP {//TODO: Change name of My*
 
-	// public static void main(String[] args) {
-	//
-	// NRPClassic nrp = null;
-	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-	// System.out.println("All Costs: " + nrp.computeAllCosts());
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
 	private int costsOfRequirements[][] = null;
@@ -298,6 +286,12 @@ public class NRPRealisticBinarySolution extends MyAbstractBinaryProblem implemen
 	@Override
 	protected int getBitsPerVariable(int index) {
 		return this.numberOfCustoments;
+	}
+
+	@Override
+	public int getNumberOfBitInVariable(int index) {
+		// TODO Auto-generated method stub
+		return this.getBitsPerVariable(index);
 	}
 
 }

@@ -1,7 +1,6 @@
 package org.uma.jmetal.algorithm.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,19 +61,24 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
 	@Override
 	public void run() {
+		int objectives = problem.getNumberOfObjectives();
 		List<S> offspringPopulation;
 		List<S> matingPopulation;
 		population = createInitialPopulation();
 		population = evaluatePopulation(population);
 		initProgress();
+		
 		while (!isStoppingConditionReached()) {
 
 			//System.out.println(population);
 			matingPopulation = selection(population);
 			offspringPopulation = reproduction(matingPopulation);
 			offspringPopulation = evaluatePopulation(offspringPopulation);
-			population = repairPopulation(population);
-			offspringPopulation = repairPopulation(offspringPopulation);
+			
+			if(objectives >= 2) {
+				population = repairPopulation(population);
+				offspringPopulation = repairPopulation(offspringPopulation);
+			}
 			
 			population = replacement(population, offspringPopulation);
 			updateProgress();

@@ -25,19 +25,6 @@ import com.google.common.collect.Multimap;
  */
 @SuppressWarnings("serial")
 public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
-	// TODO: should use abstract class to protect the method
-
-	// public static void main(String[] args) {
-	//
-	// NRPClassic nrp = null;
-	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-	// System.out.println("All Costs: " + nrp.computeAllCosts());
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
@@ -313,6 +300,12 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 			computeProfitMatrix();
 		
 		return distancePrifitMatrix[i][j];
+	}
+
+	@Override
+	public int getNumberOfBitInVariable(int index) {
+		// TODO Auto-generated method stub
+		return 0;//only for BinarySolutions;
 	}
 
 }

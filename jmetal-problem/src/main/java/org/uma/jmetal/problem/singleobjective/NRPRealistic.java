@@ -26,18 +26,6 @@ import com.google.common.collect.Multimap;
 @SuppressWarnings("serial")
 public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
 
-	// public static void main(String[] args) {
-	//
-	// NRPClassic nrp = null;
-	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-	// System.out.println("All Costs: " + nrp.computeAllCosts());
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
 	private int costsOfRequirements[][] = null;
@@ -298,5 +286,11 @@ public class NRPRealistic extends AbstractBinaryIntegerPermutationProblem implem
 	
 	public double getCostsOfRequirement(int x, int y) {
 		return costsOfRequirements[x][y];
+	}
+
+	@Override
+	public int getNumberOfBitInVariable(int index) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

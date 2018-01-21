@@ -10,11 +10,11 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.BinarySinglePointCrossover;
-import org.uma.jmetal.operator.impl.mutation.BinaryFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
-import org.uma.jmetal.problem.PermutationProblem;
-import org.uma.jmetal.problem.singleobjective.MultiobjectiveNRP;
-import org.uma.jmetal.problem.singleobjective.NRPRealistic;
+import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -27,7 +27,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 /*
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
+public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
 	/**
 	 * Usage: java
 	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
@@ -39,52 +39,53 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 	 * 
 	 */
 	public static void main(String[] args) throws Exception {
-		PermutationProblem<PermutationSolution<Integer>> problem;
+		Problem<BinarySolution> problem;
 		Algorithm<PermutationSolution<Integer>> algorithm;
 		CrossoverOperator<PermutationSolution<Integer>> crossover;
-		MutationOperator<PermutationSolution<Integer>> mutation;
-		SelectionOperator<List<PermutationSolution<Integer>>, PermutationSolution<Integer>> selection;
-		Ordering ordering = Ordering.DESCENDING;
+		MutationOperator<BinarySolution> mutation;
+		SelectionOperator<List<BinarySolution>, BinarySolution> selection;
+		Ordering ordering = Ordering.DESCENDING;// TODO: add description.
 
 		double costFactor = 0.5;
 
 		/*
 		 * The initial solution for GA should not be 0 but also smaller than factor *
-		* costs, otherwise unvalid solutions -> 0.9 for zero ist ok.
-		*/
+		 * costs, otherwise unvalid solutions -> 0.9 for zero ist ok.
+		 */
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
 
-		problem = new NRPRealistic("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
+		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
 
 		crossover = new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
 
 		double mutationProbability = 0.3;
 		// double mutationProbability = 1.0 / problem.getNumberOfVariables();
-		mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+		// mutation = new
+		// BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
+		mutation = new MyBitFlipMutation(mutationProbability);
 		// mutation = new PermutationSwapMutation<Integer>(mutationProbability);
 
-		selection = new BinaryTournamentSelection<PermutationSolution<Integer>>(
-				new SimpleMaxSolutionComparator<PermutationSolution<Integer>>());
+		selection = new BinaryTournamentSelection<BinarySolution>(new SimpleMaxSolutionComparator<BinarySolution>());
 		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
 
-		algorithm = new GeneticAlgorithmBuilder<>(problem, crossover, mutation, ordering).setPopulationSize(100)
-				.setMaxEvaluations(30000).setSelectionOperator(selection).build();
-
-		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-		PermutationSolution<Integer> solution = algorithm.getResult();
-		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-		population.add(solution);
-
-		System.out.println("End Result: " + solution);
-		long computingTime = algorithmRunner.getComputingTime();
-
-		new SolutionListOutput(population).setSeparator("\t")
-				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
-
-		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
+//		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering).setPopulationSize(100)
+//				.setMaxEvaluations(100000).setSelectionOperator(selection).build();
+//
+//		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+//
+//		PermutationSolution<Integer> solution = algorithm.getResult();
+//		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
+//		population.add(solution);
+//
+//		System.out.println("End Result: " + solution);
+//		long computingTime = algorithmRunner.getComputingTime();
+//
+//		new SolutionListOutput(population).setSeparator("\t")
+//				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+//				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
+//
+//		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+//		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 
 	}

@@ -25,19 +25,6 @@ import com.google.common.collect.Multimap;
  */
 @SuppressWarnings("serial")
 public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
-	// TODO: should use abstract class to protect the method
-
-	// public static void main(String[] args) {
-	//
-	// NRPClassic nrp = null;
-	// try {
-	// nrp = new NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-	// System.out.println("All Costs: " + nrp.computeAllCosts());
-	//
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
@@ -308,10 +295,20 @@ public class NRPClassic extends AbstractBinaryIntegerPermutationProblem implemen
 	}
 	
 	public double getDistanceProfit(int i, int j) {
-		if(distancePrifitMatrix == null)
-			computeProfitMatrix();
+//		if(distancePrifitMatrix == null)
+//			computeProfitMatrix();
+//		
+//		return distancePrifitMatrix[i][j];
+		PermutationSolution<Integer> initialSolution1 = this.createSolution();
+		initialSolution1.setVariableValue(j, 1);
+		return getEvaluatedProfit(initialSolution1);
 		
-		return distancePrifitMatrix[i][j];
+	}
+
+	@Override
+	public int getNumberOfBitInVariable(int index) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.problem.singleobjective.NRP;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -55,13 +56,14 @@ public class AntNRP<S extends Solution<?>> {
 		while(y != invalidCityIndex) {
 			numbOfVisitedCities++;
 			tmpCopy = (S) route.copy();
-			((PermutationSolution<Integer>)route).setVariableValue(x, 1);
+			((BinarySolution)route).getVariableValue(0).set(x);
+			//((PermutationSolution<Integer>)route).setVariableValue(x, 1);
 			aco.getProblem().evaluate(route);
 			//System.out.println(">"+ route.getObjective(0) + " / " + route.getAttribute(0));
 
 			if(route.getObjective(0) == -1) {
 				route = tmpCopy;
-				aco.getPheramonLevelMatrix()[_x][_y] = 0.0001; // last pheromon level update should be set to 0 or very small value, because it caused invalid solution!
+				aco.getPheramonLevelMatrix()[_x][_y] = 0.01; // last pheromon level update should be set to 0 or very small value, because it caused invalid solution!
 				//System.out.println("Unvalid");
 				return this;
 			}
@@ -75,14 +77,10 @@ public class AntNRP<S extends Solution<?>> {
 				y = invalidCityIndex;
 		}
 		//System.out.println("-->" + aco.getPheramonLevelMatrix());
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//routeDistance += getDistance(x,originatingCityIndex);
-		((PermutationSolution<Integer>)route).setVariableValue(x, 1);//TODO: how to setVariable in Solution interface, cast to DefaultSolution?
+		
+		routeDistance += getDistance(x,originatingCityIndex);
+		((BinarySolution)route).getVariableValue(0).set(x);
+		//((PermutationSolution<Integer>)route).setVariableValue(x, 1);//TODO: how to setVariable in Solution interface, cast to DefaultSolution?
 		
 		return this;
 	}
@@ -97,8 +95,8 @@ public class AntNRP<S extends Solution<?>> {
 		boolean flag = false;
 		while(!flag) {
 			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y];
-			double updatedPheromonLevel = (1-rho) * currentPheromonLevel + q / routeDistance;
-			
+			double updatedPheromonLevel = (1-rho) * currentPheromonLevel + count++ / routeDistance;
+		
 			if(updatedPheromonLevel < 0.00) {
 				 aco.getPheramonLevelMatrix()[x][y] = 0.0;
 				 flag = false;
@@ -164,7 +162,7 @@ public class AntNRP<S extends Solution<?>> {
 		double numerator = 0.0;
 		
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y];
-		double distanceLevel = ((NRP)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
+		double distanceLevel = 1;((NRP)aco.getProblem()).getDistanceProfit(x, y);//TODO: cast to NRPClassic very bad solution!
 		if(pheromonLevel != 0.0) {
 			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 /distanceLevel, beta); 
 			

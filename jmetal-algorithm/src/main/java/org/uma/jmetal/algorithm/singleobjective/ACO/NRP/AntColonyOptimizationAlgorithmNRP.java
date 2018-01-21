@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.singleobjective.ACO.NRP;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
@@ -8,7 +11,7 @@ import org.uma.jmetal.solution.Solution;
  * @author Taras Iks <ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
-public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements Algorithm<S> {
+public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements Algorithm<List<S>> {
 
 	protected Problem<S> problem;
 	private int numberOfAnts;
@@ -80,7 +83,7 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 	}
 
 	@Override
-	public S getResult() {
-		return this.shortestSolution;// XXX TODO wie im NSGA-II
+	public List<S> getResult() {
+		return Arrays.asList(this.shortestSolution);
 	}
 }

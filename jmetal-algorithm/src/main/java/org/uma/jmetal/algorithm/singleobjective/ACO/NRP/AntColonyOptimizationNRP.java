@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.singleobjective.NRP;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
@@ -13,7 +14,7 @@ public class AntColonyOptimizationNRP<S extends Solution<?>> {
 	private Problem<S> problem;
 	
 	public AntColonyOptimizationNRP(Problem<S> problem, S initialSolution ) {
-		this.size = initialSolution.getNumberOfVariables();
+		this.size = ((NRP)problem).getNumberOfBitInVariable(0); //;initialSolution.getNumberOfVariables();
 		this.initialSolution = initialSolution;
 		this.problem = problem;
 		initializePheromonLevel();
