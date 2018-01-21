@@ -102,16 +102,16 @@ public class MyDefaultBinarySolution extends AbstractGenericSolution<BinarySet, 
 		
 	}
 	
-	@Override
-	public String toString() {//TODO: changed by Taras, create it's own class for this kind of solutions.
-		String result = "";
-		for (int i = 0; i < getVariableValue(0).getBinarySetLength(); i++) {
-			if (getVariableValue(0).get(i)) {
-				result += "1";
-			} else {
-				result += "0";
-			}
-		}
-		return "Fitness: " + this.getObjective(0) + " Costs: " + this.getAttribute(0) + " " +  result;
-	}
+//	@Override
+//	public String toString() {//TODO: changed by Taras, create it's own class for this kind of solutions.
+//		String result = "";
+//		for (int i = 0; i < getVariableValue(0).getBinarySetLength(); i++) {
+//			if (getVariableValue(0).get(i)) {
+//				result += "1";
+//			} else {
+//				result += "0";
+//			}
+//		}
+//		return "Fitness: " + this.getObjective(0) + " Costs: " + this.getObjective(1) + " CD: " + this.getAttribute(0) + " Rank: " + this.getAttribute(1) + " " +  result + "\n";
+//	}
 }

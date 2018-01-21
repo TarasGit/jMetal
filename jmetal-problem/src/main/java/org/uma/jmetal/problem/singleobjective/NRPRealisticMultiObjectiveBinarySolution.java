@@ -13,24 +13,23 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.uma.jmetal.problem.BudgetProblem;
-import org.uma.jmetal.problem.impl.AbstractBinaryIntegerPermutationProblem;
-import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.problem.impl.MyAbstractBinaryProblem;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.JMetalException;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Class representing a multi-objective NRP problem for classic and realistic NRP.
+ * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem implements BudgetProblem, NRP {
+public class NRPRealisticMultiObjectiveBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRP {//TODO: Change name of My*
 
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;
 	private int costsOfRequirements[][] = null;
 
-	private int numberOfDependencies = 0;
 	private Multimap<Integer, Integer> dependencies = ArrayListMultimap.create();;
 
 	private int numberOfCustoments = 0;
@@ -42,16 +41,15 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 	/**
 	 * Creates a new TSP problem instance
 	 */
-	public MultiobjectiveNRP(String distanceFile, double costFactor) throws IOException {
+	public NRPRealisticMultiObjectiveBinarySolution(String distanceFile, double costFactor) throws IOException {
 		readProblem(distanceFile);
 		this.costs = computeAllCosts();// tsp1.txt = 857;
 		this.costFactor = costFactor;
 		System.out.println("All costs: " + this.costs);// TODO: remove.
 
-		setNumberOfVariables(this.numberOfCustoments);
+		setNumberOfVariables(1);
 		setNumberOfObjectives(2);
-		setName("NRPClassic");
-
+		setName("NRPRealistic");
 	}
 
 	/** Evaluate() method */
@@ -61,8 +59,6 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 		InputStream in = getClass().getResourceAsStream(file);
 		InputStreamReader isr = new InputStreamReader(in);
 		BufferedReader br = new BufferedReader(isr);
-
-		int depA, depB;
 
 		StreamTokenizer token = new StreamTokenizer(br);
 		try {
@@ -83,17 +79,7 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 				}
 			}
 
-			token.nextToken();
-			numberOfDependencies = (int) token.nval;
-
-			for (int i = 0; i < numberOfDependencies; i++) {
-				token.nextToken();
-				depA = (int) token.nval;
-				token.nextToken();
-				depB = (int) token.nval;
-
-				dependencies.put(depA, depB);
-			}
+			token.nextToken();// read 0 for dependencies.
 
 			token.nextToken();
 			numberOfCustoments = (int) token.nval;
@@ -123,16 +109,15 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 	}
 
 	@Override
-	public void evaluate(PermutationSolution<Integer> solution) {
+	public void evaluate(BinarySolution solution) {
 		double localCosts = getEvaluatedCosts(solution);
 		double tempBudget = this.getBudget();
 		if (!violateBudget(localCosts, tempBudget)) {
 			solution.setObjective(0, getEvaluatedProfit(solution));
-		    solution.setObjective(1, localCosts * -1);//!!!! for MIN.
+			solution.setObjective(1, localCosts * -1);
 		} else {
 			solution.setObjective(0, -1);
 			solution.setObjective(1, -1);
-			
 		}
 	}
 
@@ -140,29 +125,37 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 	// compute the distance of costs for two neighbor customers.
 	public void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
 										// compute costs difference, not profit.
+
 		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
-		PermutationSolution<Integer> initialSolution1 = this.createSolution();
-		PermutationSolution<Integer> initialSolution2 = this.createSolution();
+		BinarySolution initialSolution1 = this.createSolution();
+		BinarySolution initialSolution2 = this.createSolution();
 		for (int i = 0; i < numberOfCustoments; i++) {
-			initialSolution1.setVariableValue(i, 1);
+			initialSolution1.getVariableValue(0).set(i);// ???
 			for (int j = 0; j < numberOfCustoments; j++) {
 				if (i == j) {
 					distancePrifitMatrix[i][j] = 0;
 				} else {
-					initialSolution2.setVariableValue(j, 1);
+					initialSolution2.getVariableValue(0).set(i);
 					distancePrifitMatrix[i][j] = Math.abs(getEvaluatedProfit(initialSolution2));
-					initialSolution2.setVariableValue(j, 0);
+					initialSolution2.getVariableValue(0).clear(i);
 				}
 			}
-			initialSolution1.setVariableValue(i, 0);
+			initialSolution1.getVariableValue(0).clear(i);
 		}
 	}
 
-	public double getEvaluatedProfit(PermutationSolution<Integer> solution) {
+	public double getDistanceProfit(int i, int j) {
+		if (distancePrifitMatrix == null)
+			computeProfitMatrix();
+
+		return distancePrifitMatrix[i][j];
+	}
+
+	public double getEvaluatedProfit(BinarySolution solution) {
 		double fitness = 0.0;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {// TODO: should it be a binary Solution?
+			if (solution.getVariableValue(0).get(i)) {// TODO: should it be a binary Solution?
 				Customer customer = customers.get(i);
 				fitness += customer.getProfit();
 			}
@@ -170,7 +163,7 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 		return fitness;
 	}
 
-	public double getEvaluatedCosts(PermutationSolution<Integer> solution) {
+	public double getEvaluatedCosts(BinarySolution solution) {
 		Set<Integer> setOfRequirements = new HashSet<>();
 
 		double fitness = 0.0;
@@ -178,7 +171,7 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 		int requirement;
 
 		for (int i = 0; i < numberOfCustoments; i++) {
-			if (solution.getVariableValue(i) == 1) {
+			if (solution.getVariableValue(0).get(i)) {
 				Customer customer = customers.get(i);
 				numberOfRequests = customer.getNumberOfRequests();
 				for (int j = 0; j < numberOfRequests; j++) {
@@ -210,7 +203,7 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 		 * already in HashSet
 		 */
 
-		for (Integer i : localDependencies) { // TODO: do it by some library. if
+		for (Integer i : localDependencies) { // TODO: do it by some library.
 			if (!setOfRequirements.contains(i))
 				tmpArrayList.add(i);
 		}
@@ -286,26 +279,19 @@ public class MultiobjectiveNRP extends AbstractBinaryIntegerPermutationProblem i
 			return true;
 	}
 
-	@Override
-	public int getPermutationLength() {
-		return this.numberOfCustoments;
-	}
-
 	public double getCostsOfRequirement(int x, int y) {
 		return costsOfRequirements[x][y];
 	}
-	
-	public double getDistanceProfit(int i, int j) {
-		if(distancePrifitMatrix == null)
-			computeProfitMatrix();
-		
-		return distancePrifitMatrix[i][j];
+
+	@Override
+	protected int getBitsPerVariable(int index) {
+		return this.numberOfCustoments;
 	}
 
 	@Override
 	public int getNumberOfBitInVariable(int index) {
 		// TODO Auto-generated method stub
-		return 0;//only for BinarySolutions;
+		return this.getBitsPerVariable(index);
 	}
 
 }

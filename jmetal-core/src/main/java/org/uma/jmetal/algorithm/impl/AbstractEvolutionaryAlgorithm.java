@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.PermutationSolution;
 
 /**
@@ -67,37 +68,46 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 		population = createInitialPopulation();
 		population = evaluatePopulation(population);
 		initProgress();
-		
+
 		while (!isStoppingConditionReached()) {
 
-			//System.out.println(population);
+			// System.out.println(population);
+			// System.out.println("##############################################################################################");
 			matingPopulation = selection(population);
 			offspringPopulation = reproduction(matingPopulation);
 			offspringPopulation = evaluatePopulation(offspringPopulation);
-			
-			if(objectives >= 2) {
-				population = repairPopulation(population);
-				offspringPopulation = repairPopulation(offspringPopulation);
-			}
-			
+
+			population = repairPopulation(population);
+			offspringPopulation = repairPopulation(offspringPopulation);
+
 			population = replacement(population, offspringPopulation);
 			updateProgress();
 		}
 		System.out.println("End");
 	}
 
-	public List<S> repairPopulation(List<S> population) {//TODO: move to own class!
+	public List<S> repairPopulation(List<S> population) {// TODO: move to own class!
+		Object o = population.get(0);
 		for (int i = 0; i < population.size(); i++) {
-			PermutationSolution<Integer> solution = (PermutationSolution<Integer>) population.get(i);
 
-			if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
-					|| solution.getObjective(1) == 0) {
-				population.remove(i);
+			if (o instanceof BinarySolution) {
+				BinarySolution solution = (BinarySolution) population.get(i);
+				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
+						|| solution.getObjective(1) == 0) {
+					population.remove(i);
+				}
+
+			} else {
+				PermutationSolution<Integer> solution = (PermutationSolution<Integer>) population.get(i);
+				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
+						|| solution.getObjective(1) == 0) {
+					population.remove(i);
+				}
 			}
 		}
 		Set<S> set = new HashSet<>(population);
-		List<S> list =  new ArrayList<S>(set);
-		
+		List<S> list = new ArrayList<S>(set);
+
 		return list;
 	}
 }

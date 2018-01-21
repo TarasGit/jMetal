@@ -63,7 +63,7 @@ public class NSGAIIRunnerNRPRealisticScatterPlot extends AbstractAlgorithmRunner
     double mutationProbability = 0.3;// 0 -> 100% bit flip mutation, 1 -> 100% swap mutation.
     
     
-	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 1 -> all 0.
+	DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.7);// 1 -> all 0.
 
     //mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
 	mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
@@ -80,8 +80,8 @@ public class NSGAIIRunnerNRPRealisticScatterPlot extends AbstractAlgorithmRunner
  */
     algorithm = new NSGAIIBuilder<PermutationSolution<Integer>>(problem, crossover, mutation)
             .setSelectionOperator(selection)
-            .setMaxEvaluations(250000)
-            .setPopulationSize(1000)
+            .setMaxEvaluations(300000)
+            .setPopulationSize(3000)
             .build() ;
 
     System.out.println("start");
@@ -93,9 +93,8 @@ public class NSGAIIRunnerNRPRealisticScatterPlot extends AbstractAlgorithmRunner
 
 
     System.out.println("end: " + population);
-    
-    System.out.println(population);
-    
+    System.out.println("count" + population.stream().count());
+     
     int size = population.size();
     double data1[] = new double[size];
     double data2[] = new double[size];
