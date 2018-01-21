@@ -11,6 +11,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.comparator.BestNeighborSolutionFinder;
 
 public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
@@ -26,7 +27,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 	private BestNeighborSolutionFinder<S> solutionLocator;
 	private int numberOfNeighbors = 100;
 	private MutationOperator<S> mutationOperator;
-	private S endResult;
+	private List<S> endResult;
 	private S initialSolution;
 	private Comparator<Double> comparator;
 	Problem<S> problem;
@@ -119,12 +120,12 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 
 	@Override
 	public void run() {
-		endResult = run(initialSolution);
+		run(initialSolution);
 	}
 
 	@Override
 	public List<S> getResult() {
-		return Arrays.asList(endResult);
+		return SolutionListUtils.getNondominatedSolutions(endResult);
 	}
 
 }

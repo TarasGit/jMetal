@@ -93,8 +93,8 @@ public class NSGAIIRunnerNRPClassicScatterPlotBinarySolution extends AbstractAlg
     	
     algorithm = new NSGAIIBuilder<BinarySolution>(problem, crossover, mutation)
             .setSelectionOperator(selection)
-            .setMaxEvaluations(500000)
-            .setPopulationSize(1500)
+            .setMaxEvaluations(50000)
+            .setPopulationSize(500)
             .build() ;
 
     System.out.println("start");
