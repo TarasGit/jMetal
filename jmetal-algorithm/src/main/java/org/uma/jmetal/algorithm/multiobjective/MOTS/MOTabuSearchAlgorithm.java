@@ -24,7 +24,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	private MOTabuList<S> tabuList;
 	private MOStopCondition stopCondition;
 	private MONotInTabuListSolutionFinder<S> solutionLocator;
-	private int numberOfNeighbors = 5000;
+	private int numberOfNeighbors = 1000;
 	private MutationOperator<S> mutationOperator;
 	private List<S> endResult;
 	private List<S> newEndResult;
@@ -82,7 +82,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 			endResult = replacement(solutionsNotInTabuList, endResult);
 			
-//			newEndResult = new ArrayList<>();
+			//newEndResult = new ArrayList<>();
 //			for(S s : endResult) {
 //				int rank = (int) s.getAttribute(DominanceRanking.class);//Crowding Distance
 //					if(rank == 0) {
@@ -166,7 +166,9 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	@Override
 	public List<S> getResult() {
-		return SolutionListUtils.getNondominatedSolutions(endResult);
+		List<S> list = SolutionListUtils.getNondominatedSolutions(endResult);
+		System.out.println("-->" + list.stream().count());
+		return list;
 	}
 
 }
