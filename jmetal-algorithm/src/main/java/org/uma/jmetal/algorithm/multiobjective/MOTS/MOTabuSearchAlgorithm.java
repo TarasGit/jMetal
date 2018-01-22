@@ -24,7 +24,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	private MOTabuList<S> tabuList;
 	private MOStopCondition stopCondition;
 	private MONotInTabuListSolutionFinder<S> solutionLocator;
-	private int numberOfNeighbors = 1000;
+	private int numberOfNeighbors = 100;
 	private MutationOperator<S> mutationOperator;
 	private List<S> endResult;
 	private List<S> newEndResult;
@@ -69,49 +69,9 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 					listWithoutViolations.add(solution);
 			}
 
-			// if (listWithoutViolations.isEmpty()) {
-			// Random r = new Random();
-			// currentSolution =
-			// listWithoutViolations.get(r.nextInt(listWithoutViolations.size()));
-			// continue; // TODO: break, if we get invalid solutions-> better computation
-			// time, worse
-			// // quality of results.
-			// }
-
 			List<S> solutionsNotInTabuList = solutionLocator.findBestNeighbor(listWithoutViolations, solutionsInTabu);
 
 			endResult = replacement(solutionsNotInTabuList, endResult);
-			
-			//newEndResult = new ArrayList<>();
-//			for(S s : endResult) {
-//				int rank = (int) s.getAttribute(DominanceRanking.class);//Crowding Distance
-//					if(rank == 0) {
-//						newEndResult.add(s);
-//						//System.out.println("Rand0 : " + s);
-//					}else {
-//						break;
-//					}
-//					
-//			}
-//
-//			System.out.println(newEndResult.size());
-//			//solutionsNotInTabuList = SolutionListUtils.getNondominatedSolutions(solutionsNotInTabuList);
-			//endResult.addAll(solutionsNotInTabuList);
-
-//			Collections.sort(solutionsNotInTabuList, new Comparator<S>() {
-//
-//				@Override
-//				public int compare(S o1, S o2) {
-//					if (o1.getObjective(0) > o2.getObjective(0))
-//						return 1;
-//					else if (o1.getObjective(0) < o2.getObjective(0))
-//						return -1;
-//					else
-//						return 0;
-//				}
-//
-//			});
-//			
 			currentSolution = endResult.get(0);
 			System.out.println(currentSolution.getObjective(0));
 

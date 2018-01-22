@@ -40,7 +40,7 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 
 		Algorithm<List<BinarySolution>> algorithm;
 		double mutationProbability = 0.3;
-		int tabuListSize = 500;
+		int tabuListSize = 1000;
 		int numbOfIterations = 100;
 	    
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
