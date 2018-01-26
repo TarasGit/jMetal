@@ -1,4 +1,4 @@
-package org.uma.jmetal.runner.singleobjective.Random;
+package org.uma.jmetal.runner.singleobjective.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,31 +40,31 @@ public class RandomSearchNRPRealistic {
 		//mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 
 		
-		algorithm = new NRPRandomSearchBuilder<PermutationSolution<Integer>>(problem)
-	            .setMaxEvaluations(2500000)
-	            .build();
-		//algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
-		//numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
-
-		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
-																		// instead of list.
-
-
-		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
-		population.add(solution);
-
-		System.out.println("Solution:" + solution);
-		System.out.println("Optimal Solution: " + solution.getObjective(0));
-
-		long computingTime = algorithmRunner.getComputingTime();
-
-		new SolutionListOutput(population).setSeparator("\t")
-				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
-
-		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+//		algorithm = new NRPRandomSearchBuilder<PermutationSolution<Integer>>(problem)
+//	            .setMaxEvaluations(2500000)
+//	            .build();
+//		//algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
+//		//numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
+//
+//		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+//
+//		PermutationSolution<Integer> solution = algorithm.getResult(); // TODO: set ACO, SA to this single result
+//																		// instead of list.
+//
+//
+//		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
+//		population.add(solution);
+//
+//		System.out.println("Solution:" + solution);
+//		System.out.println("Optimal Solution: " + solution.getObjective(0));
+//
+//		long computingTime = algorithmRunner.getComputingTime();
+//
+//		new SolutionListOutput(population).setSeparator("\t")
+//				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+//				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
+//
+//		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
 

@@ -11,10 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
+import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuilderNRP;
+import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
+import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
@@ -24,7 +25,7 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.JMetalException;
-import org.uma.jmetal.util.comparator.MaxNeighborSolutionFinder;
+import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentBuilder;
@@ -58,7 +59,7 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class TabuSearchStudy {
-	private static final int INDEPENDENT_RUNS = 2;
+	private static final int INDEPENDENT_RUNS = 1;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -69,10 +70,10 @@ public class TabuSearchStudy {
 		List<ExperimentProblem<BinarySolution>> problemList = new ArrayList<>();
 		// problemList.add(new ExperimentProblem<>(new ZDT5()));
 		// problemList.add(new ExperimentProblem<>(new OneZeroMax(512)));
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);//probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
 
-		problemList
-				.add(new ExperimentProblem<>(new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", 0.5)));
+		problemList.add(new ExperimentProblem<>(
+				new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", 0.5)));
 
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithmList = configureAlgorithmList(
 				problemList);
@@ -109,12 +110,22 @@ public class TabuSearchStudy {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
 
 		for (int i = 0; i < problemList.size(); i++) {
-			Algorithm<List<BinarySolution>> algorithm = new TabuSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new MyBitFlipMutation(0.3), 50, 300,
-					new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
+			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
+					problemList.get(i).getProblem(), new MyBitFlipMutation(0.9), 1000, 100,
+					new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
+			
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
+		for (int i = 0; i < problemList.size(); i++) {
+
+			Algorithm<List<BinarySolution>> algorithm = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(
+					problemList.get(i).getProblem(), 30, 10, 1, 0.1, 1).build();
+			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
+		}
+		
+		
+		
 		// for (int i = 0; i < problemList.size(); i++) {
 		// Algorithm<List<BinarySolution>> algorithm = new SPEA2Builder<BinarySolution>(
 		// problemList.get(i).getProblem(),

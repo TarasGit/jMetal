@@ -36,8 +36,10 @@ public class NRPRealisticMultiObjectiveBinarySolution extends MyAbstractBinaryPr
 	private List<Customer> customers = null;
 	private int costs;
 	private double costFactor;
-	private double distancePrifitMatrix[][];// for ACO: difference of the profit between the neighbors.
-
+//	private double distancePrifitMatrix[][];// for ACO: difference of the profit between the neighbors.
+	double result;
+	BinarySolution tmpSolution;
+	
 	/**
 	 * Creates a new TSP problem instance
 	 */
@@ -50,6 +52,8 @@ public class NRPRealisticMultiObjectiveBinarySolution extends MyAbstractBinaryPr
 		setNumberOfVariables(1);
 		setNumberOfObjectives(2);
 		setName("NRPRealistic");
+		tmpSolution = this.createSolution();
+
 	}
 
 	/** Evaluate() method */
@@ -121,34 +125,34 @@ public class NRPRealisticMultiObjectiveBinarySolution extends MyAbstractBinaryPr
 		}
 	}
 
-	// TODO: this method will be needed for multiple-objective optimization, to
-	// compute the distance of costs for two neighbor customers.
-	public void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
-										// compute costs difference, not profit.
-
-		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
-		BinarySolution initialSolution1 = this.createSolution();
-		BinarySolution initialSolution2 = this.createSolution();
-		for (int i = 0; i < numberOfCustoments; i++) {
-			initialSolution1.getVariableValue(0).set(i);// ???
-			for (int j = 0; j < numberOfCustoments; j++) {
-				if (i == j) {
-					distancePrifitMatrix[i][j] = 0;
-				} else {
-					initialSolution2.getVariableValue(0).set(i);
-					distancePrifitMatrix[i][j] = Math.abs(getEvaluatedProfit(initialSolution2));
-					initialSolution2.getVariableValue(0).clear(i);
-				}
-			}
-			initialSolution1.getVariableValue(0).clear(i);
-		}
-	}
+//	// TODO: this method will be needed for multiple-objective optimization, to
+//	// compute the distance of costs for two neighbor customers.
+//	public void computeProfitMatrix() {// TODO: too complex calculation for profit, this structure should be used to
+//										// compute costs difference, not profit.
+//
+//		distancePrifitMatrix = new double[numberOfCustoments][numberOfCustoments];
+//		BinarySolution initialSolution1 = this.createSolution();
+//		BinarySolution initialSolution2 = this.createSolution();
+//		for (int i = 0; i < numberOfCustoments; i++) {
+//			initialSolution1.getVariableValue(0).set(i);// ???
+//			for (int j = 0; j < numberOfCustoments; j++) {
+//				if (i == j) {
+//					distancePrifitMatrix[i][j] = 0;
+//				} else {
+//					initialSolution2.getVariableValue(0).set(i);
+//					distancePrifitMatrix[i][j] = Math.abs(getEvaluatedProfit(initialSolution2));
+//					initialSolution2.getVariableValue(0).clear(i);
+//				}
+//			}
+//			initialSolution1.getVariableValue(0).clear(i);
+//		}
+//	}
 
 	public double getDistanceProfit(int i, int j) {
-		if (distancePrifitMatrix == null)
-			computeProfitMatrix();
-
-		return distancePrifitMatrix[i][j];
+		tmpSolution.getVariableValue(0).set(j);
+		double result = getEvaluatedProfit(tmpSolution);
+		tmpSolution.getVariableValue(0).clear(j);
+		return result;
 	}
 
 	public double getEvaluatedProfit(BinarySolution solution) {

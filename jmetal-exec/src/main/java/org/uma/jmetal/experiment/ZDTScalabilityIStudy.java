@@ -48,7 +48,7 @@ import java.util.List;
  */
 public class ZDTScalabilityIStudy {
 
-  private static final int INDEPENDENT_RUNS = 25;
+  private static final int INDEPENDENT_RUNS = 2;
 
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {

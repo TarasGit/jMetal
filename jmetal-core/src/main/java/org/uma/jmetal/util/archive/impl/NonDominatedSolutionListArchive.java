@@ -1,5 +1,10 @@
 package org.uma.jmetal.util.archive.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -8,12 +13,8 @@ import org.uma.jmetal.solution.impl.ArrayDoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.comparator.EqualSolutionsComparator;
+import org.uma.jmetal.util.comparator.RankingComparator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * This class implements an archive containing non-dominated solutions
@@ -32,13 +33,14 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
    */
   public NonDominatedSolutionListArchive() {
     this(new DominanceComparator<S>());
+	//  this(new RankingComparator<>());
   }
 
   /**
    * Constructor
    */
-  public NonDominatedSolutionListArchive(DominanceComparator<S> comparator) {
-    dominanceComparator = comparator;
+  public NonDominatedSolutionListArchive(DominanceComparator<S> dominanceComparator2) {
+    dominanceComparator = dominanceComparator2;
 
     solutionList = new ArrayList<>();
   }

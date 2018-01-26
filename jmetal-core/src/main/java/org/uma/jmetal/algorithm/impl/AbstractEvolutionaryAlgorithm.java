@@ -77,7 +77,7 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 			offspringPopulation = reproduction(matingPopulation);
 			offspringPopulation = evaluatePopulation(offspringPopulation);
 
-			population = repairPopulation(population);
+			population = repairPopulation(population);//TODO: added, but it should not apply for all algorithms.
 			offspringPopulation = repairPopulation(offspringPopulation);
 
 			population = replacement(population, offspringPopulation);

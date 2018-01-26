@@ -3,6 +3,8 @@ package org.uma.jmetal.algorithm.multiobjective.randomsearch;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
+import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
 import java.util.List;
@@ -32,15 +34,21 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
 
   @Override public void run() {
     S newSolution;
+    boolean flag = true;
     for (int i = 0; i < maxEvaluations; i++) {
       newSolution = problem.createSolution() ;
       problem.evaluate(newSolution);
+      System.out.println("R:"  + newSolution.getObjective(0));
+      if(newSolution.getObjective(0) == -1)
+    	  continue;
       nonDominatedArchive.add(newSolution);
+      
+      
     }
   }
 
   @Override public List<S> getResult() {
-    return nonDominatedArchive.getSolutionList();
+	    return SolutionListUtils.getNondominatedSolutions(nonDominatedArchive.getSolutionList());//TODO: not both comparators.
   }
 
   @Override public String getName() {

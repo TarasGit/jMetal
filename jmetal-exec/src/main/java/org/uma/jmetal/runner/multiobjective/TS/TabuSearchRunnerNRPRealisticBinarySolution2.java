@@ -1,5 +1,7 @@
 package org.uma.jmetal.runner.multiobjective.TS;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.WindowConstants;
@@ -9,7 +11,6 @@ import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
-import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
@@ -17,7 +18,6 @@ import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfi
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
-import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -39,9 +39,9 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.3;
-		int tabuListSize = 1500;
-		int numbOfIterations = 700;
+		double mutationProbability = 0.7;
+		int tabuListSize = 1000;
+		int numbOfIterations = 400;
 	    
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
 
@@ -56,7 +56,7 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 
 		System.out.println("Solving NRP");
 		
-	    selection = new BinaryTournamentSelection<BinarySolution>(new RankingAndCrowdingDistanceComparator<BinarySolution>());
+	    //selection = new BinaryTournamentSelection<BinarySolution>(new RankingAndCrowdingDistanceComparator<BinarySolution>());
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 		mutation = new MyBitFlipMutation(mutationProbability);
@@ -93,11 +93,18 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 		    }
 		    
 		    
-		    
+
+		    /* Create List of Arrays with data*/
+		    List<double[]> doubleArrayList = new ArrayList<>();
+		    doubleArrayList.add(data1);
+		    doubleArrayList.add(data2);
+		    //doubleArrayList.add(data3);
+		    //doubleArrayList.add(data4);
 		    
 	
 		    /*Create Chart*/
-		    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart",data1, data2, data3, data4);
+		    List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
+		    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		    example.setSize(1200, 800);
 		    example.setLocationRelativeTo(null);
 		    example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

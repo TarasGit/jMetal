@@ -42,6 +42,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 		this.initialSolution = initialSolution;
 		this.comparator = comparator;
 		this.problem = problem;
+		this.endResult = new ArrayList<>();
 	}
 
 	public S run(S initialSolution) {
@@ -120,12 +121,12 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 
 	@Override
 	public void run() {
-		run(initialSolution);
+		endResult.add(run(initialSolution));
 	}
 
 	@Override
 	public List<S> getResult() {
-		return SolutionListUtils.getNondominatedSolutions(endResult);
+		return endResult;
 	}
 
 }

@@ -77,37 +77,35 @@ public class MyBitFlipMutation implements MutationOperator<BinarySolution> {
 		if (rand > probability) {
 			int pos = (int) (randomGenerator.getRandomValue() * solution.getNumberOfBits(0));// TODO: check the
 			solution.getVariableValue(0).flip(pos);
-		
+
 		} else {
 			int permutationLength;
 			permutationLength = solution.getNumberOfBits(0);
 			if ((permutationLength != 0) && (permutationLength != 1)) {
-				if (randomGenerator.getRandomValue() < mutationProbability) {
-					pos1 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
-					pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+				// if (randomGenerator.getRandomValue() < mutationProbability) {
+				pos1 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+				pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+				//System.out.println("pos1/pos2: " + pos1 + "/" + pos2 );
+				while (pos1 == pos2) {
+					if (pos1 == (permutationLength - 1))
+						pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 2));
+					else
+						pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
+				}
 
-					while (pos1 == pos2) {
-						if (pos1 == (permutationLength - 1))
-							pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 2));
-						else
-							pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
-					}
-
-					boolean temp = solution.getVariableValue(0).get(pos1);
-					if (solution.getVariableValue(0).get(pos2)) {
-						solution.getVariableValue(0).set(pos1);
-						;
-					} else {
-						solution.getVariableValue(0).clear(pos1);
-					}
-					if (temp) {
-						solution.getVariableValue(0).set(pos2);
-						;
-					} else {
-						solution.getVariableValue(0).clear(pos2);
-					}
+				boolean temp = solution.getVariableValue(0).get(pos1);
+				if (solution.getVariableValue(0).get(pos2)) {
+					solution.getVariableValue(0).set(pos1);
+				} else {
+					solution.getVariableValue(0).clear(pos1);
+				}
+				if (temp) {
+					solution.getVariableValue(0).set(pos2);
+				} else {
+					solution.getVariableValue(0).clear(pos2);
 				}
 			}
+			// }
 		}
 	}
 }

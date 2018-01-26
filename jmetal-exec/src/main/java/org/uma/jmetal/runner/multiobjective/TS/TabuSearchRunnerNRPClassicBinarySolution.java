@@ -1,5 +1,7 @@
 package org.uma.jmetal.runner.multiobjective.TS;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.WindowConstants;
@@ -39,9 +41,9 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.3;
+		double mutationProbability = 0.7;
 		int tabuListSize = 1000;
-		int numbOfIterations = 100;
+		int numbOfIterations = 400;
 	    
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
 
@@ -52,7 +54,7 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 		
 
 		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.999);// probability for 0.
 
 		System.out.println("Solving NRP");
 		
@@ -75,7 +77,7 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 		long computingTime = algorithmRunner.getComputingTime();
 		
 	    int size = population.size();
-	    int ii = 0;
+	    int ii = 0;//only one graph
 		   if(ii==0) {
 		    	data1 = new double[size];
 		    	data2= new double[size];
@@ -93,11 +95,44 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 		    }
 		    
 		    
+//		    Test data to check the plot.
+//		    double[] test1 = new double[data1.length];
+//		    double[] test2 = new double[data1.length];
+//		    
+//		    double[] test3 = new double[data1.length];
+//		    double[] test4 = new double[data1.length];
+//		    
+//		    for(int i=0;i<data1.length;i++) {
+//		    	test1[i] = data1[i] + 10;
+//		    	test2[i] = data2[i] + 20;
+//		    	test3[i] = data1[i] + 40;
+//		    	test4[i] = data2[i] + 50;
+//		    		
+//		    }
+//		   
 		    
 		    
+//		    doubleArrayList.add(data1);
+//		    doubleArrayList.add(data2);
+//		    
+//		    doubleArrayList.add(test1);
+//		    doubleArrayList.add(test2);
+//		    doubleArrayList.add(test3);
+//		    doubleArrayList.add(test4);
+//
+//		   // doubleArrayList.add(data3);
+//		   // doubleArrayList.add(data4);
+		    
+
+
+		    /* Create List of Arrays with data*/
+		    List<double[]> doubleArrayList = new ArrayList<>();
+		    doubleArrayList.add(data1);
+		    doubleArrayList.add(data2);
 	
 		    /*Create Chart*/
-		    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart",data1, data2, data3, data4);
+		    List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
+		    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		    example.setSize(1200, 800);
 		    example.setLocationRelativeTo(null);
 		    example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

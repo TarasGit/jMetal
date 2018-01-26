@@ -45,7 +45,7 @@ import java.util.List;
  */
 
 public class ZDTStudy {
-  private static final int INDEPENDENT_RUNS = 10;
+  private static final int INDEPENDENT_RUNS = 1;
 
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {

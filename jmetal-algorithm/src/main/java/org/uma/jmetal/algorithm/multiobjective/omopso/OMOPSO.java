@@ -63,7 +63,7 @@ public class OMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Li
 
     localBest = new DoubleSolution[swarmSize];
     leaderArchive = new CrowdingDistanceArchive<DoubleSolution>(this.archiveSize);
-    epsilonArchive = new NonDominatedSolutionListArchive<DoubleSolution>(new DominanceComparator<DoubleSolution>(eta));
+    //epsilonArchive = new NonDominatedSolutionListArchive<DoubleSolution>(new DominanceComparator<DoubleSolution>(eta));
 
     dominanceComparator = new DominanceComparator<DoubleSolution>();
     crowdingDistanceComparator = new CrowdingDistanceComparator<DoubleSolution>();

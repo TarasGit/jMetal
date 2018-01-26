@@ -24,7 +24,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	private MOTabuList<S> tabuList;
 	private MOStopCondition stopCondition;
 	private MONotInTabuListSolutionFinder<S> solutionLocator;
-	private int numberOfNeighbors = 100;
+	private int numberOfNeighbors = 200;
 	private MutationOperator<S> mutationOperator;
 	private List<S> endResult;
 	private List<S> newEndResult;
@@ -75,8 +75,9 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 			currentSolution = endResult.get(0);
 			System.out.println(currentSolution.getObjective(0));
 
-			for (S s : endResult)
+			for (S s : endResult) {
 				tabuList.add(s);
+			}
 		}
 		
 		return endResult.get(0);//TODO: remove it
@@ -101,8 +102,8 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 		ArrayList<S> newList = new ArrayList<>();
 		for (int i = 0; i < numberOfNeighbors; i++) {
 			S tmpSolution = mutationOperator.execute((S) solution.copy());// TODO: how to cast properly?
-			tmpSolution.setObjective(0, 0);// TODO: reset costs to 0?
-			tmpSolution.setAttribute(0, 0);
+//			tmpSolution.setObjective(0, 0);// TODO: reset costs to 0?
+//			tmpSolution.setAttribute(0, 0);
 			problem.evaluate(tmpSolution);
 			newList.add(tmpSolution);
 		}
@@ -126,9 +127,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	@Override
 	public List<S> getResult() {
-		List<S> list = SolutionListUtils.getNondominatedSolutions(endResult);
-		System.out.println("-->" + list.stream().count());
-		return list;
+		return SolutionListUtils.getNondominatedSolutions(endResult);
 	}
 
 }

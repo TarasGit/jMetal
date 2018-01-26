@@ -96,6 +96,8 @@ public class MyDefaultBinarySolution extends AbstractGenericSolution<BinarySet, 
 		for(int i=0;i<problem.getNumberOfBits(0);i++) {
 			if(r.nextDouble() > probability)
 				bitSet.set(i);
+			else
+				bitSet.clear(i);//TODO: remove, no useful work.
 		}
 		setVariableValue(0, bitSet);
 		//System.out.println("Initial Solution BitSet: " + this.getVariableValue(0).toString());
