@@ -32,7 +32,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  */
 public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 
-    public static final double RATE_OF_COOLING = 0.01;
+    public static final double RATE_OF_COOLING = 0.001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
 	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
@@ -40,7 +40,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 	 * SOLUTION: change  RATE OF COOLING to be smaller to get better solution quality OR multiply temperature
 	 * in SA with some factor, to be able to use another temperatures.
 	 * */
-	public static final int INITIAL_TEMPERATURE = 1000;
+	public static final int INITIAL_TEMPERATURE = 10000;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double COST_FACTOR = 0.5;
 
@@ -53,7 +53,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.7;
+		double mutationProbability = 0.9;
 		
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
 
@@ -64,7 +64,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 		
 
 		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
 
 		System.out.println("Solving NRP");
 		

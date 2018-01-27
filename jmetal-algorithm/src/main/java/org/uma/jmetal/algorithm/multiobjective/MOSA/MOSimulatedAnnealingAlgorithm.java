@@ -23,14 +23,18 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	private int initialTemperature;
 	private int minimalTemperature;
 	private int count = 0;
-
+	
+	private static final int K = 2;//TODO: move to the Builder.
+	
 	protected Problem<S> problem;
 	protected MutationOperator<S> mutationOperator;
 	private Comparator<Double> comparator;
 
-	private S adjacentSolution;
+	private S tmpSolution;
 	private S shortestSolution;
 	private List<S> endResult;
+	
+	private int listSize = 400;
 	
 	NonDominatedSolutionListArchive<S> nonDominatedArchive ;
 
@@ -66,39 +70,43 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	public S findRoute(S currentSolution) {
 		shortestSolution = (S) currentSolution.copy();
 		
-		List<S> emptyList = new ArrayList<>();
+		List<S> workingList = new ArrayList<>();
 		
 		problem.evaluate(shortestSolution);
 		double temperature = this.initialTemperature;
 
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
 		while (temperature > minimalTemperature) {
-			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());// currentSolution.copy(); ->
+			tmpSolution = (S) mutationOperator.execute((S) currentSolution.copy());// currentSolution.copy(); ->
 																						// Taras changed.
 
-			problem.evaluate(adjacentSolution);
-			problem.evaluate(currentSolution);
-			problem.evaluate(shortestSolution);
+			problem.evaluate(tmpSolution);
 
-			if (adjacentSolution.getObjective(0) == -1) {
+			if (tmpSolution.getObjective(0) == -1) {
 				continue;
 			}
 			
-		    nonDominatedArchive.add(shortestSolution);//TODO: shouold add shortest?
 			
+			if(endResult.size() < listSize)
+				endResult.add(tmpSolution);
 			
-			endResult.add(shortestSolution);
-		
-			if(endResult.size() > 2000)
-				endResult = replacement(emptyList, endResult);
-			
+			workingList.add(tmpSolution);
 
 			
+			if(count >= listSize) {
+				endResult = replacement(workingList, endResult);
+				workingList.clear();
+				count=0;
+			}
 
-			if (comparator.compare(currentSolution.getObjective(0), shortestSolution.getObjective(0)) == 1)
-				shortestSolution = (S) currentSolution.copy();// copy???
-			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
-				currentSolution = (S) adjacentSolution.copy();// copy???
+			count++;
+
+			
+			if (acceptRoute(tmpSolution.getObjective(0), shortestSolution.getObjective(0), temperature)) {
+				shortestSolution = (S) tmpSolution;// copy???
+				currentSolution = (S) tmpSolution;	
+			}
+			
 			temperature *= 1 - rateOfCooling;
 			System.out.println(">" + shortestSolution.getObjective(0) + " + " + shortestSolution.getObjective(1));
 			count++;
@@ -120,17 +128,17 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		jointPopulation.addAll(offspringPopulation);
 
 		RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
-		rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(2000);//TODO XXX: //getMaxPopulationSize());
+		rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(listSize);//TODO XXX: //getMaxPopulationSize());
 
 		return rankingAndCrowdingSelection.execute(jointPopulation);
 	}
 	
-	private boolean acceptRoute(double currentDistance, double adjacentDistance, double temperature) {
+	private boolean acceptRoute(double currentDistance, double shortestDistance, double temperature) {
 		double acceptanceProbability;
 		double delta;
-		if (comparator.compare(currentDistance, adjacentDistance) == 1) {
-			delta = Math.abs(adjacentDistance - currentDistance);
-			acceptanceProbability = Math.exp(-(delta / (temperature)));//TODO: check
+		if (comparator.compare(shortestDistance, currentDistance) == 1) {
+			delta = Math.abs(shortestDistance - currentDistance);
+			acceptanceProbability = Math.exp(-(delta / (K * temperature)));//TODO: check
 		} else {
 			acceptanceProbability = 1.0;
 		}
@@ -148,7 +156,6 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	@Override
 	public List<S> getResult() {
-		System.out.println("->" + SolutionListUtils.getNondominatedSolutions(endResult).stream().count());
 		return SolutionListUtils.getNondominatedSolutions(endResult);
 	}
 }
