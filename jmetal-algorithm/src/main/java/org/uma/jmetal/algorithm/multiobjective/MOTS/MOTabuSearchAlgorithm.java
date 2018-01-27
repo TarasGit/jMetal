@@ -7,10 +7,9 @@ import java.util.List;
 import org.apache.commons.collections4.IteratorUtils;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.selection.RankingAndCrowdingSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 
 public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
@@ -24,13 +23,14 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	private MOTabuList<S> tabuList;
 	private MOStopCondition stopCondition;
 	private MONotInTabuListSolutionFinder<S> solutionLocator;
-	private int numberOfNeighbors = 200;
+	private int numberOfNeighbors = 100;
 	private MutationOperator<S> mutationOperator;
-	private List<S> endResult;
-	private List<S> newEndResult;
 	private S initialSolution;
 	private Comparator<Double> comparator;
 	Problem<S> problem;
+	MyNonDominatedSolutionListArchive<S> nonDominatedArchive;
+
+	
 
 	public MOTabuSearchAlgorithm(MOTabuList<S> tabuList, MOStopCondition stopCondition,
 			MONotInTabuListSolutionFinder<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution,
@@ -42,8 +42,8 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 		this.initialSolution = initialSolution;
 		this.comparator = comparator;
 		this.problem = problem;
-		this.endResult = new ArrayList<>();
-		this.newEndResult = new ArrayList<>();
+		this.nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+
 	}
 
 	public S run(S initialSolution) {
@@ -55,44 +55,34 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 		System.out.println(bestSolution);
 
 		S currentSolution = initialSolution;
+		List<S> listWithoutViolations = new ArrayList<>();
+		List<S> candidateNeighbors;
+
 
 		Integer currentIteration = 0;
 		while (!stopCondition.mustStop(++currentIteration)) {
 
-			List<S> candidateNeighbors = getNeighbors(currentSolution);
-			List<S> solutionsInTabu = IteratorUtils.toList(tabuList.iterator());
-			List<S> listWithoutViolations = new ArrayList<>();
-
+			candidateNeighbors = getNeighbors(currentSolution);
+			listWithoutViolations.clear();
 			for (S solution : candidateNeighbors) {
 				Double tmpAttr = (Double) solution.getObjective(0);
 				if (tmpAttr != -1.0)
 					listWithoutViolations.add(solution);
 			}
 
-			List<S> solutionsNotInTabuList = solutionLocator.findBestNeighbor(listWithoutViolations, solutionsInTabu);
+			List<S> solutionsNotInTabuList = solutionLocator.findBestNeighbor(listWithoutViolations, IteratorUtils.toList(tabuList.iterator()));
 
-			endResult = replacement(solutionsNotInTabuList, endResult);
-			currentSolution = endResult.get(0);
-			System.out.println(currentSolution.getObjective(0));
-
-			for (S s : endResult) {
+				
+			for (S s : solutionsNotInTabuList) {				
+				this.nonDominatedArchive.add(s);
 				tabuList.add(s);
 			}
+			currentSolution = nonDominatedArchive.getSolutionList().get(nonDominatedArchive.getSolutionList().size()-1);
 		}
 		
-		return endResult.get(0);//TODO: remove it
+		return null;
 	}
 
-	protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
-		List<S> jointPopulation = new ArrayList<>();
-		jointPopulation.addAll(population);
-		jointPopulation.addAll(offspringPopulation);
-
-		RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
-		rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(getMaxPopulationSize());
-
-		return rankingAndCrowdingSelection.execute(jointPopulation);
-	}
 
 	public int getMaxPopulationSize() {
 		return this.numberOfNeighbors;
@@ -127,7 +117,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	@Override
 	public List<S> getResult() {
-		return SolutionListUtils.getNondominatedSolutions(endResult);
+		return nonDominatedArchive.getSolutionList();
 	}
 
 }

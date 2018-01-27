@@ -34,7 +34,6 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
 
   @Override public void run() {
     S newSolution;
-    boolean flag = true;
     for (int i = 0; i < maxEvaluations; i++) {
       newSolution = problem.createSolution() ;
       problem.evaluate(newSolution);
@@ -48,7 +47,7 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   }
 
   @Override public List<S> getResult() {
-	    return SolutionListUtils.getNondominatedSolutions(nonDominatedArchive.getSolutionList());//TODO: not both comparators.
+	    return nonDominatedArchive.getSolutionList();
   }
 
   @Override public String getName() {

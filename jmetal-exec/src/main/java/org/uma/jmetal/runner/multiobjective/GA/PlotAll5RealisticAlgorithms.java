@@ -68,7 +68,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 
 		double costFactor = 0.5;
 
-		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-g1.txt", costFactor);
+		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);
 		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
 
 		AlgorithmRunner algorithmRunner = null;
@@ -92,7 +92,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		mutationNSGA = new MyBitFlipMutation(mutationProbabilityNSGA);
 
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(250000).setPopulationSize(500).build();
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
 
 		System.out.println("start");
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
@@ -150,12 +150,13 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 			data2ACO[i] = populationACO.get(i).getObjective(1) * -1;
 		}
 
-		/*
+		/*--------------------------------------
 		 * Simulated Annealing
+		 * -------------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.01;
-		int INITIAL_TEMPERATURE = 4000;
+		double RATE_OF_COOLING = 0.001;
+		int INITIAL_TEMPERATURE = 8000;
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
@@ -204,7 +205,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.7;
 		int tabuListSize = 1000;
-		int numbOfIterations = 500;
+		int numbOfIterations = 1000;
 
 		double data1TS[] = null, data2TS[] = null;
 

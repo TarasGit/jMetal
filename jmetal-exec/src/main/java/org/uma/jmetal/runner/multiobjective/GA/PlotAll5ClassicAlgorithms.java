@@ -68,12 +68,12 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		double costFactor = 0.5;
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp2.txt", costFactor);
 		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
 
 		AlgorithmRunner algorithmRunner = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// 0.9 for Zero.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
 
 		// mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
 
@@ -116,12 +116,12 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 800;
+		int NUMBER_OF_ANTS = 4000;
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
-		double BETA = 2;// importance between source and destination, x >= 1
+		double BETA = 1;// importance between source and destination, x >= 1
 
 		double Q = 0.0;// feramon deposited level;
-		double RHO = 0.01;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 
 		Algorithm<List<BinarySolution>> algorithmACO;
@@ -153,14 +153,14 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * ----------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.001;
-		int INITIAL_TEMPERATURE = 1000;
+		double RATE_OF_COOLING = 0.00001;
+		int INITIAL_TEMPERATURE = 10000;
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
 
 		Algorithm<List<BinarySolution>> algorithmSA;
-		double mutationProbabilitySA = 0.7;
+		double mutationProbabilitySA = 0.5;
 
 		double data1SA[] = null, data2SA[] = null;
 
@@ -197,9 +197,9 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionTS;
 
 		Algorithm<List<BinarySolution>> algorithmTS;
-		double mutationProbabilityTS = 0.7;
-		int tabuListSize = 1000;
-		int numbOfIterations = 1000;
+		double mutationProbabilityTS = 0.8;
+		int tabuListSize = 200;
+		int numbOfIterations = 2000;
 
 		double data1TS[] = null, data2TS[] = null;
 

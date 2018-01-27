@@ -32,7 +32,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  */
 public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 
-    public static final double RATE_OF_COOLING = 0.001;
+    public static final double RATE_OF_COOLING = 0.00001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
 	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
@@ -53,7 +53,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.9;
+		double mutationProbability = 0.5;
 		
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
 

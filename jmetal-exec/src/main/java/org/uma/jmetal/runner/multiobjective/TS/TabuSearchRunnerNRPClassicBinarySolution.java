@@ -41,9 +41,9 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.7;
-		int tabuListSize = 1000;
-		int numbOfIterations = 400;
+		double mutationProbability = 0.3;
+		int tabuListSize = 100;
+		int numbOfIterations = 4000;
 	    
 		double data2[] = null, data1[] = null,data3[] = null, data4[] = null;
 
@@ -54,7 +54,7 @@ public class TabuSearchRunnerNRPClassicBinarySolution {
 		
 
 		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.999);// probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
 
 		System.out.println("Solving NRP");
 		

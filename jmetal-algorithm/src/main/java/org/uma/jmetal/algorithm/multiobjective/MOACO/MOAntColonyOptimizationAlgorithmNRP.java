@@ -1,13 +1,11 @@
 package org.uma.jmetal.algorithm.multiobjective.MOACO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.operator.impl.selection.RankingAndCrowdingSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.SolutionListUtils;
+import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
 
 /**
  * @author Taras Iks <ikstaras@gmail.com>
@@ -23,9 +21,8 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 	private double beta;
 	private double rho;
 	private double q;
-	private List<S> endResult;
-	private List<S> workingList;
-	private int listSize = 1000;
+
+	MyNonDominatedSolutionListArchive<S> nonDominatedArchive;
 
 	/**
 	 * Constructor
@@ -39,8 +36,8 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 		this.beta = beta;
 		this.rho = rho;
 		this.q = q;
-		this.endResult = new ArrayList<>();
-		this.workingList = new ArrayList<>();
+		nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+
 	}
 
 	@Override
@@ -66,7 +63,7 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 			System.out.println("------------------------------------------------------------->Ant(" + i + ")");
 		}
 
-		//endResult = replacement(endResult, workingList);
+		// endResult = replacement(endResult, workingList);
 
 		return shortestSolution;
 	}
@@ -75,29 +72,20 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	private void processAnts(MOAntNRP ant) {
 		try {
-			
+
 			List<S> resultList = ant.getSolution();
 
 			for (int i = 0; i < resultList.size(); i++) {
 
-
 				currentSolution = resultList.get(i);
 
 				problem.evaluate(currentSolution);
-				if(currentSolution.getObjective(0) == -1)
+				if (currentSolution.getObjective(0) == -1)
 					break;
 
 				shortestSolution = (S) currentSolution.copy();// copy?
 
-				if (count == listSize - 1) {
-					count = 0;
-					endResult = replacement(endResult, workingList);
-				}
-
-				if (workingList.size() != listSize)
-					workingList.add(shortestSolution);
-				else
-					workingList.set(count++, shortestSolution);
+				nonDominatedArchive.add(shortestSolution);
 
 				System.out.println("shortest Solution: " + shortestSolution.getObjective(0) + "Costs: "
 						+ shortestSolution.getObjective(1));
@@ -109,18 +97,6 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	}
 
-	protected List<S> replacement(List<S> population, List<S> offspringPopulation) {// TODO: protected?
-		List<S> jointPopulation = new ArrayList<>();
-		jointPopulation.addAll(population);
-		jointPopulation.addAll(offspringPopulation);
-
-		RankingAndCrowdingSelection<S> rankingAndCrowdingSelection;
-		rankingAndCrowdingSelection = new RankingAndCrowdingSelection<S>(listSize);// TODO XXX:
-																					// //getMaxPopulationSize());
-
-		return rankingAndCrowdingSelection.execute(jointPopulation);
-	}
-
 	@Override
 	public void run() {
 		findRoute(problem.createSolution());
@@ -128,6 +104,6 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	@Override
 	public List<S> getResult() {
-		return SolutionListUtils.getNondominatedSolutions(endResult);
+		return nonDominatedArchive.getSolutionList();
 	}
 }

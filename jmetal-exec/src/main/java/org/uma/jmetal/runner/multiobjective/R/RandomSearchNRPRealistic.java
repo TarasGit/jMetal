@@ -8,12 +8,9 @@ import javax.swing.WindowConstants;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
-import org.uma.jmetal.algorithm.singleobjective.Random.NRPRandomSearchBuilder;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.DoubleSolution;
-import org.uma.jmetal.solution.PermutationSolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
@@ -39,7 +36,7 @@ public class RandomSearchNRPRealistic {
 		double costFactor = 0.5;
 		
 		//Initial Solution  of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.85);//probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1 - ((1-costFactor)/2));//probability for 0.
 
 		System.out.println("Solving NRP");
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
@@ -47,7 +44,7 @@ public class RandomSearchNRPRealistic {
 		//mutation = new BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
 
 		algorithm = new RandomSearchBuilder<BinarySolution>(problem)//uses original random builder!!!
-        .setMaxEvaluations(200000)
+        .setMaxEvaluations(100000)
         .build() ;
 		
 		/*
