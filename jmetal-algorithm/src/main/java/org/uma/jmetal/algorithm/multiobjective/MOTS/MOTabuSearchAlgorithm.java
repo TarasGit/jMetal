@@ -112,7 +112,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	@Override
 	public String getName() {
-		return "TabuSearch";
+		return "TS";
 	}
 
 	@Override

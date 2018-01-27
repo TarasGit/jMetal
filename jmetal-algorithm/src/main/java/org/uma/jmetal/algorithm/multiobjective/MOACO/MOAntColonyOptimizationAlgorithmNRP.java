@@ -45,7 +45,7 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	@Override
 	public String getName() {
-		return "SA";
+		return "ACO";
 	}
 
 	@Override

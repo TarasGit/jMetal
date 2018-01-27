@@ -12,7 +12,9 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuilderNRP;
+import org.uma.jmetal.algorithm.multiobjective.MOSA.MOSimulatedAnnealingBuilder;
 import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
+import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
 import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
@@ -59,7 +61,7 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class TabuSearchStudy {
-	private static final int INDEPENDENT_RUNS = 1;
+	private static final int INDEPENDENT_RUNS = 3;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -113,19 +115,33 @@ public class TabuSearchStudy {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new MyBitFlipMutation(0.9), 1000, 100,
 					new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
-			
+
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(
-					problemList.get(i).getProblem(), 30, 10, 1, 0.1, 1).build();
+					problemList.get(i).getProblem(), 600, 10, 1, 0.1, 1).build();
+			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
+		}
+
+		for (int i = 0; i < problemList.size(); i++) {
+
+			Algorithm<List<BinarySolution>> algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(
+					problemList.get(i).getProblem(), new MyBitFlipMutation(0.5), new SimpleMaxDoubleComparator())
+							.setMinimalTemperature(1).setInitialTemperature(1000).setRateOfCooling(0.1).build();
+			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
+		}
+
+		for (int i = 0; i < problemList.size(); i++) {
+			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
+					problemList.get(i).getProblem()).setMaxEvaluations(40000).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 		
 		
-		
+
 		// for (int i = 0; i < problemList.size(); i++) {
 		// Algorithm<List<BinarySolution>> algorithm = new SPEA2Builder<BinarySolution>(
 		// problemList.get(i).getProblem(),
