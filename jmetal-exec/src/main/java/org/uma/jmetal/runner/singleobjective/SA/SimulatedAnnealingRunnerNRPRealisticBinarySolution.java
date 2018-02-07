@@ -18,51 +18,48 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
  * Class to configure and run a simulated annealing algorithm. The target
- * problem is TSP.
+ * problem is NRP.
  *
  * @author Taras Iks <ikstaras@gmail>
  */
 public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
-	/**
-	 * Usage: java
-	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunne
-	 */
-
 	public static final double RATE_OF_COOLING = 0.001;
 	/*
-	 * IMPORTANT: don't increase the temperature, because the formulate for SA depends on it,
-	 * and for very high temperatures the most of the time you will get the acceptance probability equal to 1.
+	 * IMPORTANT: don't increase the temperature, because the formulate for SA
+	 * depends on it, and for very high temperatures the most of the time you will
+	 * get the acceptance probability equal to 1.
 	 * 
-	 * SOLUTION: change  RATE OF COOLING to be smaller to get better solution quality OR multiply temperature
-	 * in SA with some factor, to be able to use another temperatures.
-	 * */
+	 * SOLUTION: change RATE OF COOLING to be smaller to get better solution quality
+	 * OR multiply temperature in SA with some factor, to be able to use another
+	 * temperatures.
+	 */
 	public static final int INITIAL_TEMPERATURE = 100;
 	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double MUTATION_PROBABILITY = 0.5;//50% bit mutation and 50% swap mutation.
+	public static final double MUTATION_PROBABILITY = 0.5;// 50% bit mutation and 50% swap mutation.
+	public static final double K = 1;
+
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		MutationOperator<BinarySolution> mutation;
-		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//1 = probability for 0.
+
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// 1 = probability for 0.
 
 		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
-		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
-		
+		System.out.println("Number of Variables: " + problem.getNumberOfVariables());
+
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new SimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
-				.setRateOfCooling(RATE_OF_COOLING).build();
+				.setRateOfCooling(RATE_OF_COOLING).setKFactor(K).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<BinarySolution> population = algorithm.getResult();// List<DefaultIntegerPermutationSolution>
-																		// solution = algorithm.getResult() ;
-
+		List<BinarySolution> population = algorithm.getResult();
 		long computingTime = algorithmRunner.getComputingTime();
 
 		System.out.println("Solution:");

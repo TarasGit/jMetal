@@ -17,6 +17,7 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 	public static final double RATE_OF_COOLING = 0.01;
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 0;
+	public static final double K = 1;
 	
 	private Problem<S> problem;
 	private MutationOperator<S> mutationOperator;
@@ -25,6 +26,8 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 	private int initialTemperature;
 	private int minimalTemperature;
 	private Comparator<Double> comparator;
+	private double k;
+
 	
 	/**
 	 * Builder constructor
@@ -36,6 +39,7 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 		this.rateOfCooling = RATE_OF_COOLING;
 		this.initialTemperature = INITIAL_TEMPERATURE;
 		this.minimalTemperature = MINIMAL_TEMPERATURE;
+		this.k = K;
 		this.comparator = comparator;
 		
 	}
@@ -54,6 +58,11 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 		this.rateOfCooling = rateOfCooling;
 		return this;
 	}
+	
+	public MOSimulatedAnnealingBuilder<S> setKFactor(double k) {
+		this.k = k;
+		return this;
+	}
 
 	public MOSimulatedAnnealingBuilder<S> setSolutionListEvaluator(SolutionListEvaluator<Integer> evaluator) {
 		this.evaluator = evaluator;
@@ -62,7 +71,7 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 
 	public MOSimulatedAnnealingAlgorithm<S> build() {
 		return new MOSimulatedAnnealingAlgorithm<S>(problem, mutationOperator, rateOfCooling, initialTemperature,
-				minimalTemperature, comparator);
+				minimalTemperature, k, comparator);
 	}
 
 	/*

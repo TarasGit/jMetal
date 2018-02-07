@@ -135,7 +135,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro bability = 1 for 0
 																								// -> zero initial
 																								// solution.
-		// costs)//new
+		
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
 		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO,

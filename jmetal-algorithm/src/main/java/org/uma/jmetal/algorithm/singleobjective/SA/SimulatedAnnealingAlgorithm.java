@@ -16,41 +16,33 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 @SuppressWarnings("serial")
 public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
 
+	public static final boolean D = true; //Debug.
 	private double rateOfCooling;
 	private int initialTemperature;
 	private int minimalTemperature;
 	private int count = 0;
+	private double k;
 
-	protected Problem<S> problem;
-	protected MutationOperator<S> mutationOperator;//TODO: protected????
+	private Problem<S> problem;
+	private MutationOperator<S> mutationOperator;
 	private Comparator<Double> comparator;
 
-	
 	private S adjacentSolution;
 	private S shortestSolution;
 
 	/**
 	 * Constructor
 	 */
-	public SimulatedAnnealingAlgorithm(final Problem<S> problem,
-			final MutationOperator<S> mutationOperator, final double rateOfCooling,
-			final int initialTemperature, final int minimalTemperature, Comparator<Double> comparator) {
+	public SimulatedAnnealingAlgorithm(final Problem<S> problem, final MutationOperator<S> mutationOperator,
+			final double rateOfCooling, final int initialTemperature, final int minimalTemperature, final double k,
+			Comparator<Double> comparator) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
 		this.rateOfCooling = rateOfCooling;
 		this.initialTemperature = initialTemperature;
 		this.minimalTemperature = minimalTemperature;
+		this.k = k;
 		this.comparator = comparator;
-	}
-
-	@Override
-	public String getName() {
-		return "SA";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Generational Genetic Algorithm";
 	}
 
 	public S findRoute(S currentSolution) {
@@ -60,33 +52,36 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
 		while (temperature > minimalTemperature) {
-			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());//currentSolution.copy(); -> Taras changed.
-				
+			adjacentSolution = (S) mutationOperator.execute((S) currentSolution.copy());
+
 			problem.evaluate(adjacentSolution);
 			problem.evaluate(currentSolution);
 			problem.evaluate(shortestSolution);
-			
-			
-			if(adjacentSolution.getObjective(0) == -1) {
+
+			if (adjacentSolution.getObjective(0) == -1) {
 				continue;
 			}
-		
+
 			if (comparator.compare(currentSolution.getObjective(0), shortestSolution.getObjective(0)) == 1)
-				shortestSolution = (S) currentSolution.copy();// copy???
+				shortestSolution = (S) currentSolution.copy();
 			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
-				currentSolution = (S) adjacentSolution.copy();// copy???
+				currentSolution = (S) adjacentSolution.copy();
 			temperature *= 1 - rateOfCooling;
-			System.out.println(">" + shortestSolution.getObjective(0) + " + " + shortestSolution.getAttribute(0));
+			if (D) {
+				System.out.println(">" + shortestSolution.getObjective(0) + " + " + shortestSolution.getAttribute(0));
+			}
 			count++;
 		}
 
-		System.out.println("Shortes tSolution Size:" + shortestSolution.getNumberOfVariables());
-		problem.evaluate(shortestSolution);
+		if (D) {
+			System.out.println("Shortes tSolution Size:" + shortestSolution.getNumberOfVariables());
+			problem.evaluate(shortestSolution);
 
-		System.out.print(">Sortest Solution:");
-		System.out.println(shortestSolution.getObjective(0));
-		System.out.println("Count: " + count);
-
+			System.out.print(">Sortest Solution:");
+			System.out.println(shortestSolution.getObjective(0));
+			System.out.println("Count: " + count);
+		}
+		
 		return shortestSolution;
 	}
 
@@ -95,14 +90,14 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		double delta;
 		if (comparator.compare(currentDistance, adjacentDistance) == 1) {
 			delta = Math.abs(adjacentDistance - currentDistance);
-			acceptanceProbability = Math.exp(-(delta / (2 * temperature)));
-		}else {
+			acceptanceProbability = Math.exp(-(delta / (k * temperature)));
+		} else {
 			acceptanceProbability = 1.0;
 		}
 
 		if (acceptanceProbability >= JMetalRandom.getInstance().nextDouble())
 			return true;
-		else 
+		else
 			return false;
 	}
 
@@ -115,4 +110,15 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 	public List<S> getResult() {
 		return Arrays.asList(this.shortestSolution);
 	}
+
+	@Override
+	public String getName() {
+		return "SA";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Generational Genetic Algorithm";
+	}
+
 }

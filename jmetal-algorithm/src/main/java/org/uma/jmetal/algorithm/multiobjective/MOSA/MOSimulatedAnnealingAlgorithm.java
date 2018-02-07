@@ -9,6 +9,7 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 /**
  * @author Taras Iks <ikstaras@gmail.com>
@@ -16,12 +17,12 @@ import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax
 @SuppressWarnings("serial")
 public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
 
+	public static final boolean D = true; // Debug.
 	private double rateOfCooling;
 	private int initialTemperature;
 	private int minimalTemperature;
 	private int count = 0;
-
-	private static final double K = 1;// TODO: move to the Builder.
+	private double k;
 
 	protected Problem<S> problem;
 	protected MutationOperator<S> mutationOperator;
@@ -36,7 +37,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	 * Constructor
 	 */
 	public MOSimulatedAnnealingAlgorithm(final Problem<S> problem, final MutationOperator<S> mutationOperator,
-			final double rateOfCooling, final int initialTemperature, final int minimalTemperature,
+			final double rateOfCooling, final int initialTemperature, final int minimalTemperature, final double k,
 			Comparator<Double> comparator) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
@@ -44,19 +45,9 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		this.initialTemperature = initialTemperature;
 		this.minimalTemperature = minimalTemperature;
 		this.comparator = comparator;
+		this.k = k;
 
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
-
-	}
-
-	@Override
-	public String getName() {
-		return "SA";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Generational Genetic Algorithm";
 	}
 
 	public S findRoute(S currentSolution) {
@@ -71,7 +62,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 		System.out.println("Anfangsroute: " + shortestSolution.getObjective(0));
 		while (temperature > minimalTemperature) {
-			tmpSolution = (S) mutationOperator.execute((S) currentSolution.copy());// current
+			tmpSolution = (S) mutationOperator.execute((S) currentSolution.copy());
 
 			problem.evaluate(tmpSolution);
 
@@ -88,25 +79,29 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 			if (acceptRoute(tmpSolution.getObjective(0), shortestSolution.getObjective(0), tmpSolution.getObjective(1),
 					shortestSolution.getObjective(1), temperature)) {
-				shortestSolution = (S) tmpSolution;// copy???
+				shortestSolution = (S) tmpSolution;
 				currentSolution = (S) tmpSolution;
 
-				System.out.println("---------------------------------# " + shortestSolution.getObjective(0) + "| "
-						+ shortestSolution.getObjective(1));
+				if (D) {
+					System.out.println("---------------------------------# " + shortestSolution.getObjective(0) + "| "
+							+ shortestSolution.getObjective(1));
+				}
 
 			}
-
 			temperature *= 1 - rateOfCooling;
-			System.out.println(">" + tmpSolution.getObjective(0) + " + " + currentSolution.getObjective(1));
-
+			if (D) {
+				System.out.println(">" + tmpSolution.getObjective(0) + " + " + currentSolution.getObjective(1));
+			}
 		}
 
-		System.out.println("Shortes tSolution Size:" + tmpSolution.getNumberOfVariables());
 		problem.evaluate(shortestSolution);
 
-		System.out.print(">Sortest Solution:");
-		System.out.println(shortestSolution.getObjective(0));
-		System.out.println("Count: " + count);
+		if (D) {
+			System.out.println("Shortes tSolution Size:" + tmpSolution.getNumberOfVariables());
+			System.out.print(">Sortest Solution:");
+			System.out.println(shortestSolution.getObjective(0));
+			System.out.println("Count: " + count);
+		}
 
 		return shortestSolution;
 	}
@@ -116,15 +111,15 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		double acceptanceProbability = 0;
 		double delta;
 		if (comparator.compare(currentDistance, shortestDistance) == 1) {
-				//|| (comparator.compare(-1 * currentCosts, -1 * shortestCosts) <= 0)) {// Costs *= -1
+			// || (comparator.compare(-1 * currentCosts, -1 * shortestCosts) <= 0)) {
 			acceptanceProbability = 1.0;
 		} else {
 			delta = Math.abs(currentDistance - shortestDistance);
-			acceptanceProbability = Math.exp(-(delta / (K * temperature)));
+			acceptanceProbability = Math.exp(-(delta / (k * temperature)));
 
 		}
 
-		if (acceptanceProbability >= 0.8)// JMetalRandom.getInstance().nextDouble())
+		if (acceptanceProbability >= JMetalRandom.getInstance().nextDouble())
 			return true;
 		else
 			return false;
@@ -138,5 +133,15 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	@Override
 	public List<S> getResult() {
 		return SolutionListUtils.getNondominatedSolutions(nonDominatedArchive.getSolutionList());
+	}
+
+	@Override
+	public String getName() {
+		return "MOSA";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Multi-objective Simulated Annealing";
 	}
 }
