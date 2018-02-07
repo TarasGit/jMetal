@@ -45,7 +45,6 @@ public class AntColonyOptimizationRunnerNRPClassicBinarySolution {
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro	bability = 1 for 0 -> zero initial solution.
 
 		problem =  new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
-		//problem = new NRPClassicBinarySolution("/nrpClassicInstances/myNRP10Customers.txt", COST_FACTOR);
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 

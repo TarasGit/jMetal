@@ -18,12 +18,12 @@ public class AntColonyOptimizationAlgorithmTSP<S extends Solution<?>> implements
 	private double beta;
 	private double rho;
 	private double q;
-	
 
 	/**
 	 * Constructor
 	 */
-	public AntColonyOptimizationAlgorithmTSP(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
+	public AntColonyOptimizationAlgorithmTSP(Problem<S> problem, int numberOfAnts, double alpha, double beta,
+			double rho, double q) {
 		this.problem = problem;
 		this.numberOfAnts = numberOfAnts;
 		this.shortestSolution = null;
@@ -43,21 +43,17 @@ public class AntColonyOptimizationAlgorithmTSP<S extends Solution<?>> implements
 		return "Ant Colony Optimizatio Algorithm";
 	}
 
-	public S findRoute(S currentSolution) {// TODO: no initial route needed, because the ant starts with zero-route.
+	public S findRoute(S currentSolution) {
 		this.currentSolution = currentSolution;
-		
-		AntTSP<S> currentAnt;
-		
-		AntColonyOptimizationTSP<S> aco = new AntColonyOptimizationTSP<S>(problem,
-				currentSolution);
 
-		// IntStream.range(0, NUMBER_OF_ANTS).forEach(x -> {
+		AntTSP<S> currentAnt;
+
+		AntColonyOptimizationTSP<S> aco = new AntColonyOptimizationTSP<S>(problem, currentSolution);
 
 		for (int i = 0; i < numberOfAnts; i++) {
 			currentAnt = new AntTSP<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
 		}
-
 
 		return shortestSolution;
 	}
@@ -67,11 +63,9 @@ public class AntColonyOptimizationAlgorithmTSP<S extends Solution<?>> implements
 			currentSolution = (S) ant.getSolution();
 			problem.evaluate(currentSolution);
 			if (shortestSolution == null || currentSolution.getObjective(0) < shortestSolution.getObjective(0)) {
-				shortestSolution = (S) currentSolution.copy();// copy?
-				System.out.println( shortestSolution.getObjective(0));
+				shortestSolution = (S) currentSolution.copy();
+				System.out.println(shortestSolution.getObjective(0));
 			}
-			//System.out.println("CS: " + currentSolution.getObjective(0));
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -84,6 +78,6 @@ public class AntColonyOptimizationAlgorithmTSP<S extends Solution<?>> implements
 
 	@Override
 	public S getResult() {
-		return this.shortestSolution;// XXX TODO wie im NSGA-II
+		return this.shortestSolution;
 	}
 }

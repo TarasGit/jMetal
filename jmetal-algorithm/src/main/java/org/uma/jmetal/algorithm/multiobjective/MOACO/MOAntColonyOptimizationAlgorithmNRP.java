@@ -13,6 +13,8 @@ import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
 @SuppressWarnings("serial")
 public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements Algorithm<List<S>> {
 
+	public static final boolean D = true; //Debug
+	
 	protected Problem<S> problem;
 	private int numberOfAnts;
 	private S currentSolution;
@@ -40,54 +42,37 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	}
 
-	@Override
-	public String getName() {
-		return "ACO";
-	}
-
-	@Override
-	public String getDescription() {
-		return "Ant Colony Optimizatio Algorithm";
-	}
-
-	public S findRoute(S currentSolution) {
-		this.currentSolution = currentSolution;
-
+	public S findRoute() {
 		MOAntNRP<S> currentAnt;
 
-		MOAntColonyOptimizationNRP<S> aco = new MOAntColonyOptimizationNRP<S>(problem, currentSolution);
+		MOAntColonyOptimizationNRP<S> aco = new MOAntColonyOptimizationNRP<S>(problem);
 
 		for (int i = 0; i < numberOfAnts; i++) {
 			currentAnt = new MOAntNRP<S>(aco, i, alpha, beta, rho, q).run();
 			processAnts(currentAnt);
-			System.out.println("------------------------------------------------------------->Ant(" + i + ")");
+			if(D)
+				System.out.println("------------------------------------------------------------->Ant(" + i + ")");
 		}
-
-		// endResult = replacement(endResult, workingList);
 
 		return shortestSolution;
 	}
 
-	int count = 0;
-
-	private void processAnts(MOAntNRP ant) {
+	private void processAnts(MOAntNRP<S> ant) {
 		try {
-
 			List<S> resultList = ant.getSolution();
 
 			for (int i = 0; i < resultList.size(); i++) {
 
 				currentSolution = resultList.get(i);
-
 				problem.evaluate(currentSolution);
 				if (currentSolution.getObjective(0) == -1)
 					break;
 
-				shortestSolution = (S) currentSolution.copy();// copy?
-
+				shortestSolution = (S) currentSolution.copy();
 				nonDominatedArchive.add(shortestSolution);
-
-				System.out.println("shortest Solution: " + shortestSolution.getObjective(0) + "Costs: "
+				
+				if(D)
+					System.out.println("shortest Solution: " + shortestSolution.getObjective(0) + "Costs: "
 						+ shortestSolution.getObjective(1));
 			}
 
@@ -99,11 +84,23 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 
 	@Override
 	public void run() {
-		findRoute(problem.createSolution());
+		findRoute();
 	}
 
 	@Override
 	public List<S> getResult() {
 		return nonDominatedArchive.getSolutionList();
 	}
+	
+
+	@Override
+	public String getName() {
+		return "ACO";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Ant Colony Optimizatio Algorithm";
+	}
+
 }

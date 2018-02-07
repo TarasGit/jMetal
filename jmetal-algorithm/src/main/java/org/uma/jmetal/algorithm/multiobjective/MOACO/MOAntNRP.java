@@ -25,7 +25,7 @@ public class MOAntNRP<S extends Solution<?>> {
 		return routeList;
 	}
 
-	static int invalidCityIndex = -1;
+	static int invalidIndex = -1;
 
 	private int numbOfCities;
 	int _x = 0, _y = 0;
@@ -52,12 +52,12 @@ public class MOAntNRP<S extends Solution<?>> {
 		visitedCities.put(originatingCityIndex, true);
 		double routeDistance = 0.0;
 		int x = originatingCityIndex;
-		int y = invalidCityIndex;
+		int y = invalidIndex;
 		S tmpCopy;
 
 		if (numbOfVisitedCities < numbOfCities)
 			y = getY(x, visitedCities);
-		while (y != invalidCityIndex) {
+		while (y != invalidIndex) {
 			numbOfVisitedCities++;
 			tmpCopy = (S) route.copy();
 			((BinarySolution) route).getVariableValue(0).set(x);
@@ -78,7 +78,7 @@ public class MOAntNRP<S extends Solution<?>> {
 			if (numbOfVisitedCities < numbOfCities)
 				y = getY(x, visitedCities);
 			else
-				y = invalidCityIndex;
+				y = invalidIndex;
 		}
 
 		routeDistance += getDistance(x, originatingCityIndex);
@@ -113,7 +113,7 @@ public class MOAntNRP<S extends Solution<?>> {
 	}
 
 	private int getY(int x, HashMap<Integer, Boolean> visitedCities) {
-		int returnY = invalidCityIndex;
+		int returnY = invalidIndex;
 		double random = JMetalRandom.getInstance().nextDouble();
 		ArrayList<Double> transitionProbabilities = getTransitionProbabilities(x, visitedCities);
 		for (int y = 0; y < numbOfCities; y++) {
@@ -138,7 +138,7 @@ public class MOAntNRP<S extends Solution<?>> {
 		return transitionProbabilities;
 	}
 
-	// Nenner
+	
 	private double getTPDenominator(ArrayList<Double> transitionProbabilities, int x,
 			HashMap<Integer, Boolean> visitedCities) {
 		double denominator = 0.0;

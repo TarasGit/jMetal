@@ -9,13 +9,11 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 public class MOAntColonyOptimizationNRP<S extends Solution<?>> {
 	
-	private S initialSolution;
 	private int size;
 	private Problem<S> problem;
 	
-	public MOAntColonyOptimizationNRP(Problem<S> problem, S initialSolution ) {
-		this.size = ((NRP)problem).getNumberOfBitInVariable(0); //;initialSolution.getNumberOfVariables();
-		this.initialSolution = initialSolution;
+	public MOAntColonyOptimizationNRP(Problem<S> problem) {
+		this.size = ((NRP)problem).getNumberOfBitInVariable(0);
 		this.problem = problem;
 		initializePheromonLevel();
 	}
@@ -23,7 +21,6 @@ public class MOAntColonyOptimizationNRP<S extends Solution<?>> {
 	private double[][] pheromonLevelMatrix = null;
 
 	public double[][] getPheramonLevelMatrix(){ 
-		//System.out.println("PheromonM: " + this.pheromonLevelMatrix[0][0]);
 		return pheromonLevelMatrix;
 	}
 	
@@ -32,11 +29,10 @@ public class MOAntColonyOptimizationNRP<S extends Solution<?>> {
 	}
 
 	private void initializePheromonLevel() {
-		pheromonLevelMatrix = new double[size][size];//rename size
+		pheromonLevelMatrix = new double[size][size];
 		IntStream.range(0,  size).forEach(x -> {
 			IntStream.range(0,  size).forEach(y -> pheromonLevelMatrix[x][y] = JMetalRandom.getInstance().nextDouble());
 		});
-		System.out.println("Initialized PM:"  + this.pheromonLevelMatrix[0][0]);
 	}
 	
 	public int getProblemSize() {

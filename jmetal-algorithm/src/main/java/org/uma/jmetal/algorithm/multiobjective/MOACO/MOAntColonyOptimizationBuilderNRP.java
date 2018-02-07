@@ -20,13 +20,14 @@ public class MOAntColonyOptimizationBuilderNRP<S extends Solution<?>> implements
   private double beta;
   private double rho;
   private double q;
+  
   /**
    * Builder constructor
    */
   public MOAntColonyOptimizationBuilderNRP(Problem<S> problem, int numberOfAnts, double alpha, double beta, double rho, double q) {
     this.problem = problem;
     this.numberOfAnts = numberOfAnts;
-    evaluator = new SequentialSolutionListEvaluator<Integer>();//TODO XXX remove it.
+    evaluator = new SequentialSolutionListEvaluator<Integer>();
     this.alpha = alpha;
     this.beta = beta;
     this.rho = rho;
