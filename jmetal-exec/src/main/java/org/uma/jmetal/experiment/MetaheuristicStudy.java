@@ -132,7 +132,7 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.9), 1000, 100,
-					new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
+					100, new MONotInTabuListSolutionFinder<>()).build();
 
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}

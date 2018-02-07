@@ -199,6 +199,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.8;
 		int tabuListSize = 200;
+		int numberOfNeighbors = 100;
 		int numbOfIterations = 500; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
 
 		double data1TS[] = null, data2TS[] = null;
@@ -213,7 +214,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
 
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
-				new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
+				numberOfNeighbors, new MONotInTabuListSolutionFinder<>()).build();
 		AlgorithmRunner algorithmRunnerTS = new AlgorithmRunner.Executor(algorithmTS).execute();
 
 		List<BinarySolution> populationTS = algorithmTS.getResult(); // TODO: set ACO, SA to this single

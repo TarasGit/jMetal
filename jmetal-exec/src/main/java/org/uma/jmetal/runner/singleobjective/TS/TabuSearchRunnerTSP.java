@@ -19,11 +19,16 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
  * Class to configure and run a Tabu Search algorithm. The target problem is
- * NRP.
+ * TSP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
 public class TabuSearchRunnerTSP {
+
+	private static final double MUTATION_PROBABILITY = 0.3;
+	private static final int TABU_LIST_SIZE = 100;
+	private static final int NUMBER_OF_ITERATIONS = 2000;
+	private static final int NUMBER_OF_NEIGHBORS = 100;
 
 	public static void main(String[] args) throws Exception {
 
@@ -31,23 +36,17 @@ public class TabuSearchRunnerTSP {
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
 		Algorithm<List<PermutationSolution<Integer>>> algorithm;
-		double mutationProbability = 0.3;
-		int tabuListSize = 100;
-		int numbOfIterations = 2000;
-
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);//probability for 0.
 		
-		System.out.println("Solving TSP");
 		problem = new TSP("/tspInstances/kroA100.tsp");
-		mutation = new PermutationSwapMutation<Integer>(mutationProbability);
+		mutation = new PermutationSwapMutation<Integer>(MUTATION_PROBABILITY);
 
-		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, tabuListSize,
-				numbOfIterations, new SimpleMinDoubleComparator(), new MinNeighborSolutionFinder<>()).build();
+		algorithm = new TabuSearchBuilder<PermutationSolution<Integer>>(problem, mutation, TABU_LIST_SIZE,
+				NUMBER_OF_ITERATIONS, new SimpleMinDoubleComparator(), new MinNeighborSolutionFinder<>(), NUMBER_OF_NEIGHBORS).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<PermutationSolution<Integer>> population = algorithm.getResult(); // TODO: set ACO, SA to this single result
-																		// instead of list.
+		List<PermutationSolution<Integer>> population = algorithm.getResult();
 
 		System.out.println("Solution:" + population.get(0));
 		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));
@@ -61,6 +60,5 @@ public class TabuSearchRunnerTSP {
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-
 	}
 }

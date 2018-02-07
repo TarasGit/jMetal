@@ -19,42 +19,37 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
 /**
  * Class to configure and run a Tabu Search algorithm. The target problem is
- * NRP/TSP.
+ * NRP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
 public class TabuSearchRunnerNRPRealisticBinarySolution {
 
+	private static final double MUTATION_PROBABILITY = 0.3;
+	private static final int TABU_LIST_SIZE = 50;
+	private static final int NUMBER_OF_ITERATIONS = 300;
+	private static final int NUMBER_OF_NEIGHBORS = 100;
+	private static final double COST_FACTOR = 0.5;
+	
 	public static void main(String[] args) throws Exception {
 
 		Problem<BinarySolution> problem;
 		MutationOperator<BinarySolution> mutation;
 
 		Algorithm<List<BinarySolution>> algorithm;
-		double mutationProbability = 0.3;
-		int tabuListSize = 50;
-		int numbOfIterations = 300;
-		double costFactor = 0.5;
-		
-		//Initial Solution  of Tabu Search must be zero.
+
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);//probability for 0.
 
 		System.out.println("Solving NRP");
-		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
-		
-		//problem = new NRPRealistic("/nrpRealisticInstances/my_nrp-e1_10.txt", costFactor);
-		
-		
-		mutation = new BitFlipOrExchangeMutation(mutationProbability);
+		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);		
+		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
-		algorithm = new TabuSearchBuilder<BinarySolution>(problem, mutation, tabuListSize, 
-				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();
+		algorithm = new TabuSearchBuilder<BinarySolution>(problem, mutation, TABU_LIST_SIZE, 
+				NUMBER_OF_ITERATIONS, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>(), NUMBER_OF_NEIGHBORS).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-		List<BinarySolution> population = algorithm.getResult(); // TODO: set ACO, SA to this single result
-																		// instead of list
-
+		List<BinarySolution> population = algorithm.getResult(); 
 
 		System.out.println("Solution:" + population.get(0).getVariableValueString(0));
 		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));

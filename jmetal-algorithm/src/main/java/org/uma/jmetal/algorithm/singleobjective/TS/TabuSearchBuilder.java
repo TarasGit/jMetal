@@ -13,7 +13,7 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 /**
  * Taras Iks.
  */
-public class TabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuilder<TabuSearchAlgorithm<S>> {//TODO: add Algorithm interface to all classes.
+public class TabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuilder<TabuSearchAlgorithm<S>> {
 
 	/**
 	 * Builder class
@@ -25,23 +25,22 @@ public class TabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuilde
 	private int numbOfIterations;
 	private Comparator<Double> comparator;
 	private BestNeighborSolutionFinder<S> locator;
-
+	private int numberOfNeighbors;
 	private S solution;
 
 	/**
 	 * Builder constructor
 	 */
 	public TabuSearchBuilder(Problem<S> problem, MutationOperator<S> mutationOperator, int listSize,
-			int numbOfIterations, Comparator<Double> comparator, BestNeighborSolutionFinder<S> locator) {
+			int numbOfIterations, Comparator<Double> comparator, BestNeighborSolutionFinder<S> locator, int numberOfNeighbors) {
 		this.problem = problem;
 		this.comparator = comparator;
 		this.mutationOperator = mutationOperator;
 		this.listSize = listSize;
 		this.numbOfIterations = numbOfIterations;
 		this.locator = locator;
-
-		evaluator = new SequentialSolutionListEvaluator<Integer>();// TODO XXX remove it.
-
+		this.numberOfNeighbors = numberOfNeighbors;
+		evaluator = new SequentialSolutionListEvaluator<Integer>();
 	}
 
 	public TabuSearchBuilder<S> setTabuListSize(int tabuListSize) {
@@ -82,11 +81,10 @@ public class TabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuilde
 		return evaluator;
 	}
 
-	// Min for TSP, Max for NRP.
 	public TabuSearchAlgorithm<S> setupTS(Integer tabuListSize, Integer iterations,
 			MutationOperator<S> mutationOperator, Comparator<Double> comparator) {
 		return new TabuSearchAlgorithm<S>(new StaticTabuList<S>(tabuListSize), new IterationsStopCondition(iterations),
-				locator, mutationOperator, solution, comparator, problem);
+				locator, mutationOperator, solution, comparator, numberOfNeighbors, problem);
 
 	}
 
