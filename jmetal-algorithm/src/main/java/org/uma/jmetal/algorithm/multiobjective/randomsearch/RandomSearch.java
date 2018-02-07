@@ -39,8 +39,6 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
       if(newSolution.getObjective(0) == -1)
     	  continue;
       nonDominatedArchive.add(newSolution);
-      
-      
     }
   }
 
