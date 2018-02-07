@@ -10,7 +10,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
@@ -59,7 +59,7 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 	    //selection = new BinaryTournamentSelection<BinarySolution>(new RankingAndCrowdingDistanceComparator<BinarySolution>());
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);// 500(Min costs)//new
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutation = new MyBitFlipMutation(mutationProbability);
+		mutation = new BitFlipOrExchangeMutation(mutationProbability);
 
 		algorithm = new MOTabuSearchBuilder<BinarySolution>(problem, mutation, tabuListSize,
 				numbOfIterations, new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();

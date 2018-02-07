@@ -9,7 +9,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 
 public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<List<S>> {
@@ -28,7 +28,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	private S initialSolution;
 	private Comparator<Double> comparator;
 	Problem<S> problem;
-	MyNonDominatedSolutionListArchive<S> nonDominatedArchive;
+	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
 	
 
@@ -42,7 +42,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 		this.initialSolution = initialSolution;
 		this.comparator = comparator;
 		this.problem = problem;
-		this.nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+		this.nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
 
 	}
 

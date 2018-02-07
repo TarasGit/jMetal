@@ -13,7 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.uma.jmetal.problem.BudgetProblem;
-import org.uma.jmetal.problem.impl.MyAbstractBinaryProblem;
+import org.uma.jmetal.problem.impl.AbstractBinaryProblemWithConfiguration;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.JMetalException;
 
@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
  * Class representing a single-objective NRP problem.
  */
 @SuppressWarnings("serial")
-public class NRPRealisticBinarySolution extends MyAbstractBinaryProblem implements BudgetProblem, NRP {//TODO: Change name of My*
+public class NRPRealisticBinarySolution extends AbstractBinaryProblemWithConfiguration implements BudgetProblem, NRP {//TODO: Change name of My*
 
 	private int levelOfRequirements = 0;
 	private int numberOfRequirementsInLevel[] = null;

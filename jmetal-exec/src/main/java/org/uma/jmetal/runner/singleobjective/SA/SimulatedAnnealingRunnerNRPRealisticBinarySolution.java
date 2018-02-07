@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.SA.SimulatedAnnealingBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
@@ -52,7 +52,7 @@ public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 		
-		mutation = new MyBitFlipMutation(MUTATION_PROBABILITY);
+		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new SimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)

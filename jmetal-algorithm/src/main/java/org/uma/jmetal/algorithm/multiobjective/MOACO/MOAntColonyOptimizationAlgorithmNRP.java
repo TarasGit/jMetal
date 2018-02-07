@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 
 /**
  * @author Taras Iks <ikstaras@gmail.com>
@@ -24,7 +24,7 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 	private double rho;
 	private double q;
 
-	MyNonDominatedSolutionListArchive<S> nonDominatedArchive;
+	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
 	/**
 	 * Constructor
@@ -38,7 +38,7 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 		this.beta = beta;
 		this.rho = rho;
 		this.q = q;
-		nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
 
 	}
 

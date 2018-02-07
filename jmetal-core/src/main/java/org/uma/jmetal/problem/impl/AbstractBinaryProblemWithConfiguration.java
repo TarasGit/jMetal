@@ -2,10 +2,10 @@ package org.uma.jmetal.problem.impl;
 
 import org.uma.jmetal.problem.BinaryProblem;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.impl.MyDefaultBinarySolution;
+import org.uma.jmetal.solution.impl.DefaultBinarySolutionWithConfiguration;
 
 @SuppressWarnings("serial")
-public abstract class MyAbstractBinaryProblem extends AbstractGenericProblem<BinarySolution>
+public abstract class AbstractBinaryProblemWithConfiguration extends AbstractGenericProblem<BinarySolution>
   implements BinaryProblem {
 
   protected abstract int getBitsPerVariable(int index) ;
@@ -27,6 +27,6 @@ public abstract class MyAbstractBinaryProblem extends AbstractGenericProblem<Bin
 
   @Override
   public BinarySolution createSolution() {
-    return new MyDefaultBinarySolution(this)  ;
+    return new DefaultBinarySolutionWithConfiguration(this)  ;
   }
 }

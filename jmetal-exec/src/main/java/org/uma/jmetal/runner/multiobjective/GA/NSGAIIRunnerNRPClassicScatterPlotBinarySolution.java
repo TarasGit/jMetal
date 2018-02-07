@@ -13,7 +13,7 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
@@ -93,7 +93,7 @@ public class NSGAIIRunnerNRPClassicScatterPlotBinarySolution extends AbstractAlg
 				crossover = new SinglePointCrossover(0.9);// new PMXCrossover(0.9);
 			}
 
-			mutation = new MyBitFlipMutation(mutationProbability);
+			mutation = new BitFlipOrExchangeMutation(mutationProbability);
 
 			algorithm = new NSGAIIBuilder<BinarySolution>(problem, crossover, mutation).setSelectionOperator(selection)
 					.setMaxEvaluations(50000).setPopulationSize(500).build();

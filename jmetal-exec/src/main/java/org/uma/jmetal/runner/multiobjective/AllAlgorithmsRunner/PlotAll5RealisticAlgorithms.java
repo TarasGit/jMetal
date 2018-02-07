@@ -17,7 +17,7 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
@@ -35,7 +35,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class for configuring and running the NSGA-II algorithm to solve the
- * bi-objective TSP
+ * bi-objective NRP.
  *
  * @author Taras Iks
  */
@@ -89,10 +89,13 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		double data1NSGA[] = null, data2NSGA[] = null;
 		double mutationProbabilityNSGA = 0.5;
 
-		mutationNSGA = new MyBitFlipMutation(mutationProbabilityNSGA);
+		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 
+		/*
+		 * // nrp-e1 -  300.000  |  nrp-e2 - 200.000  | 
+		 */
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();//nrp-e1 - 300.000 | nrp-e2 - 200.000 |
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
 
 		System.out.println("start");
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
@@ -132,11 +135,11 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro bability = 1 for 0
 																								// -> zero initial
 																								// solution.
-																			// costs)//new
+		// costs)//new
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
 
-		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
-				RHO, Q).build();
+		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO,
+				Q).build();
 
 		AlgorithmRunner algorithmRunnerACO = new AlgorithmRunner.Executor(algorithmACO).execute();
 
@@ -155,8 +158,8 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * -------------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.01;//0.001 - nrp-e1  | 0.01 - rnp-e2 |
-		int INITIAL_TEMPERATURE = 8000;//8000 - erp-e1  | 8000 - nrp-e2 |
+		double RATE_OF_COOLING = 0.01;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
+		int INITIAL_TEMPERATURE = 8000;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
@@ -174,9 +177,9 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 
 		selectionSA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-																								// costs)//new
+		// costs)//new
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutationSA = new MyBitFlipMutation(mutationProbabilitySA);
+		mutationSA = new BitFlipOrExchangeMutation(mutationProbabilitySA);
 
 		algorithmSA = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutationSA,
 				new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
@@ -205,7 +208,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.7;
 		int tabuListSize = 1000;
-		int numbOfIterations = 1000; //1000 - nrp-e1  |
+		int numbOfIterations = 1000; // 1000 - nrp-e1 |
 
 		double data1TS[] = null, data2TS[] = null;
 
@@ -214,9 +217,9 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 
 		System.out.println("Solving NRP");
 
-																										// costs)//new
+		// costs)//new
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutationTS = new MyBitFlipMutation(mutationProbabilityTS);
+		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
 
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
 				new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
@@ -241,11 +244,8 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 
 		// Initial Solution of Tabu Search must be zero.
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
-														
-		
 
 		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(50000).build();
-
 
 		AlgorithmRunner algorithmRunnerRandom = new AlgorithmRunner.Executor(algorithmRandom).execute();
 
@@ -266,7 +266,6 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 			data2Random[i] = populationRandom.get(i).getObjective(1) * -1;
 		}
 
-
 		/*----------------------------------------------------
 		 * Create Scatter Plot for all Algorithms.
 		 * ---------------------------------------------------
@@ -285,13 +284,13 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 
 		doubleArrayList.add(data1TS);// magenta
 		doubleArrayList.add(data2TS);
-		
-		doubleArrayList.add(data1Random);//yellow
+
+		doubleArrayList.add(data1Random);// yellow
 		doubleArrayList.add(data2Random);
 
 		/* Create Chart */
-	    List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
-	    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
+		List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
+		GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		example.setSize(1200, 800);
 		example.setLocationRelativeTo(null);
 		example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

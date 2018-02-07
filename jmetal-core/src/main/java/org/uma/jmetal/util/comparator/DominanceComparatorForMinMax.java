@@ -13,26 +13,26 @@ import java.util.Comparator;
  * @author changed for Max(Profit)/Min(Costs) Problem by Taras Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
-public class MyDominanceComparator<S extends Solution<?>> implements Comparator<S>, Serializable {
+public class DominanceComparatorForMinMax<S extends Solution<?>> implements Comparator<S>, Serializable {
   private ConstraintViolationComparator<S> constraintViolationComparator;
 
   /** Constructor */
-  public MyDominanceComparator() {
+  public DominanceComparatorForMinMax() {
     this(new OverallConstraintViolationComparator<S>(), 0.0) ;
   }
 
   /** Constructor */
-  public MyDominanceComparator(double epsilon) {
+  public DominanceComparatorForMinMax(double epsilon) {
     this(new OverallConstraintViolationComparator<S>(), epsilon) ;
   }
 
   /** Constructor */
-  public MyDominanceComparator(ConstraintViolationComparator<S> constraintComparator) {
+  public DominanceComparatorForMinMax(ConstraintViolationComparator<S> constraintComparator) {
     this(constraintComparator, 0.0) ;
   }
 
   /** Constructor */
-  public MyDominanceComparator(ConstraintViolationComparator<S> constraintComparator, double epsilon) {
+  public DominanceComparatorForMinMax(ConstraintViolationComparator<S> constraintComparator, double epsilon) {
     constraintViolationComparator = constraintComparator ;
   }
 
@@ -81,9 +81,9 @@ public class MyDominanceComparator<S extends Solution<?>> implements Comparator<
       }
     }
     if (bestIsOne > bestIsTwo) {
-      result = 1;//-1
+      result = 1;
     } else if (bestIsTwo > bestIsOne) {
-      result = -1;//1
+      result = -1;
     } else {
       result = 0;
     }

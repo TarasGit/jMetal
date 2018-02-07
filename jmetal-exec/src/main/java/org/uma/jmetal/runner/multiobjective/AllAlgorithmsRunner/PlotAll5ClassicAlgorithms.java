@@ -17,7 +17,7 @@ import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
@@ -35,7 +35,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class for configuring and running the NSGA-II algorithm to solve the
- * bi-objective TSP
+ * bi-objective NRP.
  *
  * @author Taras Iks
  */
@@ -68,7 +68,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		double costFactor = 0.5;
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp5.txt", costFactor);
 		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
 
 		AlgorithmRunner algorithmRunner = null;
@@ -89,7 +89,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		double data1NSGA[] = null, data2NSGA[] = null;
 		double mutationProbabilityNSGA = 0.5;
 
-		mutationNSGA = new MyBitFlipMutation(mutationProbabilityNSGA);
+		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
 				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();//nrp1 - 300.000 | nrp2 -200.000 | nrp4 - 300.000 | nrp5 - 400.000 |
@@ -116,7 +116,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 4000;//nrp1 - 4000 | nrp2 - 2000  | nrp4 - 250 |
+		int NUMBER_OF_ANTS = 20;//nrp1 - 4000 | nrp2 - 2000  | nrp4 - 250 | nrp5 - 20.
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
 		double BETA = 1;// importance between source and destination, x >= 1
 
@@ -153,7 +153,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * ----------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.0001;//nrp1 - 0.00001, 10.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
+		double RATE_OF_COOLING = 0.01;//nrp1 - 0.00001, 10.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
 		int INITIAL_TEMPERATURE = 10000;
 		int MINIMAL_TEMPERATURE = 1;
 
@@ -169,7 +169,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		System.out.println("Solving NRP");
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutationSA = new MyBitFlipMutation(mutationProbabilitySA);
+		mutationSA = new BitFlipOrExchangeMutation(mutationProbabilitySA);
 
 		algorithmSA = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutationSA,
 				new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
@@ -199,7 +199,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.8;
 		int tabuListSize = 200;
-		int numbOfIterations = 2500; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
+		int numbOfIterations = 500; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
 
 		double data1TS[] = null, data2TS[] = null;
 
@@ -210,7 +210,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 																										// costs)//new
 		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
-		mutationTS = new MyBitFlipMutation(mutationProbabilityTS);
+		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
 
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
 				new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
@@ -237,12 +237,12 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 														
 		
 
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(150000).build();
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(15000).build();
 
 
 		AlgorithmRunner algorithmRunnerRandom = new AlgorithmRunner.Executor(algorithmRandom).execute();
 
-		List<BinarySolution> populationRandom = algorithmRandom.getResult(); // TODO: set ACO, SA to this single result
+		List<BinarySolution> populationRandom = algorithmRandom.getResult(); 
 		// instead of list.
 
 		long computingTimeRandom = algorithmRunnerRandom.getComputingTime();
@@ -291,12 +291,6 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		example.setVisible(true);
 
 		long computingTime = algorithmRunner.getComputingTime();
-
-		// new SolutionListOutput(population)
-		// .setSeparator("\t")
-		// .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-		// .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-		// .print();
 
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());

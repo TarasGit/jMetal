@@ -7,23 +7,23 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.RandomGenerator;
 
 /**
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author Taras Iks <ikstaras@gmail.com>
  * @version 1.0
  *
  *          This class implements a bit flip mutation operator.
  */
 @SuppressWarnings("serial")
-public class MyBitFlipMutation implements MutationOperator<BinarySolution> {
+public class BitFlipOrExchangeMutation implements MutationOperator<BinarySolution> {
 	private double mutationProbability;
 	private RandomGenerator<Double> randomGenerator;
 
 	/** Constructor */
-	public MyBitFlipMutation(double mutationProbability) {
+	public BitFlipOrExchangeMutation(double mutationProbability) {
 		this(mutationProbability, () -> JMetalRandom.getInstance().nextDouble());
 	}
 
 	/** Constructor */
-	public MyBitFlipMutation(double mutationProbability, RandomGenerator<Double> randomGenerator) {
+	public BitFlipOrExchangeMutation(double mutationProbability, RandomGenerator<Double> randomGenerator) {
 		if (mutationProbability < 0) {
 			throw new JMetalException("Mutation probability is negative: " + mutationProbability);
 		}
@@ -60,16 +60,6 @@ public class MyBitFlipMutation implements MutationOperator<BinarySolution> {
 	 * @param solution
 	 *            The solution to mutate
 	 */
-	// public void doMutation(double probability, BinarySolution solution) {
-	// for (int i = 0; i < solution.getNumberOfVariables(); i++) {
-	// for (int j = 0; j < solution.getVariableValue(i).getBinarySetLength(); j++) {
-	// if (randomGenerator.getRandomValue() <= probability) {
-	// solution.getVariableValue(i).flip(j);
-	// }
-	// }
-	// }
-	// }
-
 	public void doMutation(double probability, BinarySolution solution) {
 		double rand = randomGenerator.getRandomValue();
 
@@ -82,10 +72,8 @@ public class MyBitFlipMutation implements MutationOperator<BinarySolution> {
 			int permutationLength;
 			permutationLength = solution.getNumberOfBits(0);
 			if ((permutationLength != 0) && (permutationLength != 1)) {
-				// if (randomGenerator.getRandomValue() < mutationProbability) {
 				pos1 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
 				pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 1));
-				//System.out.println("pos1/pos2: " + pos1 + "/" + pos2 );
 				while (pos1 == pos2) {
 					if (pos1 == (permutationLength - 1))
 						pos2 = (int) (randomGenerator.getRandomValue() * (permutationLength - 2));
@@ -105,7 +93,7 @@ public class MyBitFlipMutation implements MutationOperator<BinarySolution> {
 					solution.getVariableValue(0).clear(pos2);
 				}
 			}
-			// }
+
 		}
 	}
 }

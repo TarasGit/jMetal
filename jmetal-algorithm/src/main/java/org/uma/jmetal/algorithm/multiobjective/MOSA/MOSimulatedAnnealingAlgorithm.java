@@ -8,7 +8,7 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 
 /**
  * @author Taras Iks <ikstaras@gmail.com>
@@ -30,7 +30,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	private S tmpSolution;
 	private S shortestSolution;
 
-	MyNonDominatedSolutionListArchive<S> nonDominatedArchive;
+	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
 	/**
 	 * Constructor
@@ -45,7 +45,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		this.minimalTemperature = minimalTemperature;
 		this.comparator = comparator;
 
-		nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
 
 	}
 

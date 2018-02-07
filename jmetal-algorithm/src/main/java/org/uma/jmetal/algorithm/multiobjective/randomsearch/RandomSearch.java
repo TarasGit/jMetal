@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 
 /**
  * This class implements a simple random search algorithm.
@@ -16,13 +16,13 @@ import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
 public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   private Problem<S> problem ;
   private int maxEvaluations ;
-  MyNonDominatedSolutionListArchive<S> nonDominatedArchive ;
+  NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive ;
 
   /** Constructor */
   public RandomSearch(Problem<S> problem, int maxEvaluations) {
     this.problem = problem ;
     this.maxEvaluations = maxEvaluations ;
-    nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
+    nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
   }
 
   /* Getter */

@@ -5,7 +5,7 @@ import java.util.List;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.singleobjective.TS.TabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
@@ -45,7 +45,7 @@ public class TabuSearchRunnerNRPRealisticBinarySolution {
 		//problem = new NRPRealistic("/nrpRealisticInstances/my_nrp-e1_10.txt", costFactor);
 		
 		
-		mutation = new MyBitFlipMutation(mutationProbability);
+		mutation = new BitFlipOrExchangeMutation(mutationProbability);
 
 		algorithm = new TabuSearchBuilder<BinarySolution>(problem, mutation, tabuListSize, 
 				numbOfIterations, new SimpleMaxDoubleComparator(), new MaxNeighborSolutionFinder<>()).build();

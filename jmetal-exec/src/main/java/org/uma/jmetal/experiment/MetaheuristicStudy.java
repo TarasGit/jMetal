@@ -17,7 +17,7 @@ import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
 import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
-import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
@@ -120,7 +120,7 @@ public class MetaheuristicStudy {
 
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new MyBitFlipMutation(0.5))
+					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new BitFlipOrExchangeMutation(0.5))
 							.setSelectionOperator(new BinaryTournamentSelection<BinarySolution>(
 									new RankingAndCrowdingDistanceComparator<BinarySolution>()))
 							.setMaxEvaluations(100000).setPopulationSize(1000).build();
@@ -131,7 +131,7 @@ public class MetaheuristicStudy {
 
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new MyBitFlipMutation(0.9), 1000, 100,
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.9), 1000, 100,
 					new SimpleMaxDoubleComparator(), new MONotInTabuListSolutionFinder<>()).build();
 
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
@@ -147,7 +147,7 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new MyBitFlipMutation(0.5), new SimpleMaxDoubleComparator())
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5), new SimpleMaxDoubleComparator())
 							.setMinimalTemperature(1).setInitialTemperature(1000).setRateOfCooling(0.1).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
