@@ -27,57 +27,42 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  * @author Taras Iks <ikstaras@gmail.com>
  */
 public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
-	/**
-	 * Usage: java
-	 * org.uma.jmetal.runner.singleobjective.BinaryGenerationalGeneticAlgorithmRunner
-	 */
 
-	/*
-	 * TODO: - generation of initial Solution changed! - comparator changed -> add
-	 * an configuration for NRP/TSP.
-	 * 
-	 */
+	public static final double COST_FACTOR = 0.5;
+	public static final double CROSSOVER_PROBABILITY = 0.5;
+	public static final double MUTATION_PROBABILITY = 0.3;
+	public static final int POPULATION_SIZE = 100;
+	public static final int MAX_EVALUATIONS = 40000;
+
 	public static void main(String[] args) throws Exception {
 		Problem<BinarySolution> problem;
 		Algorithm<BinarySolution> algorithm;
 		CrossoverOperator<BinarySolution> crossover;
 		MutationOperator<BinarySolution> mutation;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selection;
-		Ordering ordering = Ordering.DESCENDING;// TODO: add description.
+		Ordering ordering = Ordering.DESCENDING;
 
-		double costFactor = 0.5;
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// 1 for zero solution
 
-		/*
-		 * The initial solution for GA should not be 0 but also smaller than factor *
-		 * costs, otherwise unvalid solutions -> 0.9 for zero ist ok.
-		 */
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
+		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
 
-		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);// 500(Min costs)//new
+		crossover = new SinglePointCrossover(CROSSOVER_PROBABILITY);
 
-		crossover = new SinglePointCrossover(0.5);//new BinarySinglePointCrossover(0.9);// new PMXCrossover(0.9);
-
-		double mutationProbability = 0.3;
-		// double mutationProbability = 1.0 / problem.getNumberOfVariables();
-		// mutation = new
-		// BinaryFlipMutation<PermutationSolution<Integer>>(mutationProbability);
-		mutation = new BitFlipOrExchangeMutation(mutationProbability);
-		// mutation = new PermutationSwapMutation<Integer>(mutationProbability);
-
+		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 		selection = new BinaryTournamentSelection<BinarySolution>(new SimpleMaxSolutionComparator<BinarySolution>());
-		// new RankingAndCrowdingDistanceComparator<PermutationSolution<Integer>>());
-
-		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering).setPopulationSize(100)
-				.setMaxEvaluations(40000).setSelectionOperator(selection).build();
+		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering)
+				.setPopulationSize(POPULATION_SIZE).setMaxEvaluations(MAX_EVALUATIONS).setSelectionOperator(selection)
+				.build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		BinarySolution solution = algorithm.getResult();
+		long computingTime = algorithmRunner.getComputingTime();
+
 		List<BinarySolution> population = new ArrayList<>(1);
 		population.add(solution);
 
-		System.out.println("End Result: " + solution);
-		long computingTime = algorithmRunner.getComputingTime();
+		System.out.println("End Result: " + solution.getObjective(0));
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

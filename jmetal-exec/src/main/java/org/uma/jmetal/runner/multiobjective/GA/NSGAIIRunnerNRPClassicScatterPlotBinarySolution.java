@@ -24,119 +24,71 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
+import org.uma.jmetal.util.fileoutput.SolutionListOutput;
+import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class for configuring and running the NSGA-II algorithm to solve the
- * bi-objective TSP
+ * bi-objective NRP.
  *
  * @author Taras Iks
  */
 
 public class NSGAIIRunnerNRPClassicScatterPlotBinarySolution extends AbstractAlgorithmRunner {
-	/**
-	 * @param args
-	 *            Command line arguments.
-	 * @throws java.io.IOException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 *             Invoking command: java
-	 *             org.uma.jmetal.runner.multiobjective.NSGAIITSPRunner problemName
-	 *             [referenceFront]
-	 */
+
+	private static final double COST_FACTOR = 0.5;
+	private static final double CROSSOVER_PROBABILITY = 0.5;
+	private static final double MUTATION_PROBABILITY = 0.5;
+	private static final int POPULATION_SIZE = 500;
+	private static final int MAX_EVALUATIONS = 250000;
+	
 	public static void main(String[] args) throws JMetalException, IOException {
-		JMetalRandom.getInstance().setSeed(100L);
+		//JMetalRandom.getInstance().setSeed(100L);
 
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		CrossoverOperator<BinarySolution> crossover;
 		MutationOperator<BinarySolution> mutation;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selection;
+		AlgorithmRunner algorithmRunner;
+		double data2[] = null, data1[] = null;
 
-		double costFactor = 0.5;
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// probability for Zero.
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp2.txt", costFactor);// 500(Min
-																											// costs)//new
-		// problem = new
-		// MultiobjectiveNRPClassic("/nrpClassicInstances/myNRP10Customers.txt",
-		// costFactor);// 500(Min costs)//new
-
-		// crossover = new PMXCrossover(0.9) ;
-		crossover = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
-
-		AlgorithmRunner algorithmRunner = null;
-
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
-
-		// mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
 
 		selection = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-		/**
-		 * List<Double> inters = new ArrayList<>(); inters.add(0.0); inters.add(0.0);
-		 * double epsilon =0.0001; algorithm = new RNSGAIIBuilder<>(problem, crossover,
-		 * mutation,inters,epsilon)
-		 * 
-		 */
 
-		double data2[] = null, data1[] = null, data3[] = null, data4[] = null;
-		double mutationProbability = 0.1;
+		crossover = new SinglePointCrossover(CROSSOVER_PROBABILITY);
+		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
-		for (int ii = 0; ii < 2; ii++) {
-			if (ii == 0) {
-				mutationProbability = 0.1;
-				crossover = new SinglePointCrossover(0.1);// new PMXCrossover(0.9);
+		algorithm = new NSGAIIBuilder<BinarySolution>(problem, crossover, mutation).setSelectionOperator(selection)
+				.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE).build();
 
-			} else {
-				mutationProbability = 0.9;
-				crossover = new SinglePointCrossover(0.9);// new PMXCrossover(0.9);
-			}
+		algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
-			mutation = new BitFlipOrExchangeMutation(mutationProbability);
+		List<BinarySolution> population = algorithm.getResult();
 
-			algorithm = new NSGAIIBuilder<BinarySolution>(problem, crossover, mutation).setSelectionOperator(selection)
-					.setMaxEvaluations(50000).setPopulationSize(500).build();
+		int size = population.size();
 
-			System.out.println("start");
-			algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
-			List<BinarySolution> population = algorithm.getResult();
-
-			System.out.println("end: " + population);
-
-			System.out.println(population);
-
-			int size = population.size();
-			if (ii == 0) {
-				data1 = new double[size];
-				data2 = new double[size];
-				for (int i = 0; i < size; i++) {
-					data1[i] = population.get(i).getObjective(0);
-					data2[i] = population.get(i).getObjective(1) * -1;
-				}
-			} else {
-				data3 = new double[size];
-				data4 = new double[size];
-				for (int i = 0; i < size; i++) {
-					data3[i] = population.get(i).getObjective(0);
-					data4[i] = population.get(i).getObjective(1) * -1;
-				}
-			}
-
+		data1 = new double[size];
+		data2 = new double[size];
+		for (int i = 0; i < size; i++) {
+			data1[i] = population.get(i).getObjective(0);
+			data2[i] = population.get(i).getObjective(1) * -1;
 		}
-		
-		/* Create List of Arrays with data*/
-	    List<double[]> doubleArrayList = new ArrayList<>();
-	    doubleArrayList.add(data1);
-	    doubleArrayList.add(data2);
-	    doubleArrayList.add(data3);
-	    doubleArrayList.add(data4);
-	    
-		
-	    /*Create Chart*/
-	    List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
-	    GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
+
+		/* Create List of Arrays with data */
+		List<double[]> doubleArrayList = new ArrayList<>();
+		doubleArrayList.add(data1);
+		doubleArrayList.add(data2);
+
+		/* Create Chart */
+		List<String> nameList = Arrays.asList("NSGA-II");
+		GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		example.setSize(1200, 800);
 		example.setLocationRelativeTo(null);
 		example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -144,11 +96,9 @@ public class NSGAIIRunnerNRPClassicScatterPlotBinarySolution extends AbstractAlg
 
 		long computingTime = algorithmRunner.getComputingTime();
 
-		// new SolutionListOutput(population)
-		// .setSeparator("\t")
-		// .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-		// .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-		// .print();
+		new SolutionListOutput(population).setSeparator("\t")
+				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
+				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
 
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());

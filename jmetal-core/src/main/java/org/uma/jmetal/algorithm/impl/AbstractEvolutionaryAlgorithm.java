@@ -19,6 +19,7 @@ import org.uma.jmetal.solution.PermutationSolution;
  *            Result
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * changed by Taras Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R> {
@@ -71,22 +72,21 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
 		while (!isStoppingConditionReached()) {
 
-			// System.out.println(population);
-			// System.out.println("##############################################################################################");
 			matingPopulation = selection(population);
 			offspringPopulation = reproduction(matingPopulation);
 			offspringPopulation = evaluatePopulation(offspringPopulation);
 
-			population = repairPopulation(population);//TODO: added, but it should not apply for all algorithms.
-			offspringPopulation = repairPopulation(offspringPopulation);
+			if (objectives == 2) {
+				population = repairPopulation(population);// TODO: added, but it should not apply for all algorithms.
+				offspringPopulation = repairPopulation(offspringPopulation);
+			}
 
 			population = replacement(population, offspringPopulation);
 			updateProgress();
 		}
-		System.out.println("End");
 	}
 
-	public List<S> repairPopulation(List<S> population) {// TODO: move to own class!
+	public List<S> repairPopulation(List<S> population) {// TODO: move to own class
 		Object o = population.get(0);
 		for (int i = 0; i < population.size(); i++) {
 
@@ -96,7 +96,6 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 						|| solution.getObjective(1) == 0) {
 					population.remove(i);
 				}
-
 			} else {
 				PermutationSolution<Integer> solution = (PermutationSolution<Integer>) population.get(i);
 				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
