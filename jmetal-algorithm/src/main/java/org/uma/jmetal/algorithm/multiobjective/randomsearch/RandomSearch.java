@@ -1,13 +1,11 @@
 package org.uma.jmetal.algorithm.multiobjective.randomsearch;
 
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
-import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-
-import java.util.List;
+import org.uma.jmetal.util.archive.impl.MyNonDominatedSolutionListArchive;
 
 /**
  * This class implements a simple random search algorithm.
@@ -18,13 +16,13 @@ import java.util.List;
 public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
   private Problem<S> problem ;
   private int maxEvaluations ;
-  NonDominatedSolutionListArchive<S> nonDominatedArchive ;
+  MyNonDominatedSolutionListArchive<S> nonDominatedArchive ;
 
   /** Constructor */
   public RandomSearch(Problem<S> problem, int maxEvaluations) {
     this.problem = problem ;
     this.maxEvaluations = maxEvaluations ;
-    nonDominatedArchive = new NonDominatedSolutionListArchive<S>();
+    nonDominatedArchive = new MyNonDominatedSolutionListArchive<S>();
   }
 
   /* Getter */

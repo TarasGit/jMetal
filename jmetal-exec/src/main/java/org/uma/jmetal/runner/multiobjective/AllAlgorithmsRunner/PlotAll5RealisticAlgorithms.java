@@ -1,4 +1,4 @@
-package org.uma.jmetal.runner.multiobjective.GA;
+package org.uma.jmetal.runner.multiobjective.AllAlgorithmsRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		mutationNSGA = new MyBitFlipMutation(mutationProbabilityNSGA);
 
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();//nrp-e1 - 300.000 | nrp-e2 - 200.000 |
 
 		System.out.println("start");
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
@@ -155,8 +155,8 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * -------------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.001;
-		int INITIAL_TEMPERATURE = 8000;
+		double RATE_OF_COOLING = 0.01;//0.001 - nrp-e1  | 0.01 - rnp-e2 |
+		int INITIAL_TEMPERATURE = 8000;//8000 - erp-e1  | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
@@ -205,7 +205,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.7;
 		int tabuListSize = 1000;
-		int numbOfIterations = 1000;
+		int numbOfIterations = 1000; //1000 - nrp-e1  |
 
 		double data1TS[] = null, data2TS[] = null;
 

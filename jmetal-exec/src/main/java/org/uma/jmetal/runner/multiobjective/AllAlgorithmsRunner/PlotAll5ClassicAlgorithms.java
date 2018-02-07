@@ -1,4 +1,4 @@
-package org.uma.jmetal.runner.multiobjective.GA;
+package org.uma.jmetal.runner.multiobjective.AllAlgorithmsRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuil
 import org.uma.jmetal.algorithm.multiobjective.MOSA.MOSimulatedAnnealingBuilder;
 import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
-import org.uma.jmetal.algorithm.singleobjective.Random.NRPRandomSearchBuilder;
+import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
@@ -68,12 +68,12 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		double costFactor = 0.5;
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp2.txt", costFactor);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);
 		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
 
 		AlgorithmRunner algorithmRunner = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// 0.9 for Zero.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// 0.9 for Zero.
 
 		// mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
 
@@ -92,7 +92,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		mutationNSGA = new MyBitFlipMutation(mutationProbabilityNSGA);
 
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();//nrp1 - 300.000 | nrp2 -200.000 | nrp4 - 300.000 | nrp5 - 400.000 |
 
 		System.out.println("start");
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
@@ -116,7 +116,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 4000;
+		int NUMBER_OF_ANTS = 4000;//nrp1 - 4000 | nrp2 - 2000  | nrp4 - 250 |
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
 		double BETA = 1;// importance between source and destination, x >= 1
 
@@ -153,7 +153,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * ----------------------------------
 		 */
 
-		double RATE_OF_COOLING = 0.00001;
+		double RATE_OF_COOLING = 0.0001;//nrp1 - 0.00001, 10.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
 		int INITIAL_TEMPERATURE = 10000;
 		int MINIMAL_TEMPERATURE = 1;
 
@@ -199,7 +199,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.8;
 		int tabuListSize = 200;
-		int numbOfIterations = 2000;
+		int numbOfIterations = 2500; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
 
 		double data1TS[] = null, data2TS[] = null;
 
@@ -237,7 +237,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 														
 		
 
-		algorithmRandom = new NRPRandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(100000).build();
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(150000).build();
 
 
 		AlgorithmRunner algorithmRunnerRandom = new AlgorithmRunner.Executor(algorithmRandom).execute();

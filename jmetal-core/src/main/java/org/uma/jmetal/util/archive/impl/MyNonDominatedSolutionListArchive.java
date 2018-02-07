@@ -19,8 +19,7 @@ import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 /**
  * This class implements an archive containing non-dominated solutions
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- * @author Juan J. Durillo
+ * @author changed for Max(Profit)/Min(Costs) Problem by Taras Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public class MyNonDominatedSolutionListArchive<S extends Solution<?>> implements Archive<S> {

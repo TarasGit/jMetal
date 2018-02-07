@@ -11,7 +11,7 @@ import java.util.Comparator;
  * equal or not. A dominance test is applied to decide about what solution
  * is the best.
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author changed for Max(Profit)/Min(Costs) Problem by Taras Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public class MyEqualSolutionsComparator<S extends Solution<?>> implements Comparator<S>, Serializable {

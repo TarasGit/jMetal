@@ -10,7 +10,7 @@ import java.util.Comparator;
 /**
  * This class implements a solution comparator taking into account the violation constraints
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * @author changed for Max(Profit)/Min(Costs) Problem by Taras Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public class MyDominanceComparator<S extends Solution<?>> implements Comparator<S>, Serializable {

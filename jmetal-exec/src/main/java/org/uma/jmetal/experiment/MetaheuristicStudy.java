@@ -14,8 +14,11 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuilderNRP;
 import org.uma.jmetal.algorithm.multiobjective.MOSA.MOSimulatedAnnealingBuilder;
 import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
+import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
+import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
 import org.uma.jmetal.operator.impl.mutation.MyBitFlipMutation;
+import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -28,6 +31,7 @@ import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
+import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentBuilder;
@@ -60,8 +64,8 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class TabuSearchStudy {
-	private static final int INDEPENDENT_RUNS = 3;
+public class MetaheuristicStudy {
+	private static final int INDEPENDENT_RUNS = 1;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -110,6 +114,20 @@ public class TabuSearchStudy {
 	static List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> configureAlgorithmList(
 			List<ExperimentProblem<BinarySolution>> problemList) {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
+		
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// 0.9 for Zero.
+
+
+		for (int i = 0; i < problemList.size(); i++) {
+			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
+					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new MyBitFlipMutation(0.5))
+							.setSelectionOperator(new BinaryTournamentSelection<BinarySolution>(
+									new RankingAndCrowdingDistanceComparator<BinarySolution>()))
+							.setMaxEvaluations(100000).setPopulationSize(1000).build();
+			
+			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
+
+		}
 
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
@@ -139,8 +157,6 @@ public class TabuSearchStudy {
 					problemList.get(i).getProblem()).setMaxEvaluations(40000).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-		
-		
 
 		// for (int i = 0; i < problemList.size(); i++) {
 		// Algorithm<List<BinarySolution>> algorithm = new SPEA2Builder<BinarySolution>(
