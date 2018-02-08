@@ -63,9 +63,10 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  * test 8. Generate R scripts to obtain boxplots
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * changed by Taras Iks<ikstaras@gmail.com>
  */
 public class MetaheuristicStudy {
-	private static final int INDEPENDENT_RUNS = 1;
+	private static final int INDEPENDENT_RUNS = 2;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -74,8 +75,6 @@ public class MetaheuristicStudy {
 		String experimentBaseDirectory = args[0];
 
 		List<ExperimentProblem<BinarySolution>> problemList = new ArrayList<>();
-		// problemList.add(new ExperimentProblem<>(new ZDT5()));
-		// problemList.add(new ExperimentProblem<>(new OneZeroMax(512)));
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
 
 		problemList.add(new ExperimentProblem<>(
@@ -115,9 +114,9 @@ public class MetaheuristicStudy {
 			List<ExperimentProblem<BinarySolution>> problemList) {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
 		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// 0.9 for Zero.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// 0.9 for Zero.
 
-
+		/* NSGAII Study*/
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new BitFlipOrExchangeMutation(0.5))
@@ -129,6 +128,7 @@ public class MetaheuristicStudy {
 
 		}
 
+		/* TS Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.9), 1000, 100,
@@ -137,13 +137,15 @@ public class MetaheuristicStudy {
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
+		/* ACO Study */
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(
-					problemList.get(i).getProblem(), 600, 10, 1, 0.1, 1).build();
+					problemList.get(i).getProblem(), 100, 10, 1, 0.1, 1).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
+		/* SA Study */
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(
@@ -152,67 +154,12 @@ public class MetaheuristicStudy {
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
+		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
 					problemList.get(i).getProblem()).setMaxEvaluations(40000).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-
-		// for (int i = 0; i < problemList.size(); i++) {
-		// Algorithm<List<BinarySolution>> algorithm = new SPEA2Builder<BinarySolution>(
-		// problemList.get(i).getProblem(),
-		// new SinglePointCrossover(1.0),
-		// new BitFlipMutation(1.0 / ((BinaryProblem)
-		// problemList.get(i).getProblem()).getNumberOfBits(0)))
-		// .setMaxIterations(250)
-		// .setPopulationSize(100)
-		// .build();
-		// algorithms.add(new ExperimentAlgorithm<>(algorithm,
-		// problemList.get(i).getTag()));
-		// }
-		//
-		// for (int i = 0; i < problemList.size(); i++) {
-		// Algorithm<List<BinarySolution>> algorithm = new
-		// MOCellBuilder<BinarySolution>(
-		// problemList.get(i).getProblem(),
-		// new SinglePointCrossover(1.0),
-		// new BitFlipMutation(1.0 / ((BinaryProblem)
-		// problemList.get(i).getProblem()).getNumberOfBits(0)))
-		// .setMaxEvaluations(25000)
-		// .setPopulationSize(100)
-		// .build();
-		// algorithms.add(new ExperimentAlgorithm<>(algorithm,
-		// problemList.get(i).getTag()));
-		// }
-		//
-		// for (int i = 0; i < problemList.size(); i++) {
-		// CrossoverOperator<BinarySolution> crossoverOperator;
-		// MutationOperator<BinarySolution> mutationOperator;
-		// SelectionOperator<List<BinarySolution>, BinarySolution> parentsSelection;
-		// SelectionOperator<List<BinarySolution>, List<BinarySolution>>
-		// newGenerationSelection;
-		//
-		// crossoverOperator = new HUXCrossover(1.0);
-		// parentsSelection = new RandomSelection<BinarySolution>();
-		// newGenerationSelection = new
-		// RankingAndCrowdingSelection<BinarySolution>(100);
-		// mutationOperator = new BitFlipMutation(0.35);
-		// Algorithm<List<BinarySolution>> algorithm = new MOCHCBuilder(
-		// (BinaryProblem) problemList.get(i).getProblem())
-		// .setInitialConvergenceCount(0.25)
-		// .setConvergenceValue(3)
-		// .setPreservedPopulation(0.05)
-		// .setPopulationSize(100)
-		// .setMaxEvaluations(25000)
-		// .setCrossover(crossoverOperator)
-		// .setNewGenerationSelection(newGenerationSelection)
-		// .setCataclysmicMutation(mutationOperator)
-		// .setParentSelection(parentsSelection)
-		// .setEvaluator(new SequentialSolutionListEvaluator<BinarySolution>())
-		// .build();
-		// algorithms.add(new ExperimentAlgorithm<>(algorithm,
-		// problemList.get(i).getTag()));
-		// }
 
 		return algorithms;
 	}

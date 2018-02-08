@@ -58,7 +58,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * --------------------------------------------------
 		 **/
 
-		JMetalRandom.getInstance().setSeed(100L);
+		//JMetalRandom.getInstance().setSeed(100L);
 
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithmNSGA;
