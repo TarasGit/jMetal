@@ -26,7 +26,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 /*
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class GenerationalGeneticAlgorithmRunnerNRPClassicBinarySolution {
+public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 
 	public static final double COST_FACTOR = 0.5;
 	public static final double CROSSOVER_PROBABILITY = 0.5;

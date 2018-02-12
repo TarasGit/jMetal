@@ -41,16 +41,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  */
 
 public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
-	/**
-	 * @param args
-	 *            Command line arguments.
-	 * @throws java.io.IOException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 *             Invoking command: java
-	 *             org.uma.jmetal.runner.multiobjective.NSGAIITSPRunner problemName
-	 *             [referenceFront]
-	 */
+
 	public static void main(String[] args) throws JMetalException, IOException {
 
 		/*---------------------------------------------------
@@ -59,53 +50,34 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 **/
 
 		//JMetalRandom.getInstance().setSeed(100L);
-
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithmNSGA;
 		CrossoverOperator<BinarySolution> crossoverNSGA;
 		MutationOperator<BinarySolution> mutationNSGA;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionNSGA;
-
+		
 		double costFactor = 0.5;
-
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);
-		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
-
+		crossoverNSGA = new SinglePointCrossover(0.5);
 		AlgorithmRunner algorithmRunner = null;
-
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// 0.9 for Zero.
-
-		// mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
-
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
 		selectionNSGA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-		/**
-		 * List<Double> inters = new ArrayList<>(); inters.add(0.0); inters.add(0.0);
-		 * double epsilon =0.0001; algorithm = new RNSGAIIBuilder<>(problem, crossover,
-		 * mutation,inters,epsilon)
-		 * 
-		 */
-
+		
 		double data1NSGA[] = null, data2NSGA[] = null;
 		double mutationProbabilityNSGA = 0.5;
-
 		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 
 		/*
-		 * // nrp-e1 -  300.000  |  nrp-e2 - 200.000  | 
+		 * nrp-e1 -  300.000  |  nrp-e2 - 200.000  | 
 		 */
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
 				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
 
-		System.out.println("start");
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
 
 		List<BinarySolution> populationNSGA = algorithmNSGA.getResult();
-
-		System.out.println("end: " + populationNSGA);
-
 		System.out.println("NSGA-II - finished");
-
 		int sizeNSGA = populationNSGA.size();
 		data1NSGA = new double[sizeNSGA];
 		data2NSGA = new double[sizeNSGA];
@@ -119,32 +91,23 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 200;
+		int NUMBER_OF_ANTS = 100;
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
 		double BETA = 2;// importance between source and destination, x >= 1
 
 		double Q = 0.0;// feramon deposited level;
 		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
-		double COST_FACTOR = 0.5;
-
-		Problem<BinarySolution> problemACO;
 		Algorithm<List<BinarySolution>> algorithmACO;
 		double data1ACO[] = null, data2ACO[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro bability = 1 for 0
-																								// -> zero initial
-																								// solution.
-		
-		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
-
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO,
 				Q).build();
 
-		AlgorithmRunner algorithmRunnerACO = new AlgorithmRunner.Executor(algorithmACO).execute();
+		new AlgorithmRunner.Executor(algorithmACO).execute();
 
 		List<BinarySolution> populationACO = algorithmACO.getResult();
-
 		int sizeACO = populationACO.size();
 		data1ACO = new double[sizeACO];
 		data2ACO = new double[sizeACO];
@@ -153,42 +116,33 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 			data2ACO[i] = populationACO.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*--------------------------------------
 		 * Simulated Annealing
 		 * -------------------------------------
 		 */
-
 		double RATE_OF_COOLING = 0.01;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
 		int INITIAL_TEMPERATURE = 8000;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionSA;
-
 		Algorithm<List<BinarySolution>> algorithmSA;
-		double mutationProbabilitySA = 0.6;// IMPORTANT for MOTS is mutation probability < 0.1 the best option.
-
+		double mutationProbabilitySA = 0.6;
 		double data1SA[] = null, data2SA[] = null;
 
-		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
-		System.out.println("Solving NRP");
-
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 		selectionSA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-		// costs)//new
-		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
 		mutationSA = new BitFlipOrExchangeMutation(mutationProbabilitySA);
 
 		algorithmSA = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutationSA,
 				new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
 						.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING).build();
 
-		AlgorithmRunner algorithmRunnerSA = new AlgorithmRunner.Executor(algorithmSA).execute();
-
-		List<BinarySolution> populationSA = algorithmSA.getResult(); // TODO: set ACO, SA to this single
-
+		new AlgorithmRunner.Executor(algorithmSA).execute();
+		
+		List<BinarySolution> populationSA = algorithmSA.getResult();
 		int sizeSA = populationSA.size();
 		data1SA = new double[sizeSA];
 		data2SA = new double[sizeSA];
@@ -197,36 +151,26 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 			data2SA[i] = populationSA.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*------------------------
 		 *  Tabu Search
 		 * -----------------------
 		 * */
-
 		MutationOperator<BinarySolution> mutationTS;
-		SelectionOperator<List<BinarySolution>, BinarySolution> selectionTS;
-
 		Algorithm<List<BinarySolution>> algorithmTS;
-		double mutationProbabilityTS = 0.7;
+		double mutationProbabilityTS = 0.5;
 		int tabuListSize = 1000;
 		int numberOfNeighbors = 100;
 		int numbOfIterations = 1000; // 1000 - nrp-e1 |
 
 		double data1TS[] = null, data2TS[] = null;
-
-		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// probability for 0.
-
-		System.out.println("Solving NRP");
-
-		// costs)//new
-		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
 		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
-
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
 				numberOfNeighbors, new MONotInTabuListSolutionFinder<>()).build();
-		AlgorithmRunner algorithmRunnerTS = new AlgorithmRunner.Executor(algorithmTS).execute();
+		new AlgorithmRunner.Executor(algorithmTS).execute();
 
-		List<BinarySolution> populationTS = algorithmTS.getResult(); // TODO: set ACO, SA to this single
+		List<BinarySolution> populationTS = algorithmTS.getResult(); 
 
 		int sizeTS = populationTS.size();
 		data1TS = new double[sizeTS];
@@ -236,29 +180,20 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 			data2TS[i] = populationTS.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*-------------------------------------------------
 		 * Random
 		 * -------------------------------------------------
 		 * */
-
 		Algorithm<List<BinarySolution>> algorithmRandom;
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.75);// probability for 0.
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(60000).build();
 
-		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
-
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(50000).build();
-
-		AlgorithmRunner algorithmRunnerRandom = new AlgorithmRunner.Executor(algorithmRandom).execute();
-
-		List<BinarySolution> populationRandom = algorithmRandom.getResult(); // TODO: set ACO, SA to this single result
-		// instead of list.
-
-		long computingTimeRandom = algorithmRunnerRandom.getComputingTime();
-
+		new AlgorithmRunner.Executor(algorithmRandom).execute();
+		
+		List<BinarySolution> populationRandom = algorithmRandom.getResult();
 		double[] data1Random = null, data2Random = null;
-
 		int sizeRandom = populationRandom.size();
-		System.err.println("last Size" + sizeRandom);
 
 		data1Random = new double[sizeRandom];
 		data2Random = new double[sizeRandom];
@@ -298,12 +233,6 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		example.setVisible(true);
 
 		long computingTime = algorithmRunner.getComputingTime();
-
-		// new SolutionListOutput(population)
-		// .setSeparator("\t")
-		// .setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
-		// .setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv"))
-		// .print();
 
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Random seed: " + JMetalRandom.getInstance().getSeed());

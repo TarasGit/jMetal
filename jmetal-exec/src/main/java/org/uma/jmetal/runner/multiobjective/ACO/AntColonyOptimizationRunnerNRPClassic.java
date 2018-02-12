@@ -24,17 +24,16 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunnerNRPClassicBinarySolution {
+public class AntColonyOptimizationRunnerNRPClassic {
 
 	/*
 	 * TODO: BUG: BETA > ALPHA & #Ants = 10 -> Rank = -1 Exception.
 	 */
 	public static final int NUMBER_OF_ANTS = 1000;
-	public static final double ALPHA = 10;// importance of pheramon trail, x >= 0,
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
 	public static final double BETA = 1;// importance between source and destination, x >= 1
-
-	public static final double Q = 0.0;// feramon deposited level;
-	public static final double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+	public static final double Q = 2;// pheromone deposited level;
+	public static final double RHO = 0.1;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double COST_FACTOR = 0.5;
 

@@ -1,7 +1,7 @@
 package org.uma.jmetal.algorithm.singleobjective.TS;
 
 
-public class IterationsStopCondition implements StopCondition { 
+public class IterationsStopCondition{ 
  
  private final Integer maxIterations; 
   
@@ -9,7 +9,6 @@ public class IterationsStopCondition implements StopCondition {
   this.maxIterations = maxIterations; 
  } 
   
- @Override 
  public Boolean mustStop(Integer currentIteration) { 
   return currentIteration >= maxIterations; 
  } 

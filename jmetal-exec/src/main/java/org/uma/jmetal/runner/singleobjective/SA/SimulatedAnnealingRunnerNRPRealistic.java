@@ -7,7 +7,7 @@ import org.uma.jmetal.algorithm.singleobjective.SA.SimulatedAnnealingBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
+import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -22,9 +22,8 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail>
  */
-public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
-
-	public static final double RATE_OF_COOLING = 0.0001;
+public class SimulatedAnnealingRunnerNRPRealistic {
+	public static final double RATE_OF_COOLING = 0.001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA
 	 * depends on it, and for very high temperatures the most of the time you will
@@ -36,7 +35,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 	 */
 	public static final int INITIAL_TEMPERATURE = 100;
 	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double MUTATION_PROBABILITY = 0.5;
+	public static final double MUTATION_PROBABILITY = 0.5;// 50% bit mutation and 50% swap mutation.
 	public static final double K = 1;
 
 	public static final double COST_FACTOR = 0.5;
@@ -46,9 +45,9 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 		Algorithm<List<BinarySolution>> algorithm;
 		MutationOperator<BinarySolution> mutation;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// 1 probability for 0.
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// 1 = probability for 0.
 
-		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
+		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());
 
@@ -61,11 +60,10 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
-
 		long computingTime = algorithmRunner.getComputingTime();
 
 		System.out.println("Solution:");
-		System.out.println(population.get(0));
+		System.out.println(population.get(0).getObjective(0));
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

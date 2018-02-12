@@ -17,6 +17,13 @@ import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
+import org.uma.jmetal.qualityindicator.impl.SetCoverage;
+import org.uma.jmetal.qualityindicator.impl.Spread;
+import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
@@ -26,6 +33,8 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
@@ -36,13 +45,14 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  * @author Taras Iks
  */
 
-public class NSGAIIRunnerNRPRealisticScatterPlotBinarySolution extends AbstractAlgorithmRunner {
+public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
 
-	private static final double COST_FACTOR = 0.5;
-	private static final double CROSSOVER_PROBABILITY = 0.5;
-	private static final double MUTATION_PROBABILITY = 0.5;
-	private static final int POPULATION_SIZE = 500;
-	private static final int MAX_EVALUATIONS = 250000;
+	public static final boolean METRICS = true;
+	public static final double COST_FACTOR = 0.5;
+	public static final double CROSSOVER_PROBABILITY = 0.5;
+	public static final double MUTATION_PROBABILITY = 0.5;
+	public static final int POPULATION_SIZE = 500;
+	public static final int MAX_EVALUATIONS = 200000;
 
 	public static void main(String[] args) throws JMetalException, IOException {
 		// JMetalRandom.getInstance().setSeed(100L);
@@ -95,6 +105,47 @@ public class NSGAIIRunnerNRPRealisticScatterPlotBinarySolution extends AbstractA
 		example.setVisible(true);
 
 		long computingTime = algorithmRunner.getComputingTime();
+
+		if (METRICS) {
+			System.out.println("");
+			System.out.println("Metrics...");
+			/* Compute SPREAD Metric */
+			Spread<BinarySolution> spread = new Spread<>();
+			spread.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double spreadMetric = spread.evaluate(population);
+			System.out.println("SPREAD METRIC: " + spreadMetric);
+
+			SetCoverage sc = new SetCoverage();
+			double setCoverageMetric = sc.evaluate(
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
+					population);
+			System.out.println("Set Coverage Metric: " + setCoverageMetric);
+
+			Epsilon<BinarySolution> epsilon = new Epsilon<>();
+			epsilon.setReferenceParetoFront(new ArrayFront("./referenceFronts/NRPRealistic.rf"));
+			double epsilonMetric = epsilon.evaluate(population);
+			System.out.println("Epsilon Metric: " + epsilonMetric);
+
+			GenerationalDistance<BinarySolution> generationalDistance = new GenerationalDistance<>();
+			generationalDistance.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double generationalDistanceMetrik = generationalDistance.evaluate(population);
+			System.out.println("Generational Distance: " + generationalDistanceMetrik);
+
+			InvertedGenerationalDistance<BinarySolution> invertedGenerationalDistance = new InvertedGenerationalDistance<BinarySolution>();
+			invertedGenerationalDistance.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double invertedGeneratlDistanceMetrik = invertedGenerationalDistance.evaluate(population);
+			System.out.println("Inverted General Distance: " + invertedGeneratlDistanceMetrik);
+
+			InvertedGenerationalDistancePlus<BinarySolution> invertedGenerationalDistancePlus = new InvertedGenerationalDistancePlus<BinarySolution>();
+			invertedGenerationalDistancePlus.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double invertedGenerationalDistancePlusMetrik = invertedGenerationalDistancePlus.evaluate(population);
+			System.out.println("Inverted Generational Distance Plus: " + invertedGenerationalDistancePlusMetrik);
+
+			PISAHypervolume<BinarySolution> hypervolume = new PISAHypervolume<BinarySolution>();
+			hypervolume.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double hypervolumeMetrik = hypervolume.evaluate(population);
+			System.out.println("Hypervolume: " + hypervolumeMetrik);
+		}
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

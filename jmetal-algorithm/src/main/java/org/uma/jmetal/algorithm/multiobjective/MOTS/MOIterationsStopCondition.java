@@ -1,7 +1,7 @@
 package org.uma.jmetal.algorithm.multiobjective.MOTS;
 
 
-public class MOIterationsStopCondition implements MOStopCondition { 
+public class MOIterationsStopCondition { 
  
  private final Integer maxIterations; 
   
@@ -9,7 +9,6 @@ public class MOIterationsStopCondition implements MOStopCondition {
   this.maxIterations = maxIterations; 
  } 
   
- @Override 
  public Boolean mustStop(Integer currentIteration) { 
   return currentIteration >= maxIterations; 
  } 

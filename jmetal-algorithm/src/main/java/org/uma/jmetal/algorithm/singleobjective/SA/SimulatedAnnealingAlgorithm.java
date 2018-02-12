@@ -45,7 +45,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		this.comparator = comparator;
 	}
 
-	public S findRoute(S currentSolution) {
+	public S findSolution(S currentSolution) {
 		shortestSolution = (S) currentSolution.copy();
 		problem.evaluate(shortestSolution);
 		double temperature = this.initialTemperature;
@@ -64,7 +64,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 
 			if (comparator.compare(currentSolution.getObjective(0), shortestSolution.getObjective(0)) == 1)
 				shortestSolution = (S) currentSolution.copy();
-			if (acceptRoute(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
+			if (acceptSolution(currentSolution.getObjective(0), adjacentSolution.getObjective(0), temperature))
 				currentSolution = (S) adjacentSolution.copy();
 			temperature *= 1 - rateOfCooling;
 			if (D) {
@@ -85,7 +85,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 		return shortestSolution;
 	}
 
-	private boolean acceptRoute(double currentDistance, double adjacentDistance, double temperature) {
+	private boolean acceptSolution(double currentDistance, double adjacentDistance, double temperature) {
 		double acceptanceProbability;
 		double delta;
 		if (comparator.compare(currentDistance, adjacentDistance) == 1) {
@@ -103,7 +103,7 @@ public class SimulatedAnnealingAlgorithm<S extends Solution<?>> implements Algor
 
 	@Override
 	public void run() {
-		findRoute(problem.createSolution());
+		findSolution(problem.createSolution());
 	}
 
 	@Override

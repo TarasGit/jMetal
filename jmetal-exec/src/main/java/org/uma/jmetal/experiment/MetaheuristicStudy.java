@@ -46,13 +46,6 @@ import org.uma.jmetal.util.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.util.experiment.util.ExperimentProblem;
 
 /**
- * Example of experimental study based on solving two binary problems with four
- * algorithms: NSGAII, SPEA2, MOCell, and MOCHC
- *
- * This experiment assumes that the reference Pareto front are not known, so the
- * names of files containing them and the directory where they are located must
- * be specified.
- *
  * Six quality indicators are used for performance assessment.
  *
  * The steps to carry out the experiment are: 1. Configure the experiment 2.
@@ -62,11 +55,35 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  * 7. Generate Latex tables with the ranking obtained by applying the Friedman
  * test 8. Generate R scripts to obtain boxplots
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- * changed by Taras Iks<ikstaras@gmail.com>
+ * @author Antonio J. Nebro <antonio@lcc.uma.es> changed by Taras
+ *         Iks<ikstaras@gmail.com>
  */
 public class MetaheuristicStudy {
-	private static final int INDEPENDENT_RUNS = 2;
+	private static final int INDEPENDENT_RUNS = 1;
+
+	/* GA */
+	public static final int POPULATION_SIZE = 500;
+	public static final int MAX_EVALUATIONS = 200000;
+
+	/* ACO */
+	public static final int NUMBER_OF_ANTS = 20;
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 1;// importance between source and destination, x >= 1
+	public static final double Q = 2;// pheromone deposited level;
+	public static final double RHO = 0.01;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+
+	/* RANDOM */
+	public static final int RANDOM_MAX_EVALUATION = 10000;
+
+	/* SA */
+	public static final double RATE_OF_COOLING = 0.001;
+	public static final int INITIAL_TEMPERATURE = 1000;
+	public static final int MINIMAL_TEMPERATURE = 1;
+
+	/* TS */
+	public static final int TABU_LIST_SIZE = 100;
+	public static final int NUMBER_OF_ITERATIONS = 1000;
+	public static final int NUMBER_OF_NEIGHBORS = 100;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -84,24 +101,39 @@ public class MetaheuristicStudy {
 				problemList);
 
 		Experiment<BinarySolution, List<BinarySolution>> experiment;
-		experiment = new ExperimentBuilder<BinarySolution, List<BinarySolution>>("BinaryProblemsStudy")
+		experiment = new ExperimentBuilder<BinarySolution, List<BinarySolution>>("Me500taheuristicsStudy")
 				.setAlgorithmList(algorithmList).setProblemList(problemList)
 				.setExperimentBaseDirectory(experimentBaseDirectory).setOutputParetoFrontFileName("FUN")
 				.setOutputParetoSetFileName("VAR")
 				.setReferenceFrontDirectory(experimentBaseDirectory + "/referenceFronts")
-				.setIndicatorList(Arrays.asList(new Epsilon<BinarySolution>(), new Spread<BinarySolution>(),
+				.setIndicatorList(Arrays.asList(new Spread<BinarySolution>(), new Epsilon<BinarySolution>(),
 						new GenerationalDistance<BinarySolution>(), new PISAHypervolume<BinarySolution>(),
 						new InvertedGenerationalDistance<BinarySolution>(),
 						new InvertedGenerationalDistancePlus<BinarySolution>()))
 				.setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(8).build();
 
+		System.out.println("Start computing");
+
 		new ExecuteAlgorithms<>(experiment).run();
+		System.out.println("Execute Algorithms - finished");
+
 		new GenerateReferenceParetoFront(experiment).run();
+		System.out.println("Generate Reference Front - finished");
+
 		new ComputeQualityIndicators<>(experiment).run();
+		System.out.println("Compute Quality Indicators - finished");
+
 		new GenerateLatexTablesWithStatistics(experiment).run();
+		System.out.println("Generate Latex Tables - finished");
+
 		new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+		System.out.println("Generate Wilcoxon Tables - finished");
+
 		new GenerateFriedmanTestTables<>(experiment).run();
+		System.out.println("Generate Friedman Test - finished");
+
 		new GenerateBoxplotsWithR<>(experiment).setRows(1).setColumns(2).setDisplayNotch().run();
+		System.out.println("Generate Boxplot - finished");
 	}
 
 	/**
@@ -113,17 +145,17 @@ public class MetaheuristicStudy {
 	static List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> configureAlgorithmList(
 			List<ExperimentProblem<BinarySolution>> problemList) {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
-		
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// 0.9 for Zero.
 
-		/* NSGAII Study*/
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
+
+		/* NSGAII Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new BitFlipOrExchangeMutation(0.5))
 							.setSelectionOperator(new BinaryTournamentSelection<BinarySolution>(
 									new RankingAndCrowdingDistanceComparator<BinarySolution>()))
-							.setMaxEvaluations(100000).setPopulationSize(1000).build();
-			
+							.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE).build();
+
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 
 		}
@@ -131,8 +163,8 @@ public class MetaheuristicStudy {
 		/* TS Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.9), 1000, 100,
-					100, new MONotInTabuListSolutionFinder<>()).build();
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5), TABU_LIST_SIZE,
+					NUMBER_OF_ITERATIONS, NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>()).build();
 
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
@@ -141,7 +173,7 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(
-					problemList.get(i).getProblem(), 100, 10, 1, 0.1, 1).build();
+					problemList.get(i).getProblem(), NUMBER_OF_ANTS, ALPHA, BETA, RHO, Q).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
@@ -149,15 +181,16 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5), new SimpleMaxDoubleComparator())
-							.setMinimalTemperature(1).setInitialTemperature(1000).setRateOfCooling(0.1).build();
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5),
+					new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
+							.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
 		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem()).setMaxEvaluations(40000).build();
+					problemList.get(i).getProblem()).setMaxEvaluations(RANDOM_MAX_EVALUATION).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 

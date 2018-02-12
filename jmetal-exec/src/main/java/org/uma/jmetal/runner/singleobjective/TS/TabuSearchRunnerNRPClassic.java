@@ -23,7 +23,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class TabuSearchRunnerNRPClassicBinarySolution {
+public class TabuSearchRunnerNRPClassic {
 
 	private static final double MUTATION_PROBABILITY = 0.3;
 	private static final int TABU_LIST_SIZE = 1000;

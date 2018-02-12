@@ -12,6 +12,10 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.SetCoverage;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -19,6 +23,8 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
@@ -27,13 +33,15 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class TabuSearchRunnerNRPRealisticBinarySolution2 {
+public class TabuSearchRunnerNRPRealistic {
+	
+	public static final boolean METRICS = true;
 
-	private static final double MUTATION_PROBABILITY = 0.7;
-	private static final int TABU_LIST_SIZE = 1000;
-	private static final int NUMBER_OF_ITERATIONS = 400;
-	private static final double COSTFACTOR = 0.5;
-	private static final int NUMBER_OF_NEIGHBORS = 100;
+	public static final double MUTATION_PROBABILITY = 0.7;
+	public static final int TABU_LIST_SIZE = 100;
+	public static final int NUMBER_OF_ITERATIONS = 1000;
+	public static final double COSTFACTOR = 0.5;
+	public static final int NUMBER_OF_NEIGHBORS = 100;
 
 	public static void main(String[] args) throws Exception {
 
@@ -54,9 +62,6 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 
 		List<BinarySolution> population = algorithm.getResult();
 
-		System.out.println("Solution:" + population.get(0));
-		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));
-
 		long computingTime = algorithmRunner.getComputingTime();
 
 		int size = population.size();
@@ -73,12 +78,38 @@ public class TabuSearchRunnerNRPRealisticBinarySolution2 {
 		doubleArrayList.add(data2);
 
 		/* Create Chart */
-		List<String> nameList = Arrays.asList("NSGA-II", "ACO", "SA", "TS", "R");
+		List<String> nameList = Arrays.asList("TS");
 		GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		example.setSize(1200, 800);
 		example.setLocationRelativeTo(null);
 		example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		example.setVisible(true);
+
+		if (METRICS) {
+			System.out.println("");
+			System.out.println("Metrics...");
+			/* Compute SPREAD Metric */
+			Spread<BinarySolution> spread = new Spread<>();
+			spread.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double spreadMetric = spread.evaluate(population);
+			System.out.println("SPREAD METRIC: " + spreadMetric);
+
+			SetCoverage sc = new SetCoverage();
+			double setCoverageMetric = sc.evaluate(
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
+					population);
+			System.out.println("Set Coverage Metric: " + setCoverageMetric);
+
+			Epsilon<BinarySolution> epsilon = new Epsilon<>();
+			epsilon.setReferenceParetoFront(new ArrayFront("./referenceFronts/NRPRealistic.rf"));
+			double epsilonMetric = epsilon.evaluate(population);
+			System.out.println("Epsilon Metric: " + epsilonMetric);
+
+			GenerationalDistance<BinarySolution> generationalDistance = new GenerationalDistance<>();
+			generationalDistance.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double generationalDistanceMetrik = generationalDistance.evaluate(population);
+			System.out.println("Generational Distance: " + generationalDistanceMetrik);
+		}
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

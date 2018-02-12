@@ -41,65 +41,38 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  */
 
 public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
-	/**
-	 * @param args
-	 *            Command line arguments.
-	 * @throws java.io.IOException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 *             Invoking command: java
-	 *             org.uma.jmetal.runner.multiobjective.NSGAIITSPRunner problemName
-	 *             [referenceFront]
-	 */
+
 	public static void main(String[] args) throws JMetalException, IOException {
 
 		/*---------------------------------------------------
 		 * NSGA-II
 		 * --------------------------------------------------
 		 **/
-
-		JMetalRandom.getInstance().setSeed(100L);
-
+		
+		//JMetalRandom.getInstance().setSeed(100L);
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithmNSGA;
 		CrossoverOperator<BinarySolution> crossoverNSGA;
 		MutationOperator<BinarySolution> mutationNSGA;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionNSGA;
-
 		double costFactor = 0.5;
-
+		
 		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp5.txt", costFactor);
-		crossoverNSGA = new SinglePointCrossover(0.5);// new PMXCrossover(0.9);
-
+		
+		crossoverNSGA = new SinglePointCrossover(0.5);
 		AlgorithmRunner algorithmRunner = null;
-
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// 0.9 for Zero.
-
-		// mutation = new PermutationSwapMutation<Integer>(mutationProbability) ;
-
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
+		
 		selectionNSGA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-		/**
-		 * List<Double> inters = new ArrayList<>(); inters.add(0.0); inters.add(0.0);
-		 * double epsilon =0.0001; algorithm = new RNSGAIIBuilder<>(problem, crossover,
-		 * mutation,inters,epsilon)
-		 * 
-		 */
-
 		double data1NSGA[] = null, data2NSGA[] = null;
 		double mutationProbabilityNSGA = 0.5;
 
 		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
-
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();//nrp1 - 300.000 | nrp2 -200.000 | nrp4 - 300.000 | nrp5 - 400.000 |
-
-		System.out.println("start");
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(200000).setPopulationSize(300).build();//nrp1 - 300.000 | nrp2 -200.000 | nrp4 - 300.000 | nrp5 - 400.000 |
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
-
 		List<BinarySolution> populationNSGA = algorithmNSGA.getResult();
-
-		System.out.println("end: " + populationNSGA);
 
 		System.out.println("NSGA-II - finished");
 
@@ -111,33 +84,26 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 			data2NSGA[i] = populationNSGA.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*----------------------------------------------------
 		 * Ant Colony Optimization
 		 *----------------------------------------------------
 		 */
-
 		int NUMBER_OF_ANTS = 20;//nrp1 - 4000 | nrp2 - 2000  | nrp4 - 250 | nrp5 - 20.
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
 		double BETA = 1;// importance between source and destination, x >= 1
 
 		double Q = 0.0;// feramon deposited level;
 		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
-
-
+		
 		Algorithm<List<BinarySolution>> algorithmACO;
 		double data1ACO[] = null, data2ACO[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro bability = 1 for 0
-																								// -> zero initial
-																								// solution.
-																		
-		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
-
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
+		
 		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
 				RHO, Q).build();
-
-		AlgorithmRunner algorithmRunnerACO = new AlgorithmRunner.Executor(algorithmACO).execute();
-
+		new AlgorithmRunner.Executor(algorithmACO).execute();
 		List<BinarySolution> populationACO = algorithmACO.getResult();
 
 		int sizeACO = populationACO.size();
@@ -152,32 +118,25 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * Simulated Annealing
 		 * ----------------------------------
 		 */
-
 		double RATE_OF_COOLING = 0.01;//nrp1 - 0.00001, 10.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
 		int INITIAL_TEMPERATURE = 10000;
 		int MINIMAL_TEMPERATURE = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
-
 		Algorithm<List<BinarySolution>> algorithmSA;
 		double mutationProbabilitySA = 0.5;
-
 		double data1SA[] = null, data2SA[] = null;
 
-		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
-		System.out.println("Solving NRP");
-		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 		mutationSA = new BitFlipOrExchangeMutation(mutationProbabilitySA);
 
 		algorithmSA = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutationSA,
 				new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
 						.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING).build();
 
-		AlgorithmRunner algorithmRunnerSA = new AlgorithmRunner.Executor(algorithmSA).execute();
+		new AlgorithmRunner.Executor(algorithmSA).execute();
 
-		List<BinarySolution> populationSA = algorithmSA.getResult(); // TODO: set ACO, SA to this single
+		List<BinarySolution> populationSA = algorithmSA.getResult();
 
 		int sizeSA = populationSA.size();
 		data1SA = new double[sizeSA];
@@ -187,12 +146,11 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 			data2SA[i] = populationSA.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*------------------------
 		 *  Tabu Search
 		 * -----------------------
 		 * */
-
-	
 		MutationOperator<BinarySolution> mutationTS;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionTS;
 
@@ -200,24 +158,17 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		double mutationProbabilityTS = 0.8;
 		int tabuListSize = 200;
 		int numberOfNeighbors = 100;
-		int numbOfIterations = 500; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
-
+		int numbOfIterations = 1000; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
 		double data1TS[] = null, data2TS[] = null;
 
-		// Initial Solution of Tabu Search must be zero.
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// probability for 0.
-
-		System.out.println("Solving NRP");
-
-																										// costs)//new
-		// NRPClassic("/nrpClassicInstances/myNRP10Customers.txt");
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
 		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
 
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
 				numberOfNeighbors, new MONotInTabuListSolutionFinder<>()).build();
-		AlgorithmRunner algorithmRunnerTS = new AlgorithmRunner.Executor(algorithmTS).execute();
+		new AlgorithmRunner.Executor(algorithmTS).execute();
 
-		List<BinarySolution> populationTS = algorithmTS.getResult(); // TODO: set ACO, SA to this single
+		List<BinarySolution> populationTS = algorithmTS.getResult();
 
 		int sizeTS = populationTS.size();
 		data1TS = new double[sizeTS];
@@ -227,31 +178,22 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 			data2TS[i] = populationTS.get(i).getObjective(1) * -1;
 		}
 
+		
 		/*-------------------------------------------------
 		 * Random
 		 * -------------------------------------------------
 		 * */
-
 		Algorithm<List<BinarySolution>> algorithmRandom;
-
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.95);// probability for 0.
-														
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.75);// probability for 0.
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(30000).build();
 		
-
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(15000).build();
-
-
-		AlgorithmRunner algorithmRunnerRandom = new AlgorithmRunner.Executor(algorithmRandom).execute();
+		new AlgorithmRunner.Executor(algorithmRandom).execute();
 
 		List<BinarySolution> populationRandom = algorithmRandom.getResult(); 
-		// instead of list.
-
-		long computingTimeRandom = algorithmRunnerRandom.getComputingTime();
 
 		double[] data1Random = null, data2Random = null;
 
 		int sizeRandom = populationRandom.size();
-		System.err.println("last Size" + sizeRandom);
 
 		data1Random = new double[sizeRandom];
 		data2Random = new double[sizeRandom];

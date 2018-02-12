@@ -96,12 +96,14 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 						|| solution.getObjective(1) == 0) {
 					population.remove(i);
 				}
-			} else {
+			} else if(o instanceof PermutationSolution) {
 				PermutationSolution<Integer> solution = (PermutationSolution<Integer>) population.get(i);
 				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
 						|| solution.getObjective(1) == 0) {
 					population.remove(i);
 				}
+			}else {
+				return population;
 			}
 		}
 		Set<S> set = new HashSet<>(population);

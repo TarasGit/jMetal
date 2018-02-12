@@ -52,7 +52,7 @@ public class AntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implements
 			currentSolution = (S) ant.getSolution();
 			problem.evaluate(currentSolution);
 			if (shortestSolution == null || currentSolution.getObjective(0) > shortestSolution.getObjective(0)) {
-				shortestSolution = (S) currentSolution.copy();// copy?
+				shortestSolution = (S) currentSolution.copy();
 				System.out.println("shortest Solution: " + shortestSolution.getObjective(0) + "Costs: "
 						+ shortestSolution.getAttribute(0));
 			}

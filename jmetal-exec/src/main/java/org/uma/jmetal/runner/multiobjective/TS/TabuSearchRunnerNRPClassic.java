@@ -1,4 +1,4 @@
-package org.uma.jmetal.runner.multiobjective.SA;
+package org.uma.jmetal.runner.multiobjective.TS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.WindowConstants;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.MOSA.MOSimulatedAnnealingBuilder;
+import org.uma.jmetal.algorithm.multiobjective.MOTS.MOTabuSearchBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
@@ -16,56 +16,45 @@ import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
-import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
+import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
  * Class to configure and run a Tabu Search algorithm. The target problem is
- * NRP/TSP.
+ * NRP.
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
+public class TabuSearchRunnerNRPClassic {
 
-	public static final double RATE_OF_COOLING = 0.00001;
-	/*
-	 * IMPORTANT: don't increase the temperature, because the formulate for SA
-	 * depends on it, and for very high temperatures the most of the time you will
-	 * get the acceptance probability equal to 1.
-	 * 
-	 * SOLUTION: change RATE OF COOLING to be smaller to get better solution quality
-	 * OR multiply temperature in SA with some factor, to be able to use another
-	 * temperatures.
-	 */
-	public static final int INITIAL_TEMPERATURE = 10000;
-	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double K = 1;
-	public static final double MUTATION_PROBABILITY = 0.7;
-	
-	public static final double COST_FACTOR = 0.5;
+	private static final double MUTATION_PROBABILITY = 0.3;
+	private static final int TABU_LIST_SIZE = 100;
+	private static final int NUMBER_OF_ITERATIONS = 4000;
+	private static final double COSTFACTOR = 0.5;
+	private static final int NUMBER_OF_NEIGHBORS = 100;
 
 	public static void main(String[] args) throws Exception {
 
 		Problem<BinarySolution> problem;
 		MutationOperator<BinarySolution> mutation;
+
 		Algorithm<List<BinarySolution>> algorithm;
 		double data2[] = null, data1[] = null;
 
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COSTFACTOR);
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
-		algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
-				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
-				.setRateOfCooling(RATE_OF_COOLING).setKFactor(K).build();
-
+		algorithm = new MOTabuSearchBuilder<BinarySolution>(problem, mutation, TABU_LIST_SIZE, NUMBER_OF_ITERATIONS,
+				NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>()).build();
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
 
+		System.out.println("Solution:" + population.get(0));
 		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));
 
 		long computingTime = algorithmRunner.getComputingTime();
@@ -85,7 +74,7 @@ public class SimulatedAnnealingRunnerNRPClassicBinarySolution {
 		doubleArrayList.add(data2);
 
 		/* Create Chart */
-		List<String> nameList = Arrays.asList("SA");
+		List<String> nameList = Arrays.asList("TS");
 		GenerateScatterPlotChart example = new GenerateScatterPlotChart("Scatter Chart", doubleArrayList, nameList);
 		example.setSize(1200, 800);
 		example.setLocationRelativeTo(null);

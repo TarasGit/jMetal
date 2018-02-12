@@ -12,6 +12,10 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.SetCoverage;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -19,6 +23,8 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
@@ -27,7 +33,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
+public class SimulatedAnnealingRunnerNRPRealistic {
 
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA
@@ -38,12 +44,14 @@ public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 	 * OR multiply temperature in SA with some factor, to be able to use another
 	 * temperatures.
 	 */
-	public static final double RATE_OF_COOLING = 0.001;
-	public static final int INITIAL_TEMPERATURE = 4000;
-	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double K = 1;
-	public static final double MUTATION_PROBABILITY = 0.7;
+	public static final boolean METRICS = true;
 	
+	public static final double RATE_OF_COOLING = 0.001;
+	public static final int INITIAL_TEMPERATURE = 1000;
+	public static final int MINIMAL_TEMPERATURE = 1;
+	public static final double K = 2;
+	public static final double MUTATION_PROBABILITY = 0.7;
+
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
@@ -66,8 +74,6 @@ public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
-
-		System.out.println("Optimal Solution: " + population.get(0).getObjective(0));
 
 		long computingTime = algorithmRunner.getComputingTime();
 
@@ -93,6 +99,32 @@ public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 		example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		example.setVisible(true);
 
+		if (METRICS) {
+			System.out.println("");
+			System.out.println("Metrics...");
+			/* Compute SPREAD Metric */
+			Spread<BinarySolution> spread = new Spread<>();
+			spread.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double spreadMetric = spread.evaluate(population);
+			System.out.println("SPREAD METRIC: " + spreadMetric);
+
+			SetCoverage sc = new SetCoverage();
+			double setCoverageMetric = sc.evaluate(
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
+					population);
+			System.out.println("Set Coverage Metric: " + setCoverageMetric);
+
+			Epsilon<BinarySolution> epsilon = new Epsilon<>();
+			epsilon.setReferenceParetoFront(new ArrayFront("./referenceFronts/NRPRealistic.rf"));
+			double epsilonMetric = epsilon.evaluate(population);
+			System.out.println("Epsilon Metric: " + epsilonMetric);
+
+			GenerationalDistance<BinarySolution> generationalDistance = new GenerationalDistance<>();
+			generationalDistance.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double generationalDistanceMetrik = generationalDistance.evaluate(population);
+			System.out.println("Generational Distance: " + generationalDistanceMetrik);
+		}
+
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
@@ -100,6 +132,5 @@ public class SimulatedAnnealingRunnerNRPRealisticBinarySolution {
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-
 	}
 }

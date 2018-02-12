@@ -36,7 +36,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  * @author Taras Iks
  */
 
-public class NSGAIIRunnerNRPClassicScatterPlotBinarySolution extends AbstractAlgorithmRunner {
+public class NSGAIIRunnerNRPClassic extends AbstractAlgorithmRunner {
 
 	private static final double COST_FACTOR = 0.5;
 	private static final double CROSSOVER_PROBABILITY = 0.5;

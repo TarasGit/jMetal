@@ -43,7 +43,7 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class NSGAIIStudy2 {
-  private static final int INDEPENDENT_RUNS = 2 ;
+  private static final int INDEPENDENT_RUNS = 20 ;
 
   public static void main(String[] args) throws IOException {
     if (args.length != 1) {

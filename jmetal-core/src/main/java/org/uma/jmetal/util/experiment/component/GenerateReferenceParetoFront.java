@@ -2,6 +2,7 @@ package org.uma.jmetal.util.experiment.component;
 
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentComponent;
 import org.uma.jmetal.util.experiment.util.ExperimentAlgorithm;
@@ -50,8 +51,8 @@ public class GenerateReferenceParetoFront implements ExperimentComponent{
 
     List<String> referenceFrontFileNames = new LinkedList<>() ;
     for (ExperimentProblem<?> problem : experiment.getProblemList()) {
-      NonDominatedSolutionListArchive<PointSolution> nonDominatedSolutionArchive =
-          new NonDominatedSolutionListArchive<PointSolution>() ;
+      NonDominatedSolutionListArchiveForMinMax<PointSolution> nonDominatedSolutionArchive =
+          new NonDominatedSolutionListArchiveForMinMax<PointSolution>();//TODO: changed by Taras from original for Min/Max Problem, move it to its own Class.
 
       for (ExperimentAlgorithm<?,?> algorithm : experiment.getAlgorithmList()) {
         String problemDirectory = experiment.getExperimentBaseDirectory() + "/data/" +

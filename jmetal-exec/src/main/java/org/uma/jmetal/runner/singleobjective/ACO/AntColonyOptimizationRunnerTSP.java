@@ -23,11 +23,11 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 public class AntColonyOptimizationRunnerTSP {
 
 	public static final int NUMBER_OF_ANTS = 10000;
-	public static final double ALPHA = 9;// importance of pheramon trail, x >= 0
+	public static final double ALPHA = 9;// importance of pheromone trail, x >= 0
 	public static final double BETA = 9.5;// importance between source and destination, x >= 1
 
-	public static final double Q = 0.0005;// feramon deposited level, 0<=x<=1
-	public static final double RHO = 0.2;// feramon avapouration level, 0<=x<=1
+	public static final double Q = 0.0005;// pheromone deposited level, 0<=x<=1
+	public static final double RHO = 0.2;// pheromone evaporation level, 0<=x<=1
 
 	public static void main(String[] args) throws Exception {
 
@@ -35,25 +35,21 @@ public class AntColonyOptimizationRunnerTSP {
 		AntColonyOptimizationAlgorithmTSP<PermutationSolution<Integer>> algorithm;
 
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
 		problem = new TSP("/tspInstances/kroA100.tsp");
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());
-
+		
 		algorithm = new AntColonyOptimizationBuilderTSP<PermutationSolution<Integer>>(problem, NUMBER_OF_ANTS, ALPHA,
 				BETA, RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		PermutationSolution<Integer> solution = algorithm.getResult();
-
 		List<PermutationSolution<Integer>> population = new ArrayList<>(1);
 		population.add(solution);
-
 		System.out.println("End Solution: " + solution);
 
 		long computingTime = algorithmRunner.getComputingTime();
-
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();

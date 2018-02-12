@@ -50,7 +50,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
 	}
 
-	public S findRoute(S currentSolution) {
+	public S findSolution(S currentSolution) {
 		shortestSolution = (S) currentSolution;
 		double lastDistance, lastCosts;
 
@@ -77,7 +77,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 			}
 
-			if (acceptRoute(tmpSolution.getObjective(0), shortestSolution.getObjective(0), tmpSolution.getObjective(1),
+			if (acceptSolution(tmpSolution.getObjective(0), shortestSolution.getObjective(0), tmpSolution.getObjective(1),
 					shortestSolution.getObjective(1), temperature)) {
 				shortestSolution = (S) tmpSolution;
 				currentSolution = (S) tmpSolution;
@@ -106,7 +106,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		return shortestSolution;
 	}
 
-	private boolean acceptRoute(double currentDistance, double shortestDistance, double currentCosts,
+	private boolean acceptSolution(double currentDistance, double shortestDistance, double currentCosts,
 			double shortestCosts, double temperature) {
 		double acceptanceProbability = 0;
 		double delta;
@@ -116,7 +116,6 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		} else {
 			delta = Math.abs(currentDistance - shortestDistance);
 			acceptanceProbability = Math.exp(-(delta / (k * temperature)));
-
 		}
 
 		if (acceptanceProbability >= JMetalRandom.getInstance().nextDouble())
@@ -127,7 +126,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	@Override
 	public void run() {
-		findRoute(problem.createSolution());
+		findSolution(problem.createSolution());
 	}
 
 	@Override

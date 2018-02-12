@@ -15,7 +15,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	private static final long serialVersionUID = 1L;
 	private MOTabuList<S> tabuList;
-	private MOStopCondition stopCondition;
+	private MOIterationsStopCondition stopCondition;
 	private MONotInTabuListSolutionFinder<S> solutionLocator;
 	private int numberOfNeighbors;
 	private MutationOperator<S> mutationOperator;
@@ -23,7 +23,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	Problem<S> problem;
 	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
-	public MOTabuSearchAlgorithm(MOTabuList<S> tabuList, MOStopCondition stopCondition,
+	public MOTabuSearchAlgorithm(MOTabuList<S> tabuList, MOIterationsStopCondition stopCondition,
 			MONotInTabuListSolutionFinder<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution,
 			int numberOfNeighbors, Problem<S> problem) {
 		this.tabuList = tabuList;

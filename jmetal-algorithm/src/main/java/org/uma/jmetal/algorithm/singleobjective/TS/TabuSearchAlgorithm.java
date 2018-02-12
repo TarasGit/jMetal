@@ -17,7 +17,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 	private static final boolean D = true; // DEBUG	
 	private static final long serialVersionUID = 1L;
 	private TabuList<S> tabuList;
-	private StopCondition stopCondition;
+	private IterationsStopCondition stopCondition;
 	private BestNeighborSolutionFinder<S> solutionLocator;
 	private int numberOfNeighbors;
 	private MutationOperator<S> mutationOperator;
@@ -26,7 +26,7 @@ public class TabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<Lis
 	private Comparator<Double> comparator;
 	Problem<S> problem;
 
-	public TabuSearchAlgorithm(TabuList<S> tabuList, StopCondition stopCondition,
+	public TabuSearchAlgorithm(TabuList<S> tabuList, IterationsStopCondition stopCondition,
 			BestNeighborSolutionFinder<S> solutionLocator, MutationOperator<S> mutationOperator, S initialSolution,
 			Comparator<Double> comparator, int numberOfNeighbors, Problem<S> problem) {
 		this.tabuList = tabuList;

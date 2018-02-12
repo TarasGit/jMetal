@@ -13,25 +13,25 @@ public class AntNRP<S extends Solution<?>> {
 
 	private AntColonyOptimizationNRP<S> aco;
 	private int antNumb;
-	private S route = null;
+	private S solution = null;
 	private double alpha;
 	private double beta;
 	private double rho;
 	private double q;
 
 	public S getSolution() {
-		return route;
+		return solution;
 	}
 
 	static int invalidIndex = -1;
 
-	private int numbOfCities;
+	private int numberOfCustomers;
 	int _x = 0, _y = 0;
 
 	public AntNRP(AntColonyOptimizationNRP<S> aco, int antNumb, double alpha, double beta, double rho, double q) {
 		this.aco = aco;
 		this.antNumb = antNumb;
-		this.numbOfCities = aco.getProblemSize();// 1 < x < n -> [0,..10] -> 11
+		this.numberOfCustomers = aco.getProblemSize();
 		this.alpha = alpha;
 		this.beta = beta;
 		this.rho = rho;
@@ -40,43 +40,43 @@ public class AntNRP<S extends Solution<?>> {
 	}
 
 	public AntNRP<S> run() {
-		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numbOfCities - 1);
-		route = aco.getInitialSolution();
+		int originatingCityIndex = JMetalRandom.getInstance().nextInt(0, numberOfCustomers - 1);
+		solution = aco.getInitialSolution();
 
-		HashMap<Integer, Boolean> visitedCities = new HashMap<Integer, Boolean>(numbOfCities);
-		IntStream.range(0, numbOfCities).forEach(x -> visitedCities.put(x, false));
-		int numbOfVisitedCities = 0;
-		visitedCities.put(originatingCityIndex, true);
-		double routeDistance = 0.0;
+		HashMap<Integer, Boolean> acceptedCustomers = new HashMap<Integer, Boolean>(numberOfCustomers);
+		IntStream.range(0, numberOfCustomers).forEach(x -> acceptedCustomers.put(x, false));
+		int currentNumberOfCustomers = 0;
+		acceptedCustomers.put(originatingCityIndex, true);
+		double customersProfit = 0.0;
 		int x = originatingCityIndex;
 		int y = invalidIndex;
 		S tmpCopy;
 
-		if (numbOfVisitedCities < numbOfCities)
-			y = getY(x, visitedCities);
+		if (currentNumberOfCustomers < numberOfCustomers)
+			y = getNextCustomer(x, acceptedCustomers);
 		while (y != invalidIndex) {
-			numbOfVisitedCities++;
-			tmpCopy = (S) route.copy();
-			((BinarySolution) route).getVariableValue(0).set(x);
-			aco.getProblem().evaluate(route);
+			currentNumberOfCustomers++;
+			tmpCopy = (S) solution.copy();
+			((BinarySolution) solution).getVariableValue(0).set(x);
+			aco.getProblem().evaluate(solution);
 
-			if (route.getObjective(0) == -1) {
-				route = tmpCopy;
+			if (solution.getObjective(0) == -1) {
+				solution = tmpCopy;
 				aco.getPheramonLevelMatrix()[_x][_y] = 0.01; // last pheromon level update should be set to 0 or very
 																// small value, because it caused invalid solution!
 				return this;
 			}
-			routeDistance += getDistance(x, y);
-			adjustPheromonLevel(x, y, routeDistance);
-			visitedCities.put(y, true);
+			customersProfit += getDistance(x, y);
+			adjustPheromonLevel(x, y, customersProfit);
+			acceptedCustomers.put(y, true);
 			x = y;
-			if (numbOfVisitedCities < numbOfCities)
-				y = getY(x, visitedCities);
+			if (currentNumberOfCustomers < numberOfCustomers)
+				y = getNextCustomer(x, acceptedCustomers);
 			else
 				y = invalidIndex;
 		}
-		routeDistance += getDistance(x, originatingCityIndex);
-		((BinarySolution) route).getVariableValue(0).set(x);
+		customersProfit += getDistance(x, originatingCityIndex);
+		((BinarySolution) solution).getVariableValue(0).set(x);
 		return this;
 	}
 
@@ -105,11 +105,11 @@ public class AntNRP<S extends Solution<?>> {
 		}
 	}
 
-	private int getY(int x, HashMap<Integer, Boolean> visitedCities) {
+	private int getNextCustomer(int x, HashMap<Integer, Boolean> visitedCities) {
 		int returnY = invalidIndex;
 		double random = JMetalRandom.getInstance().nextDouble();
 		ArrayList<Double> transitionProbabilities = getTransitionProbabilities(x, visitedCities);
-		for (int y = 0; y < numbOfCities; y++) {
+		for (int y = 0; y < numberOfCustomers; y++) {
 			if (transitionProbabilities.get(y) > random) {
 				returnY = y;
 				break;
@@ -121,11 +121,11 @@ public class AntNRP<S extends Solution<?>> {
 	}
 
 	private ArrayList<Double> getTransitionProbabilities(int x, HashMap<Integer, Boolean> visitedCities) {
-		ArrayList<Double> transitionProbabilities = new ArrayList<Double>(numbOfCities);
-		IntStream.range(0, numbOfCities).forEach(i -> transitionProbabilities.add(0.0));
+		ArrayList<Double> transitionProbabilities = new ArrayList<Double>(numberOfCustomers);
+		IntStream.range(0, numberOfCustomers).forEach(i -> transitionProbabilities.add(0.0));
 
 		double denominator = getTPDenominator(transitionProbabilities, x, visitedCities);
-		IntStream.range(0, numbOfCities).forEach(y -> {
+		IntStream.range(0, numberOfCustomers).forEach(y -> {
 			transitionProbabilities.set(y, transitionProbabilities.get(y) / denominator);
 		});
 		return transitionProbabilities;
@@ -134,7 +134,7 @@ public class AntNRP<S extends Solution<?>> {
 	private double getTPDenominator(ArrayList<Double> transitionProbabilities, int x,
 			HashMap<Integer, Boolean> visitedCities) {
 		double denominator = 0.0;
-		for (int y = 0; y < numbOfCities; y++) {
+		for (int y = 0; y < numberOfCustomers; y++) {
 			if (!visitedCities.get(y)) {
 				if (x == y)
 					transitionProbabilities.set(y, 0.0);

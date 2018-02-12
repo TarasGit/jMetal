@@ -19,46 +19,33 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunnerNRPClassicBinarySolution {
+public class AntColonyOptimizationRunnerNRPClassic {
 
 	public static final int 	NUMBER_OF_ANTS = 1000;
-	public static final double 	ALPHA = 2;// importance of pheramon trail, x >= 0, 
+	public static final double 	ALPHA = 2;// importance of pheromone trail, x >= 0, 
 	public static final double 	BETA = 1;// importance between source and destination, x >= 1
-
-	
-
-	/* IMPORTANT
-	 * 
-	 * Q is not used, because if Q is constant, so Q/distance -> limit(0)
-	 * instead a counter is used, which increases in each iteration -> couter/distance ~ [0..1]
-	 * */
-	public static final double 	Q = 0.0;// feramon deposited level; 
-	public static final double 	RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+	public static final double 	Q = 0.0;// pheromone deposited level; 
+	public static final double 	RHO = 0.1;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double COST_FACTOR = 0.7;
 
 	public static void main(String[] args) throws Exception {
-
+		
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// pro	bability = 1 for 0 -> zero initial solution.
-
 		problem =  new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
 
-		System.out.println("Number of Variables: " + problem.getNumberOfVariables());// Taras
+		System.out.println("Number of Variables: " + problem.getNumberOfVariables());
 
 		algorithm = new AntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA,
 				RHO, Q).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
 		List<BinarySolution> population = algorithm.getResult();
 
-		System.out.println("End Solution: " + population.get(0));
-
 		long computingTime = algorithmRunner.getComputingTime();
-
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();

@@ -37,7 +37,7 @@ public class ArrayFront implements Front {
 
     numberOfPoints = solutionList.size();
     pointDimensions = solutionList.get(0).getNumberOfObjectives() ;
-    points = new Point[numberOfPoints] ;
+    //points = new Point[numberOfPoints] ;
 
     points = new Point[numberOfPoints];
     for (int i = 0; i < numberOfPoints; i++) {

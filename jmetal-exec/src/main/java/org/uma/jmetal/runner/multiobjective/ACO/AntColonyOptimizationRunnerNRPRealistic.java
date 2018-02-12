@@ -10,12 +10,18 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuilderNRP;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
+import org.uma.jmetal.qualityindicator.impl.Epsilon;
+import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
+import org.uma.jmetal.qualityindicator.impl.SetCoverage;
+import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontUtils;
 import org.uma.jmetal.utility.GenerateScatterPlotChart;
 
 /**
@@ -24,22 +30,18 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  *
  * @author Taras Iks <ikstaras@gmail.com>
  */
-public class AntColonyOptimizationRunnerNRPRealisticBinarySolution {
+public class AntColonyOptimizationRunnerNRPRealistic {
 
 	/*
 	 * TODO: BUG: BETA > ALPHA & #Ants = 10-> Rank = -1 Exception.
 	 */
-	public static final int NUMBER_OF_ANTS = 100;
-	public static final double ALPHA = 20;// importance of pheramon trail, x >= 0,
-	public static final double BETA = 10;// importance between source and destination, x >= 1
-
-	/*
-	 * Q is not used, because if Q is constant, so Q/distance -> limit(0) instead a
-	 * counter is used, which increases in each iteration -> couter/distance ~
-	 * [0..1]
-	 */
-	public static final double Q = 0.0;// feramon deposited level;
-	public static final double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+	public static final boolean METRICS = true;
+	
+	public static final int NUMBER_OF_ANTS = 20;
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 1;// importance between source and destination, x >= 1
+	public static final double Q = 2;// pheromone deposited level;
+	public static final double RHO = 0.01;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double COST_FACTOR = 0.5;
 
@@ -48,7 +50,7 @@ public class AntColonyOptimizationRunnerNRPRealisticBinarySolution {
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		double data2[] = null, data1[] = null;
-		
+
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// 1 for 0 initial
 																								// solution.
 
@@ -59,7 +61,6 @@ public class AntColonyOptimizationRunnerNRPRealisticBinarySolution {
 				.build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
-
 		List<BinarySolution> population = algorithm.getResult();
 
 		long computingTime = algorithmRunner.getComputingTime();
@@ -87,6 +88,32 @@ public class AntColonyOptimizationRunnerNRPRealisticBinarySolution {
 		example.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		example.setVisible(true);
 
+		if (METRICS) {
+			System.out.println("");
+			System.out.println("Metrics...");
+			/* Compute SPREAD Metric */
+			Spread<BinarySolution> spread = new Spread<>();
+			spread.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double spreadMetric = spread.evaluate(population);
+			System.out.println("SPREAD METRIC: " + spreadMetric);
+
+			SetCoverage sc = new SetCoverage();
+			double setCoverageMetric = sc.evaluate(
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
+					population);
+			System.out.println("Set Coverage Metric: " + setCoverageMetric);
+
+			Epsilon<BinarySolution> epsilon = new Epsilon<>();
+			epsilon.setReferenceParetoFront(new ArrayFront("./referenceFronts/NRPRealistic.rf"));
+			double epsilonMetric = epsilon.evaluate(population);
+			System.out.println("Epsilon Metric: " + epsilonMetric);
+
+			GenerationalDistance<BinarySolution> generationalDistance = new GenerationalDistance<>();
+			generationalDistance.setReferenceParetoFront("./referenceFronts/NRPRealistic.rf");
+			double generationalDistanceMetrik = generationalDistance.evaluate(population);
+			System.out.println("Generational Distance: " + generationalDistanceMetrik);
+		}
+
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))
 				.setFunFileOutputContext(new DefaultFileOutputContext("FUN.tsv")).print();
@@ -94,6 +121,5 @@ public class AntColonyOptimizationRunnerNRPRealisticBinarySolution {
 		JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
 		JMetalLogger.logger.info("Objectives values have been written to file FUN.tsv");
 		JMetalLogger.logger.info("Variables values have been written to file VAR.tsv");
-
 	}
 }
