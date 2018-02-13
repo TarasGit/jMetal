@@ -1,4 +1,4 @@
-# jMetal 5 is used for my Master Thesis: Solving Next Release Problem with different Metaheuristics.
+# jMetal: Solving Next Release Problem with different Metaheuristics.
 
 ![2018-01-26 22-39-12](https://user-images.githubusercontent.com/5406878/36144148-773a806c-10ad-11e8-8fd5-14638ecddfb4.png)
 
