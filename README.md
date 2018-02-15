@@ -1,6 +1,6 @@
 ## jMetal: Solving Next Release Problem with different Metaheuristics.
 
-![githubjmetal](https://user-images.githubusercontent.com/5406878/36193981-3c0e0a98-1168-11e8-8d0a-921ddc7b4687.png)
+![newgraph](https://user-images.githubusercontent.com/5406878/36235284-db83b668-11ef-11e8-9f92-816755e5dca2.png)
 
 
 ### Status
