@@ -131,7 +131,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	@Override
 	public List<S> getResult() {
-		return SolutionListUtils.getNondominatedSolutions(nonDominatedArchive.getSolutionList());
+		return nonDominatedArchive.getSolutionList();
 	}
 
 	@Override
