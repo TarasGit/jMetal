@@ -21,7 +21,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class AntColonyOptimizationRunnerNRPRealistic {
 
-	public static final int NUMBER_OF_ANTS = 1000;
+	public static final int NUMBER_OF_ANTS = 100;
 	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
 	public static final double BETA = 1;// importance between source and destination, x >= 1
 	public static final double Q = 0.0;// pheromone deposited level;
@@ -36,7 +36,7 @@ public class AntColonyOptimizationRunnerNRPRealistic {
 
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability = 1 for 0
 
-		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e2.txt", COST_FACTOR);
+		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
 		System.out.println("Number of Variables: " + problem.getNumberOfVariables());
 

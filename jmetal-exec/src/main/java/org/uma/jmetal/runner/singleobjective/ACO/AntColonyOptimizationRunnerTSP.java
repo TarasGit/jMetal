@@ -23,10 +23,10 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 public class AntColonyOptimizationRunnerTSP {
 
 	public static final int NUMBER_OF_ANTS = 10000;
-	public static final double ALPHA = 9;// importance of pheromone trail, x >= 0
-	public static final double BETA = 9.5;// importance between source and destination, x >= 1
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0
+	public static final double BETA = 10;// importance between source and destination, x >= 1
 
-	public static final double Q = 0.0005;// pheromone deposited level, 0<=x<=1
+	public static final double Q = 5;// pheromone deposited level, 0<=x<=1
 	public static final double RHO = 0.2;// pheromone evaporation level, 0<=x<=1
 
 	public static void main(String[] args) throws Exception {

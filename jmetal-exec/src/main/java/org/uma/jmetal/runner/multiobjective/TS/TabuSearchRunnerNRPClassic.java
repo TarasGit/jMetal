@@ -13,7 +13,6 @@ import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
@@ -35,6 +34,8 @@ public class TabuSearchRunnerNRPClassic {
 	private static final double COSTFACTOR = 0.5;
 	private static final int NUMBER_OF_NEIGHBORS = 100;
 
+	public static final double INITIAL_POPOULATION_PROBABILITY = 1;
+
 	public static void main(String[] args) throws Exception {
 
 		Problem<BinarySolution> problem;
@@ -43,13 +44,12 @@ public class TabuSearchRunnerNRPClassic {
 		Algorithm<List<BinarySolution>> algorithm;
 		double data2[] = null, data1[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
 		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COSTFACTOR);
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new MOTabuSearchBuilder<BinarySolution>(problem, mutation, TABU_LIST_SIZE, NUMBER_OF_ITERATIONS,
-				NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>()).build();
+				NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>())
+						.setInitialPopulationProbability(INITIAL_POPOULATION_PROBABILITY).build();
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
@@ -64,8 +64,8 @@ public class TabuSearchRunnerNRPClassic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

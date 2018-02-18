@@ -1,5 +1,8 @@
 package org.uma.jmetal.algorithm.multiobjective.nsgaii;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.impl.AbstractGeneticAlgorithm;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -9,9 +12,6 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
@@ -39,6 +39,7 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
     this.selectionOperator = selectionOperator;
 
     this.evaluator = evaluator;
+    this.initialSolutionProbability = 1;
   }
 
   @Override protected void initProgress() {
@@ -47,6 +48,11 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
 
   @Override protected void updateProgress() {
     evaluations += getMaxPopulationSize() ;
+  }
+  
+  public NSGAII<S> setInitialSolutionProbability(double initialSolutionProbability) {
+	  this.initialSolutionProbability = initialSolutionProbability;
+	  return this;
   }
 
   @Override protected boolean isStoppingConditionReached() {
@@ -75,7 +81,12 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
   }
 
   protected List<S> getNonDominatedSolutions(List<S> solutionList) {
-    return SolutionListUtils.getNondominatedSolutions(solutionList);
+	    List<S> solutions = SolutionListUtils.getNondominatedSolutions(solutionList);
+	    for(S s : solutions) {
+	    	s.setObjective(0, s.getObjective(0) * -1);
+	    	s.setObjective(1, s.getObjective(1) * -1);
+	    }
+	    return solutions;
   }
 
   @Override public String getName() {

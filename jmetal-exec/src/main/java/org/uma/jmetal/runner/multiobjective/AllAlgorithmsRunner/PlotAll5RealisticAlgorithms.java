@@ -49,30 +49,33 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * --------------------------------------------------
 		 **/
 
-		//JMetalRandom.getInstance().setSeed(100L);
+		// JMetalRandom.getInstance().setSeed(100L);
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithmNSGA;
 		CrossoverOperator<BinarySolution> crossoverNSGA;
 		MutationOperator<BinarySolution> mutationNSGA;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionNSGA;
-		
+
 		double costFactor = 0.5;
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", costFactor);
 		crossoverNSGA = new SinglePointCrossover(0.5);
 		AlgorithmRunner algorithmRunner = null;
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
+
+		double INITIAL_SOLUTION_PROBABILITY_GA = 0.99;
+
 		selectionNSGA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
-		
+
 		double data1NSGA[] = null, data2NSGA[] = null;
 		double mutationProbabilityNSGA = 0.5;
 		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 
 		/*
-		 * nrp-e1 -  300.000  |  nrp-e2 - 200.000  | 
+		 * nrp-e1 - 300.000 | nrp-e2 - 200.000 |
 		 */
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500).build();
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(250000).setPopulationSize(500)
+				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_GA).build();
 
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
 
@@ -82,8 +85,8 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		data1NSGA = new double[sizeNSGA];
 		data2NSGA = new double[sizeNSGA];
 		for (int i = 0; i < sizeNSGA; i++) {
-			data1NSGA[i] = populationNSGA.get(i).getObjective(0);
-			data2NSGA[i] = populationNSGA.get(i).getObjective(1) * -1;
+			data1NSGA[i] = populationNSGA.get(i).getObjective(0) * -1;
+			data2NSGA[i] = populationNSGA.get(i).getObjective(1);
 		}
 
 		/*----------------------------------------------------
@@ -91,19 +94,21 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 100;
-		double ALPHA = 10;// importance of pheramon trail, x >= 0,
+		int NUMBER_OF_ANTS = 50;
+		double ALPHA = 2;// importance of pheramon trail, x >= 0,
 		double BETA = 2;// importance between source and destination, x >= 1
 
-		double Q = 0.0;// feramon deposited level;
-		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+		double Q = 5.0;// feramon deposited level;
+		double RHO = 0.01;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+
+		double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
 		Algorithm<List<BinarySolution>> algorithmACO;
 		double data1ACO[] = null, data2ACO[] = null;
 
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 		algorithmACO = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(problem, NUMBER_OF_ANTS, ALPHA, BETA, RHO,
-				Q).build();
+				Q, INITIAL_SOLUTION_PROBABILITY_ACO).build();
 
 		new AlgorithmRunner.Executor(algorithmACO).execute();
 
@@ -112,46 +117,46 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		data1ACO = new double[sizeACO];
 		data2ACO = new double[sizeACO];
 		for (int i = 0; i < sizeACO; i++) {
-			data1ACO[i] = populationACO.get(i).getObjective(0);
-			data2ACO[i] = populationACO.get(i).getObjective(1) * -1;
+			data1ACO[i] = populationACO.get(i).getObjective(0) * -1;
+			data2ACO[i] = populationACO.get(i).getObjective(1);
 		}
 
-		
 		/*--------------------------------------
 		 * Simulated Annealing
 		 * -------------------------------------
 		 */
-		double RATE_OF_COOLING = 0.01;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
-		int INITIAL_TEMPERATURE = 8000;// 8000 - erp-e1 | 8000 - nrp-e2 |
+		double RATE_OF_COOLING = 0.0005;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
+		int INITIAL_TEMPERATURE = 1000;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
+		double mutationProbabilitySA = 0.95;
+
+		double INITIAL_SOLUTION_PROBABILITY_SA = 1;
 
 		MutationOperator<BinarySolution> mutationSA;
 		SelectionOperator<List<BinarySolution>, BinarySolution> selectionSA;
 		Algorithm<List<BinarySolution>> algorithmSA;
-		double mutationProbabilitySA = 0.6;
 		double data1SA[] = null, data2SA[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 		selectionSA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
 		mutationSA = new BitFlipOrExchangeMutation(mutationProbabilitySA);
 
 		algorithmSA = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutationSA,
 				new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
-						.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING).build();
+						.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING)
+						.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_SA).build();
 
 		new AlgorithmRunner.Executor(algorithmSA).execute();
-		
+
 		List<BinarySolution> populationSA = algorithmSA.getResult();
 		int sizeSA = populationSA.size();
 		data1SA = new double[sizeSA];
 		data2SA = new double[sizeSA];
 		for (int i = 0; i < sizeSA; i++) {
-			data1SA[i] = populationSA.get(i).getObjective(0);
-			data2SA[i] = populationSA.get(i).getObjective(1) * -1;
+			data1SA[i] = populationSA.get(i).getObjective(0) * -1;
+			data2SA[i] = populationSA.get(i).getObjective(1);
 		}
 
-		
 		/*------------------------
 		 *  Tabu Search
 		 * -----------------------
@@ -161,36 +166,39 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		double mutationProbabilityTS = 0.5;
 		int tabuListSize = 1000;
 		int numberOfNeighbors = 100;
-		int numbOfIterations = 1000; // 1000 - nrp-e1 |
+		int numbOfIterations = 2000; // 1000 - nrp-e1 |
+
+		double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 
 		double data1TS[] = null, data2TS[] = null;
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
 		mutationTS = new BitFlipOrExchangeMutation(mutationProbabilityTS);
 		algorithmTS = new MOTabuSearchBuilder<BinarySolution>(problem, mutationTS, tabuListSize, numbOfIterations,
-				numberOfNeighbors, new MONotInTabuListSolutionFinder<>()).build();
+				numberOfNeighbors, new MONotInTabuListSolutionFinder<>())
+						.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_TS).build();
 		new AlgorithmRunner.Executor(algorithmTS).execute();
 
-		List<BinarySolution> populationTS = algorithmTS.getResult(); 
+		List<BinarySolution> populationTS = algorithmTS.getResult();
 
 		int sizeTS = populationTS.size();
 		data1TS = new double[sizeTS];
 		data2TS = new double[sizeTS];
 		for (int i = 0; i < sizeTS; i++) {
-			data1TS[i] = populationTS.get(i).getObjective(0);
-			data2TS[i] = populationTS.get(i).getObjective(1) * -1;
+			data1TS[i] = populationTS.get(i).getObjective(0) * -1;
+			data2TS[i] = populationTS.get(i).getObjective(1);
 		}
 
-		
 		/*-------------------------------------------------
 		 * Random
 		 * -------------------------------------------------
 		 * */
+		double INITIAL_SOLUTION_PROBABILITY_R = 0.75;
+
 		Algorithm<List<BinarySolution>> algorithmRandom;
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.75);// probability for 0.
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(60000).build();
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(50000)
+				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 
 		new AlgorithmRunner.Executor(algorithmRandom).execute();
-		
+
 		List<BinarySolution> populationRandom = algorithmRandom.getResult();
 		double[] data1Random = null, data2Random = null;
 		int sizeRandom = populationRandom.size();
@@ -198,8 +206,8 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		data1Random = new double[sizeRandom];
 		data2Random = new double[sizeRandom];
 		for (int i = 0; i < sizeRandom; i++) {
-			data1Random[i] = populationRandom.get(i).getObjective(0);
-			data2Random[i] = populationRandom.get(i).getObjective(1) * -1;
+			data1Random[i] = populationRandom.get(i).getObjective(0) * -1;
+			data2Random[i] = populationRandom.get(i).getObjective(1);
 		}
 
 		/*----------------------------------------------------

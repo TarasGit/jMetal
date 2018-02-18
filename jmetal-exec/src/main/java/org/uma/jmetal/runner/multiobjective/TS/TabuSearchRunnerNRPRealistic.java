@@ -17,7 +17,6 @@ import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.SetCoverage;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
@@ -34,7 +33,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  * @author Taras Iks <ikstaras@gmail.com>
  */
 public class TabuSearchRunnerNRPRealistic {
-	
+
 	public static final boolean METRICS = true;
 
 	public static final double MUTATION_PROBABILITY = 0.7;
@@ -42,6 +41,8 @@ public class TabuSearchRunnerNRPRealistic {
 	public static final int NUMBER_OF_ITERATIONS = 1000;
 	public static final double COSTFACTOR = 0.5;
 	public static final int NUMBER_OF_NEIGHBORS = 100;
+
+	public static final double INITIAL_POPOULATION_PROBABILITY = 1;
 
 	public static void main(String[] args) throws Exception {
 
@@ -51,13 +52,12 @@ public class TabuSearchRunnerNRPRealistic {
 
 		double data2[] = null, data1[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COSTFACTOR);
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new MOTabuSearchBuilder<BinarySolution>(problem, mutation, TABU_LIST_SIZE, NUMBER_OF_ITERATIONS,
-				NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>()).build();
+				NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>())
+						.setInitialPopulationProbability(INITIAL_POPOULATION_PROBABILITY).build();
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
@@ -68,8 +68,8 @@ public class TabuSearchRunnerNRPRealistic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */
@@ -98,7 +98,10 @@ public class TabuSearchRunnerNRPRealistic {
 			double setCoverageMetric = sc.evaluate(
 					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
 					population);
-			System.out.println("Set Coverage Metric: " + setCoverageMetric);
+			double setCoverageMetric2 = sc.evaluate(
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.rf")),
+					FrontUtils.convertFrontToSolutionList(new ArrayFront("./referenceFronts/NRPRealistic.MOTS.rf")));
+			System.out.println("Set Coverage Metric: " + setCoverageMetric + "/" + setCoverageMetric2);
 
 			Epsilon<BinarySolution> epsilon = new Epsilon<>();
 			epsilon.setReferenceParetoFront(new ArrayFront("./referenceFronts/NRPRealistic.rf"));

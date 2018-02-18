@@ -3,6 +3,7 @@ package org.uma.jmetal.algorithm.multiobjective.MOTS;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
@@ -23,6 +24,7 @@ public class MOTabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 	private MONotInTabuListSolutionFinder<S> locator;
 	private int numberOfNeighbors;
 	private S solution;
+	private double initialSolutionProbability;
 
 	/**
 	 * Builder constructor
@@ -36,7 +38,7 @@ public class MOTabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 		this.locator = locator;
 		this.numberOfNeighbors = numberOfNeighbors;
 		evaluator = new SequentialSolutionListEvaluator<Integer>();
-
+		this.initialSolutionProbability = 1;
 	}
 
 	public MOTabuSearchBuilder<S> setTabuListSize(int tabuListSize) {
@@ -48,6 +50,11 @@ public class MOTabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 	public MOTabuSearchBuilder<S> setNumberOfIterations(int numberOfIterations) {
 		this.numbOfIterations = numberOfIterations;
 
+		return this;
+	}
+
+	public MOTabuSearchBuilder<S> setInitialPopulationProbability(double initialPopulationProbability) {
+		this.initialSolutionProbability = initialPopulationProbability;
 		return this;
 	}
 
@@ -81,7 +88,7 @@ public class MOTabuSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 			MutationOperator<S> mutationOperator) {
 		return new MOTabuSearchAlgorithm<S>(new MOStaticTabuList<S>(tabuListSize),
 				new MOIterationsStopCondition(iterations), locator, mutationOperator, solution, numberOfNeighbors,
-				problem);
+				initialSolutionProbability, problem);
 
 	}
 

@@ -6,6 +6,7 @@ import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
@@ -30,7 +31,8 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
   private MutationOperator<S> mutationOperator;
   private SelectionOperator<List<S>, S> selectionOperator;
   private SolutionListEvaluator<S> evaluator;
-
+  private double initialSolutionProbability;
+  
   private NSGAIIVariant variant;
 
   /**
@@ -92,12 +94,18 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
 
     return this;
   }
+  
+  public NSGAIIBuilder<S> setInitialPopulationProbability(double initialPopulationProbability) {
+	  	this.initialSolutionProbability = initialPopulationProbability;
+	    return this;
+	  }
 
   public NSGAII<S> build() {
     NSGAII<S> algorithm = null ;
     if (variant.equals(NSGAIIVariant.NSGAII)) {
       algorithm = new NSGAII<S>(problem, maxEvaluations, populationSize, crossoverOperator,
           mutationOperator, selectionOperator, evaluator);
+      algorithm.setInitialSolutionProbability(initialSolutionProbability);//added
     } else if (variant.equals(NSGAIIVariant.SteadyStateNSGAII)) {
       algorithm = new SteadyStateNSGAII<S>(problem, maxEvaluations, populationSize, crossoverOperator,
           mutationOperator, selectionOperator, evaluator);

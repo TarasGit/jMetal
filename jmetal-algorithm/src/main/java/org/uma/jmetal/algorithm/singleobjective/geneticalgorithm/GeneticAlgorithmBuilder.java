@@ -32,7 +32,8 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
   private Ordering ordering;
   private GeneticAlgorithmVariant variant ;
   private SelectionOperator<List<S>, S> defaultSelectionOperator = new BinaryTournamentSelection<S>() ;
-
+  private double initialSolutionProbabilty;
+  
   /**
    * Builder constructor
    */
@@ -46,7 +47,7 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
     this.crossoverOperator = crossoverOperator ;
     this.selectionOperator = defaultSelectionOperator;
     this.ordering = ordering;
-    
+    this.initialSolutionProbabilty = 1;
 
     evaluator = new SequentialSolutionListEvaluator<S>();
 
@@ -77,6 +78,12 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
     return this;
   }
 
+  public GeneticAlgorithmBuilder<S> setInitialSolutionProbability(double initialSolutionProbability) {
+	    this.initialSolutionProbabilty = initialSolutionProbability;
+
+	    return this;
+	  }
+  
   public GeneticAlgorithmBuilder<S> setVariant(GeneticAlgorithmVariant variant) {
     this.variant = variant;
 
@@ -85,8 +92,10 @@ public class GeneticAlgorithmBuilder<S extends Solution<?>> {
 
   public Algorithm<S> build() {
     if (variant == GeneticAlgorithmVariant.GENERATIONAL) {
-      return new GenerationalGeneticAlgorithm<S>(problem, maxEvaluations, populationSize,
+    	GenerationalGeneticAlgorithm<S> algorithm = new GenerationalGeneticAlgorithm<S>(problem, maxEvaluations, populationSize,
           crossoverOperator, mutationOperator, selectionOperator, evaluator, ordering);
+    	algorithm.setInitialSolutionProbability(this.initialSolutionProbabilty);//TODO: CHANGED
+    	return algorithm;
     } else if (variant == GeneticAlgorithmVariant.STEADY_STATE) {
       return new SteadyStateGeneticAlgorithm<S>(problem, maxEvaluations, populationSize,
           crossoverOperator, mutationOperator, selectionOperator);

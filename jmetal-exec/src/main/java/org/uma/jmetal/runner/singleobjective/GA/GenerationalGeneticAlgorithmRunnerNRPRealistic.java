@@ -15,7 +15,6 @@ import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.ObjectiveComparator.Ordering;
@@ -30,9 +29,10 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 
 	public static final double COST_FACTOR = 0.5;
 	public static final double CROSSOVER_PROBABILITY = 0.5;
-	public static final double MUTATION_PROBABILITY = 0.3;
+	public static final double MUTATION_PROBABILITY = 0.5;
 	public static final int POPULATION_SIZE = 100;
 	public static final int MAX_EVALUATIONS = 40000;
+	public static final double INITIAL_SOLUTION_PROBABILITY = 1;
 
 	public static void main(String[] args) throws Exception {
 		Problem<BinarySolution> problem;
@@ -42,8 +42,6 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 		SelectionOperator<List<BinarySolution>, BinarySolution> selection;
 		Ordering ordering = Ordering.DESCENDING;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// 1 for zero solution
-
 		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
 		crossover = new SinglePointCrossover(CROSSOVER_PROBABILITY);
@@ -52,7 +50,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPRealistic {
 		selection = new BinaryTournamentSelection<BinarySolution>(new SimpleMaxSolutionComparator<BinarySolution>());
 		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering)
 				.setPopulationSize(POPULATION_SIZE).setMaxEvaluations(MAX_EVALUATIONS).setSelectionOperator(selection)
-				.build();
+				.setInitialSolutionProbability(INITIAL_SOLUTION_PROBABILITY).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 

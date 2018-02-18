@@ -5,6 +5,7 @@ import java.util.Comparator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
@@ -27,7 +28,7 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 	private int minimalTemperature;
 	private Comparator<Double> comparator;
 	private double k;
-
+	private double initialSolutionProbability;
 	
 	/**
 	 * Builder constructor
@@ -35,12 +36,13 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 	public MOSimulatedAnnealingBuilder(Problem<S> problem, MutationOperator<S> mutationOperator, Comparator<Double> comparator) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
-		this.evaluator = new SequentialSolutionListEvaluator<Integer>();// TODO XXX remove it.
+		this.evaluator = new SequentialSolutionListEvaluator<Integer>();
 		this.rateOfCooling = RATE_OF_COOLING;
 		this.initialTemperature = INITIAL_TEMPERATURE;
 		this.minimalTemperature = MINIMAL_TEMPERATURE;
 		this.k = K;
 		this.comparator = comparator;
+		this.initialSolutionProbability = 1;
 		
 	}
 
@@ -51,6 +53,11 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 	
 	public MOSimulatedAnnealingBuilder<S> setMinimalTemperature(int minimalTemperature) {
 		this.minimalTemperature = minimalTemperature;;
+		return this;
+	}
+	
+	public MOSimulatedAnnealingBuilder<S> setInitialPopulationProbability(double initialPopulationProbability) {
+		this.initialSolutionProbability = initialPopulationProbability;
 		return this;
 	}
 	
@@ -71,7 +78,7 @@ public class MOSimulatedAnnealingBuilder<S extends Solution<?>> implements Algor
 
 	public MOSimulatedAnnealingAlgorithm<S> build() {
 		return new MOSimulatedAnnealingAlgorithm<S>(problem, mutationOperator, rateOfCooling, initialTemperature,
-				minimalTemperature, k, comparator);
+				minimalTemperature, k, comparator, initialSolutionProbability);
 	}
 
 	/*

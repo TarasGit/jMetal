@@ -52,7 +52,9 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
 	public static final double CROSSOVER_PROBABILITY = 0.5;
 	public static final double MUTATION_PROBABILITY = 0.5;
 	public static final int POPULATION_SIZE = 500;
-	public static final int MAX_EVALUATIONS = 200000;
+	public static final int MAX_EVALUATIONS = 250000;
+
+	public static final double INITIAL_POPOULATION_PROBABILITY = 0.99; // for 0
 
 	public static void main(String[] args) throws JMetalException, IOException {
 		// JMetalRandom.getInstance().setSeed(100L);
@@ -65,8 +67,6 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
 		AlgorithmRunner algorithmRunner;
 		double data2[] = null, data1[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);// probability for Zero.
-
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 
 		selection = new BinaryTournamentSelection<BinarySolution>(
@@ -76,7 +76,8 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new NSGAIIBuilder<BinarySolution>(problem, crossover, mutation).setSelectionOperator(selection)
-				.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE).build();
+				.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE)
+				.setInitialPopulationProbability(INITIAL_POPOULATION_PROBABILITY).build();
 
 		algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -87,8 +88,8 @@ public class NSGAIIRunnerNRPRealistic extends AbstractAlgorithmRunner {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

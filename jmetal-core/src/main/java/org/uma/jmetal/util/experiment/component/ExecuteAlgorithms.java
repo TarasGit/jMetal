@@ -17,6 +17,7 @@ import java.io.File;
  * {@link Experiment #getExperimentBaseDirectory()}/algorithmName/problemName.
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
+ * changed by Taras Iks <ikstaras@gmail.com>
  */
 public class ExecuteAlgorithms<S extends Solution<?>, Result> implements ExperimentComponent {
   private Experiment<S, Result> experiment;
@@ -38,7 +39,8 @@ public class ExecuteAlgorithms<S extends Solution<?>, Result> implements Experim
       final int id = i ;
 
       experiment.getAlgorithmList()
-              .parallelStream()
+              //.parallelStream() //TODO: changed to sequential, because initialSolutionConfiguration Interface is used for all Algorithms.
+      		  .stream()
               .forEach(algorithm -> algorithm.runAlgorithm(id, experiment)) ;
     }
   }

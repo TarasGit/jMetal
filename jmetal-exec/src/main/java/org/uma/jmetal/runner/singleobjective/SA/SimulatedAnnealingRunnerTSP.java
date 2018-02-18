@@ -45,7 +45,7 @@ public class SimulatedAnnealingRunnerTSP {
 		Algorithm<List<PermutationSolution<Integer>>> algorithm;
 		MutationOperator<PermutationSolution<Integer>> mutation;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.5);
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 
 		problem = new TSP("/tspInstances/kroA100.tsp");
 

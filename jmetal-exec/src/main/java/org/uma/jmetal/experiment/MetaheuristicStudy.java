@@ -63,27 +63,34 @@ public class MetaheuristicStudy {
 
 	/* GA */
 	public static final int POPULATION_SIZE = 500;
-	public static final int MAX_EVALUATIONS = 200000;
+	public static final int MAX_EVALUATIONS = 250000;
+	public static final double INITIAL_SOLUTION_PROBABILITY_GA = 0.98;
 
 	/* ACO */
-	public static final int NUMBER_OF_ANTS = 20;
-	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
-	public static final double BETA = 1;// importance between source and destination, x >= 1
-	public static final double Q = 2;// pheromone deposited level;
+	public static final int NUMBER_OF_ANTS = 50;
+	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 2;// importance between source and destination, x >= 1
+	public static final double Q = 100;// pheromone deposited level;
 	public static final double RHO = 0.01;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
+	public static final double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
+
 	/* RANDOM */
-	public static final int RANDOM_MAX_EVALUATION = 10000;
+	public static final int RANDOM_MAX_EVALUATION = 50000;
+	public static final double INITIAL_SOLUTION_PROBABILITY_R = 0.85;
 
 	/* SA */
-	public static final double RATE_OF_COOLING = 0.001;
+	public static final double RATE_OF_COOLING = 0.0005;
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
+	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 0.95;
+	public static final double MUTATION_PROBABILITY_SA = 0.95;
 
 	/* TS */
-	public static final int TABU_LIST_SIZE = 100;
+	public static final int TABU_LIST_SIZE = 1000;
 	public static final int NUMBER_OF_ITERATIONS = 1000;
 	public static final int NUMBER_OF_NEIGHBORS = 100;
+	public static final double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length != 1) {
@@ -92,7 +99,6 @@ public class MetaheuristicStudy {
 		String experimentBaseDirectory = args[0];
 
 		List<ExperimentProblem<BinarySolution>> problemList = new ArrayList<>();
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.9);// probability for 0.
 
 		problemList.add(new ExperimentProblem<>(
 				new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", 0.5)));
@@ -101,7 +107,7 @@ public class MetaheuristicStudy {
 				problemList);
 
 		Experiment<BinarySolution, List<BinarySolution>> experiment;
-		experiment = new ExperimentBuilder<BinarySolution, List<BinarySolution>>("Me500taheuristicsStudy")
+		experiment = new ExperimentBuilder<BinarySolution, List<BinarySolution>>("MetaheuristicsStudy")
 				.setAlgorithmList(algorithmList).setProblemList(problemList)
 				.setExperimentBaseDirectory(experimentBaseDirectory).setOutputParetoFrontFileName("FUN")
 				.setOutputParetoSetFileName("VAR")
@@ -110,10 +116,14 @@ public class MetaheuristicStudy {
 						new GenerationalDistance<BinarySolution>(), new PISAHypervolume<BinarySolution>(),
 						new InvertedGenerationalDistance<BinarySolution>(),
 						new InvertedGenerationalDistancePlus<BinarySolution>()))
-				.setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(8).build();
+				.setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(1).build();
 
 		System.out.println("Start computing");
 
+		/*
+		 * Changed to sequential execution, because of the initial solution
+		 * configuration for each algorithm.
+		 */
 		new ExecuteAlgorithms<>(experiment).run();
 		System.out.println("Execute Algorithms - finished");
 
@@ -145,16 +155,15 @@ public class MetaheuristicStudy {
 	static List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> configureAlgorithmList(
 			List<ExperimentProblem<BinarySolution>> problemList) {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
-
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.99);
-
+		
 		/* NSGAII Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
 					problemList.get(i).getProblem(), new SinglePointCrossover(0.5), new BitFlipOrExchangeMutation(0.5))
 							.setSelectionOperator(new BinaryTournamentSelection<BinarySolution>(
 									new RankingAndCrowdingDistanceComparator<BinarySolution>()))
-							.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE).build();
+							.setMaxEvaluations(MAX_EVALUATIONS).setPopulationSize(POPULATION_SIZE)
+							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_GA).build();
 
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 
@@ -163,8 +172,9 @@ public class MetaheuristicStudy {
 		/* TS Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new MOTabuSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5), TABU_LIST_SIZE,
-					NUMBER_OF_ITERATIONS, NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>()).build();
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.4), TABU_LIST_SIZE,
+					NUMBER_OF_ITERATIONS, NUMBER_OF_NEIGHBORS, new MONotInTabuListSolutionFinder<>())
+							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_TS).build();
 
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
@@ -173,7 +183,8 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOAntColonyOptimizationBuilderNRP<BinarySolution>(
-					problemList.get(i).getProblem(), NUMBER_OF_ANTS, ALPHA, BETA, RHO, Q).build();
+					problemList.get(i).getProblem(), NUMBER_OF_ANTS, ALPHA, BETA, RHO, Q,
+					INITIAL_SOLUTION_PROBABILITY_ACO).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 
@@ -181,16 +192,19 @@ public class MetaheuristicStudy {
 		for (int i = 0; i < problemList.size(); i++) {
 
 			Algorithm<List<BinarySolution>> algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0.5),
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(MUTATION_PROBABILITY_SA),
 					new SimpleMaxDoubleComparator()).setMinimalTemperature(MINIMAL_TEMPERATURE)
-							.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING).build();
+							.setInitialTemperature(INITIAL_TEMPERATURE).setRateOfCooling(RATE_OF_COOLING)
+							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_SA).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
+		
 
 		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem()).setMaxEvaluations(RANDOM_MAX_EVALUATION).build();
+					problemList.get(i).getProblem()).setMaxEvaluations(RANDOM_MAX_EVALUATION)
+							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
 

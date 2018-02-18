@@ -1,14 +1,12 @@
 package org.uma.jmetal.algorithm.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.solution.PermutationSolution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 
 /**
  * Abstract class representing an evolutionary algorithm
@@ -18,14 +16,15 @@ import org.uma.jmetal.solution.PermutationSolution;
  * @param <R>
  *            Result
  *
- * @author Antonio J. Nebro <antonio@lcc.uma.es>
- * changed by Taras Iks<ikstaras@gmail.com>
+ * @author Antonio J. Nebro <antonio@lcc.uma.es> changed by Taras
+ *         Iks<ikstaras@gmail.com>
  */
 @SuppressWarnings("serial")
 public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R> {
 	protected List<S> population;
 	protected Problem<S> problem;
-
+	protected double initialSolutionProbability;
+	
 	public List<S> getPopulation() {
 		return population;
 	}
@@ -63,6 +62,8 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
 	@Override
 	public void run() {
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(this.initialSolutionProbability);// probability for 0.		
+
 		int objectives = problem.getNumberOfObjectives();
 		List<S> offspringPopulation;
 		List<S> matingPopulation;
@@ -88,27 +89,28 @@ public abstract class AbstractEvolutionaryAlgorithm<S, R> implements Algorithm<R
 
 	public List<S> repairPopulation(List<S> population) {// TODO: move to own class
 		Object o = population.get(0);
-		for (int i = 0; i < population.size(); i++) {
 
-			if (o instanceof BinarySolution) {
+		if (o instanceof BinarySolution) {
+			for (int i = 0; i < population.size(); i++) {
+
 				BinarySolution solution = (BinarySolution) population.get(i);
 				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
 						|| solution.getObjective(1) == 0) {
 					population.remove(i);
 				}
-			} else if(o instanceof PermutationSolution) {
+			}
+		}
+
+		if (o instanceof PermutationSolution) {
+			for (int i = 0; i < population.size(); i++) {
 				PermutationSolution<Integer> solution = (PermutationSolution<Integer>) population.get(i);
 				if (solution.getObjective(0) == -1 || solution.getObjective(1) == -1 || solution.getObjective(0) == 0
 						|| solution.getObjective(1) == 0) {
 					population.remove(i);
 				}
-			}else {
-				return population;
 			}
 		}
-		Set<S> set = new HashSet<>(population);
-		List<S> list = new ArrayList<S>(set);
 
-		return list;
+		return population;
 	}
 }

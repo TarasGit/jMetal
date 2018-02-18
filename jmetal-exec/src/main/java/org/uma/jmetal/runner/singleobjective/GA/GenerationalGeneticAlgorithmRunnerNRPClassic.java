@@ -30,9 +30,10 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 
 	public static final double COST_FACTOR = 0.5;
 	public static final double CROSSOVER_PROBABILITY = 0.5;
-	public static final double MUTATION_PROBABILITY = 0.3;
+	public static final double MUTATION_PROBABILITY = 0.5;
 	public static final int POPULATION_SIZE = 100;
-	public static final int MAX_EVALUATIONS = 40000;
+	public static final int MAX_EVALUATIONS = 100000;
+	public static final double INITIAL_SOLUTION_PROBABILITY = 1;
 
 	public static void main(String[] args) throws Exception {
 		Problem<BinarySolution> problem;
@@ -52,6 +53,7 @@ public class GenerationalGeneticAlgorithmRunnerNRPClassic {
 		selection = new BinaryTournamentSelection<BinarySolution>(new SimpleMaxSolutionComparator<BinarySolution>());
 		algorithm = new GeneticAlgorithmBuilder<BinarySolution>(problem, crossover, mutation, ordering)
 				.setPopulationSize(POPULATION_SIZE).setMaxEvaluations(MAX_EVALUATIONS).setSelectionOperator(selection)
+				.setInitialSolutionProbability(INITIAL_SOLUTION_PROBABILITY)
 				.build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

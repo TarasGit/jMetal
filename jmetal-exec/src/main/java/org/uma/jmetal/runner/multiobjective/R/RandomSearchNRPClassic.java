@@ -29,16 +29,17 @@ public class RandomSearchNRPClassic {
 	public static final double COST_FACTOR = 0.5;
 	public static final int MAX_EVALUATIONS = 100000;
 
+	public static final double INITIAL_POPULATION_PROBABILITY = 0.98;
+
 	public static void main(String[] args) throws Exception {
 
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		double[] data1 = null, data2 = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1 - ((1 - COST_FACTOR) / 2));
-
 		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
-		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATIONS).build();
+		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATIONS)
+				.setInitialPopulationProbability(INITIAL_POPULATION_PROBABILITY).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -49,8 +50,8 @@ public class RandomSearchNRPClassic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

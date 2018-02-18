@@ -1,5 +1,6 @@
 package org.uma.jmetal.runner.singleobjective.R;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
@@ -29,17 +30,26 @@ public class RandomSearchNRPRealistic {
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1 - ((1 - COST_FACTOR) / 2));
-
 		problem = new NRPRealisticBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
-		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATION).build();
+		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATION)
+				.setInitialPopulationProbability(0.85).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
 		List<BinarySolution> population = algorithm.getResult();
 		long computingTime = algorithmRunner.getComputingTime();
 
-		System.out.println(population.get(0).getObjective(0));
+		population.sort(new Comparator<BinarySolution>() {
+			public int compare(BinarySolution o1, BinarySolution o2) {
+				if(o1.getObjective(0) > o2.getObjective(0))
+					return 1;
+				else if(o1.getObjective(0) < o2.getObjective(0))
+					return -1;
+				else
+					return 0;
+			};
+		});
+		System.out.println("Best Solution: " + population.get(0).getObjective(0));
 
 		new SolutionListOutput(population).setSeparator("\t")
 				.setVarFileOutputContext(new DefaultFileOutputContext("VAR.tsv"))

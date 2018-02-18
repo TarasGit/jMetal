@@ -43,6 +43,10 @@ public class GenerationalGeneticAlgorithm<S extends Solution<?>> extends Abstrac
 
     comparator = new ObjectiveComparator<S>(0, ordering);
   }
+  
+  public void setInitialSolutionProbability(double initialSolutionProbability) {
+	  this.initialSolutionProbability = initialSolutionProbability;
+  }
 
   @Override protected boolean isStoppingConditionReached() {
     return (evaluations >= maxEvaluations);

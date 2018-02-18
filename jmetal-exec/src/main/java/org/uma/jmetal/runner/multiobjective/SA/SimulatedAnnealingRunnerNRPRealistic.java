@@ -17,7 +17,6 @@ import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.SetCoverage;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
@@ -45,12 +44,14 @@ public class SimulatedAnnealingRunnerNRPRealistic {
 	 * temperatures.
 	 */
 	public static final boolean METRICS = true;
-	
-	public static final double RATE_OF_COOLING = 0.001;
+
+	public static final double RATE_OF_COOLING = 0.0005;
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double K = 2;
-	public static final double MUTATION_PROBABILITY = 0.7;
+	public static final double K = 1;
+	public static final double MUTATION_PROBABILITY = 0.95;
+
+	public static final double INITIAL_POPULATION_PROBABILITY = 1;
 
 	public static final double COST_FACTOR = 0.5;
 
@@ -62,14 +63,13 @@ public class SimulatedAnnealingRunnerNRPRealistic {
 		Algorithm<List<BinarySolution>> algorithm;
 		double data2[] = null, data1[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
-				.setRateOfCooling(RATE_OF_COOLING).setKFactor(K).build();
+				.setRateOfCooling(RATE_OF_COOLING).setInitialPopulationProbability(INITIAL_POPULATION_PROBABILITY)
+				.setKFactor(K).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -82,8 +82,8 @@ public class SimulatedAnnealingRunnerNRPRealistic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

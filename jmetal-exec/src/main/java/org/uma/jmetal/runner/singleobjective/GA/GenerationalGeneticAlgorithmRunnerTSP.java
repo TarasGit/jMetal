@@ -30,7 +30,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
  */
 public class GenerationalGeneticAlgorithmRunnerTSP {
 
-	public static final double CROSSOVER_PROBABILITY = 0.9;
+	public static final double CROSSOVER_PROBABILITY = 0.5;
 	public static final int POPULATION_SIZE = 100;
 	public static final int MAX_EVALUATIONS = 2500000;
 

@@ -13,7 +13,6 @@ import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.comparator.SimpleMaxDoubleComparator;
@@ -29,7 +28,6 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
  */
 public class SimulatedAnnealingRunnerNRPClassic {
 
-	public static final double RATE_OF_COOLING = 0.00001;
 	/*
 	 * IMPORTANT: don't increase the temperature, because the formulate for SA
 	 * depends on it, and for very high temperatures the most of the time you will
@@ -39,11 +37,14 @@ public class SimulatedAnnealingRunnerNRPClassic {
 	 * OR multiply temperature in SA with some factor, to be able to use another
 	 * temperatures.
 	 */
-	public static final int INITIAL_TEMPERATURE = 10000;
+	public static final double RATE_OF_COOLING = 0.0001;
+	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double K = 1;
-	public static final double MUTATION_PROBABILITY = 0.7;
-	
+	public static final double MUTATION_PROBABILITY = 0.98;
+
+	public static final double INITIAL_POPULATION_PROBABILITY = 1;
+
 	public static final double COST_FACTOR = 0.5;
 
 	public static void main(String[] args) throws Exception {
@@ -53,14 +54,13 @@ public class SimulatedAnnealingRunnerNRPClassic {
 		Algorithm<List<BinarySolution>> algorithm;
 		double data2[] = null, data1[] = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);// probability for 0.
-
 		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
 		mutation = new BitFlipOrExchangeMutation(MUTATION_PROBABILITY);
 
 		algorithm = new MOSimulatedAnnealingBuilder<BinarySolution>(problem, mutation, new SimpleMaxDoubleComparator())
 				.setMinimalTemperature(MINIMAL_TEMPERATURE).setInitialTemperature(INITIAL_TEMPERATURE)
-				.setRateOfCooling(RATE_OF_COOLING).setKFactor(K).build();
+				.setRateOfCooling(RATE_OF_COOLING).setKFactor(K)
+				.setInitialPopulationProbability(INITIAL_POPULATION_PROBABILITY).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -73,8 +73,8 @@ public class SimulatedAnnealingRunnerNRPClassic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

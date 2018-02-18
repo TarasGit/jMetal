@@ -98,7 +98,7 @@ public class MOAntNRP<S extends Solution<?>> {
 		boolean flag = false;
 		while (!flag) {
 			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y];
-			double updatedPheromonLevel = (1 - rho) * currentPheromonLevel + count++ / routeDistance;// 1/routeDistance;
+			double updatedPheromonLevel = (1 - rho) * currentPheromonLevel +  routeDistance;// 1/routeDistance;
 
 			if (updatedPheromonLevel < 0.00) {
 				aco.getPheramonLevelMatrix()[x][y] = 0.0;
@@ -160,7 +160,7 @@ public class MOAntNRP<S extends Solution<?>> {
 		double pheromonLevel = aco.getPheramonLevelMatrix()[x][y];
 		double distanceLevel = ((NRP) aco.getProblem()).getDistanceProfit(x, y);
 		if (pheromonLevel != 0.0) {
-			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(1 / distanceLevel, beta);
+			numerator = Math.pow(pheromonLevel, alpha) * Math.pow(distanceLevel, beta);
 		}
 		return numerator;
 	}

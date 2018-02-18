@@ -15,7 +15,6 @@ import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.SetCoverage;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -35,7 +34,9 @@ public class RandomSearchNRPRealistic {
 	public static final boolean METRICS = true;
 
 	public static final double COST_FACTOR = 0.5;
-	public static final int MAX_EVALUATION = 10000;
+	public static final int MAX_EVALUATION = 20000;
+
+	public static final double INITIAL_POPULATION_PROBABILITY = 0.98;
 
 	public static void main(String[] args) throws Exception {
 
@@ -43,11 +44,9 @@ public class RandomSearchNRPRealistic {
 		Algorithm<List<BinarySolution>> algorithm;
 		double[] data1 = null, data2 = null;
 
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.75);// 1 - ((1 - COST_FACTOR)
-																								// / 2));
-
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
-		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATION).build();
+		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATION)
+				.setInitialPopulationProbability(INITIAL_POPULATION_PROBABILITY).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
 
@@ -58,8 +57,8 @@ public class RandomSearchNRPRealistic {
 		data1 = new double[size];
 		data2 = new double[size];
 		for (int i = 0; i < size; i++) {
-			data1[i] = population.get(i).getObjective(0);
-			data2[i] = population.get(i).getObjective(1) * -1;
+			data1[i] = population.get(i).getObjective(0) * -1;
+			data2[i] = population.get(i).getObjective(1);
 		}
 
 		/* Create List of Arrays with data */

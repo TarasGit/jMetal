@@ -7,6 +7,7 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.SolutionListUtils;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchiveForMinMax;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -30,6 +31,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	private S tmpSolution;
 	private S shortestSolution;
+	private double initialSolutionProbability;
 
 	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
@@ -38,7 +40,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 	 */
 	public MOSimulatedAnnealingAlgorithm(final Problem<S> problem, final MutationOperator<S> mutationOperator,
 			final double rateOfCooling, final int initialTemperature, final int minimalTemperature, final double k,
-			Comparator<Double> comparator) {
+			Comparator<Double> comparator, double initialSolutionProbability) {
 		this.problem = problem;
 		this.mutationOperator = mutationOperator;
 		this.rateOfCooling = rateOfCooling;
@@ -46,11 +48,15 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 		this.minimalTemperature = minimalTemperature;
 		this.comparator = comparator;
 		this.k = k;
+		this.initialSolutionProbability = initialSolutionProbability;
 
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
+
 	}
 
 	public S findSolution(S currentSolution) {
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(initialSolutionProbability);// probability for 0.	
+		currentSolution = problem.createSolution();
 		shortestSolution = (S) currentSolution;
 		double lastDistance, lastCosts;
 
@@ -77,8 +83,8 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 			}
 
-			if (acceptSolution(tmpSolution.getObjective(0), shortestSolution.getObjective(0), tmpSolution.getObjective(1),
-					shortestSolution.getObjective(1), temperature)) {
+			if (acceptSolution(tmpSolution.getObjective(0), shortestSolution.getObjective(0),
+					tmpSolution.getObjective(1), shortestSolution.getObjective(1), temperature)) {
 				shortestSolution = (S) tmpSolution;
 				currentSolution = (S) tmpSolution;
 
@@ -126,12 +132,17 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	@Override
 	public void run() {
-		findSolution(problem.createSolution());
+		findSolution(problem.createSolution());//TODO
 	}
 
 	@Override
 	public List<S> getResult() {
-		return nonDominatedArchive.getSolutionList();
+		List<S> solutions = nonDominatedArchive.getSolutionList();
+		for (S s : solutions) {
+			s.setObjective(0, s.getObjective(0) * -1);
+			s.setObjective(1, s.getObjective(1) * -1);
+		}
+		return solutions;
 	}
 
 	@Override
