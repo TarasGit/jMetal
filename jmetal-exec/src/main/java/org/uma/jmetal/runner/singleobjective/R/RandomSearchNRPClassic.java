@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
@@ -28,9 +30,13 @@ public class RandomSearchNRPClassic {
 
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
+		MutationOperator<BinarySolution> mutation;
+
+		mutation = new BitFlipOrExchangeMutation(0);
+
 
 		problem = new NRPClassicBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);
-		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATIONS)
+		algorithm = new RandomSearchBuilder<BinarySolution>(problem, mutation).setMaxEvaluations(MAX_EVALUATIONS)
 				.setInitialPopulationProbability(0.85).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

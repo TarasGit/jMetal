@@ -1,5 +1,6 @@
 package org.uma.jmetal.algorithm.multiobjective.randomsearch;
 
+import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
@@ -14,16 +15,18 @@ public class RandomSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 	private Problem<S> problem;
 	private int maxEvaluations;
 	private double initialSolutionProbability;
+	private MutationOperator<S> mutationOperator;
 
 	/* Getter */
 	public int getMaxEvaluations() {
 		return maxEvaluations;
 	}
 
-	public RandomSearchBuilder(Problem<S> problem) {
+	public RandomSearchBuilder(Problem<S> problem, MutationOperator<S> mutationOperator) {
 		this.problem = problem;
 		maxEvaluations = 25000;
-		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(0.98);
+		this.mutationOperator = mutationOperator; 
+		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance().setProbability(1);
 	}
 
 	public RandomSearchBuilder<S> setMaxEvaluations(int maxEvaluations) {
@@ -38,6 +41,6 @@ public class RandomSearchBuilder<S extends Solution<?>> implements AlgorithmBuil
 	}
 
 	public RandomSearch<S> build() {
-		return new RandomSearch<S>(problem, maxEvaluations, initialSolutionProbability);
+		return new RandomSearch<S>(problem, maxEvaluations, initialSolutionProbability, mutationOperator);
 	}
 }

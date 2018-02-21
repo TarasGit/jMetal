@@ -28,7 +28,6 @@ import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.Spread;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.comparator.MONotInTabuListSolutionFinder;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
@@ -59,7 +58,7 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  *         Iks<ikstaras@gmail.com>
  */
 public class MetaheuristicStudy {
-	private static final int INDEPENDENT_RUNS = 1;
+	private static final int INDEPENDENT_RUNS = 2;
 
 	/* GA */
 	public static final int POPULATION_SIZE = 500;
@@ -67,7 +66,7 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_GA = 0.98;
 
 	/* ACO */
-	public static final int NUMBER_OF_ANTS = 50;
+	public static final int NUMBER_OF_ANTS = 100;
 	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
 	public static final double BETA = 2;// importance between source and destination, x >= 1
 	public static final double Q = 100;// pheromone deposited level;
@@ -76,7 +75,7 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
 	/* RANDOM */
-	public static final int RANDOM_MAX_EVALUATION = 50000;
+	public static final int RANDOM_MAX_EVALUATION = 30000;
 	public static final double INITIAL_SOLUTION_PROBABILITY_R = 0.85;
 
 	/* SA */
@@ -155,7 +154,7 @@ public class MetaheuristicStudy {
 	static List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> configureAlgorithmList(
 			List<ExperimentProblem<BinarySolution>> problemList) {
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithms = new ArrayList<>();
-		
+
 		/* NSGAII Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new NSGAIIBuilder<BinarySolution>(
@@ -198,12 +197,12 @@ public class MetaheuristicStudy {
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_SA).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-		
 
 		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem()).setMaxEvaluations(RANDOM_MAX_EVALUATION)
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0))
+							.setMaxEvaluations(RANDOM_MAX_EVALUATION)
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}

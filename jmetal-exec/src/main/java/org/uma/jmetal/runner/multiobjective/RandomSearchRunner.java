@@ -30,6 +30,7 @@ public class RandomSearchRunner extends AbstractAlgorithmRunner {
     Problem<DoubleSolution> problem;
     Algorithm<List<DoubleSolution>> algorithm;
 
+    
     String referenceParetoFront = "" ;
 
     String problemName ;
@@ -45,21 +46,21 @@ public class RandomSearchRunner extends AbstractAlgorithmRunner {
 
     problem = ProblemUtils.loadProblem(problemName);
 
-    algorithm = new RandomSearchBuilder<DoubleSolution>(problem)
-            .setMaxEvaluations(2500000)
-            .build() ;
-
-    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
-            .execute() ;
-
-    List<DoubleSolution> population = algorithm.getResult() ;
-    long computingTime = algorithmRunner.getComputingTime() ;
-
-    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
-
-    printFinalSolutionSet(population);
-    if (!referenceParetoFront.equals("")) {
-      printQualityIndicators(population, referenceParetoFront) ;
-    }
+//    algorithm = new RandomSearchBuilder<DoubleSolution>(problem)
+//            .setMaxEvaluations(2500000)
+//            .build() ;
+//
+//    AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
+//            .execute() ;
+//
+//    List<DoubleSolution> population = algorithm.getResult() ;
+//    long computingTime = algorithmRunner.getComputingTime() ;
+//
+//    JMetalLogger.logger.info("Total execution time: " + computingTime + "ms");
+//
+//    printFinalSolutionSet(population);
+//    if (!referenceParetoFront.equals("")) {
+//      printQualityIndicators(population, referenceParetoFront) ;
+//   }
   }
 }

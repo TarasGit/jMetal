@@ -58,7 +58,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		double INITIAL_SOLUTION_PROBABILITY_GA = 0.99;
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp5.txt", costFactor);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp2.txt", costFactor);
 
 		crossoverNSGA = new SinglePointCrossover(0.5);
 		AlgorithmRunner algorithmRunner = null;
@@ -66,7 +66,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		selectionNSGA = new BinaryTournamentSelection<BinarySolution>(
 				new RankingAndCrowdingDistanceComparator<BinarySolution>());
 		double data1NSGA[] = null, data2NSGA[] = null;
-		double mutationProbabilityNSGA = 0.5;
+		double mutationProbabilityNSGA = 0.1;
 
 		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
@@ -91,12 +91,12 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * Ant Colony Optimization
 		 *----------------------------------------------------
 		 */
-		int NUMBER_OF_ANTS = 50;// nrp1 - 4000 | nrp2 - 2000 | nrp4 - 250 | nrp5 - 20.
+		int NUMBER_OF_ANTS = 300;// nrp1 - 4000 | nrp2 - 2000 | nrp4 - 250 | nrp5 - 20.
 		double ALPHA = 2;// importance of pheramon trail, x >= 0,
 		double BETA = 2;// importance between source and destination, x >= 1
 
 		double Q = 0.0;// feramon deposited level;
-		double RHO = 0.01;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 		double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
@@ -120,13 +120,13 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * Simulated Annealing
 		 * ----------------------------------
 		 */
-		double RATE_OF_COOLING = 0.0001;// nrp1 - 0.0001, 1.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
+		double RATE_OF_COOLING = 0.00005;// nrp1 - 0.0001, 1.000 | nrp2 - 0.001, 10.000 | nrp4 - 0.01 |
 		int INITIAL_TEMPERATURE = 1000;
-		int MINIMAL_TEMPERATURE = 1;
+		int MINIMAL_TEMPERATURE = 5;
 
 		MutationOperator<BinarySolution> mutationSA;
 		Algorithm<List<BinarySolution>> algorithmSA;
-		double mutationProbabilitySA = 0.95;
+		double mutationProbabilitySA = 0.99;
 		double data1SA[] = null, data2SA[] = null;
 
 		double INITIAL_SOLUTION_PROBABILITY_SA = 1;
@@ -156,9 +156,9 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * */
 		MutationOperator<BinarySolution> mutationTS;
 		Algorithm<List<BinarySolution>> algorithmTS;
-		double mutationProbabilityTS = 0.8;
+		double mutationProbabilityTS = 0.9;
 		int tabuListSize = 200;
-		int numberOfNeighbors = 100;
+		int numberOfNeighbors = 200;
 		int numbOfIterations = 1000; // nrp1 - 2500 | nrp2 - 2000 | nrp4 - 1000 |
 		double data1TS[] = null, data2TS[] = null;
 
@@ -187,9 +187,13 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * */
 		Algorithm<List<BinarySolution>> algorithmRandom;
 
-		double INITIAL_SOLUTION_PROBABILITY_R = 0.75;
+		double INITIAL_SOLUTION_PROBABILITY_R = 1; //for 0
+		MutationOperator<BinarySolution> mutation;
 
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(30000)
+		mutation = new BitFlipOrExchangeMutation(0.99);//0 for flip mutation
+
+
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem, mutation).setMaxEvaluations(100000)
 				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 
 		new AlgorithmRunner.Executor(algorithmRandom).execute();

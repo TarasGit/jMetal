@@ -3,6 +3,7 @@ package org.uma.jmetal.algorithm.multiobjective.randomsearch;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
@@ -18,15 +19,18 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
 	private Problem<S> problem;
 	private int maxEvaluations;
 	private double initialSolutionProbablity;
+	private MutationOperator<S> mutationOperator;
+
 
 	NonDominatedSolutionListArchiveForMinMax<S> nonDominatedArchive;
 
 	/** Constructor */
-	public RandomSearch(Problem<S> problem, int maxEvaluations, double initialPopulationProbability) {
+	public RandomSearch(Problem<S> problem, int maxEvaluations, double initialPopulationProbability, MutationOperator<S> mutationOperator) {
 		this.problem = problem;
 		this.maxEvaluations = maxEvaluations;
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<S>();
 		this.initialSolutionProbablity = initialPopulationProbability;
+		this.mutationOperator = mutationOperator;		
 	}
 
 	/* Getter */
@@ -38,9 +42,9 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
 	public void run() {
 		DefaultBinaryIntegerPermutationSolutionConfiguration.getInstance()
 				.setProbability(this.initialSolutionProbablity);
-		S newSolution;
+		S newSolution = problem.createSolution();
 		for (int i = 0; i < maxEvaluations; i++) {
-			newSolution = problem.createSolution();
+			newSolution = mutationOperator.execute((S) newSolution.copy());//problem.createSolution();
 			problem.evaluate(newSolution);
 			System.out.println("R:" + newSolution.getObjective(0));
 			if (newSolution.getObjective(0) == -1)

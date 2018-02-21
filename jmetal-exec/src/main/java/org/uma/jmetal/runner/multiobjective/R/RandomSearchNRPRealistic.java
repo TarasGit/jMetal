@@ -8,6 +8,8 @@ import javax.swing.WindowConstants;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.randomsearch.RandomSearchBuilder;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -36,16 +38,20 @@ public class RandomSearchNRPRealistic {
 	public static final double COST_FACTOR = 0.5;
 	public static final int MAX_EVALUATION = 20000;
 
-	public static final double INITIAL_POPULATION_PROBABILITY = 0.98;
+	public static final double INITIAL_POPULATION_PROBABILITY = 1;
 
 	public static void main(String[] args) throws Exception {
 
 		Problem<BinarySolution> problem;
 		Algorithm<List<BinarySolution>> algorithm;
 		double[] data1 = null, data2 = null;
+		MutationOperator<BinarySolution> mutation;
+
+		mutation = new BitFlipOrExchangeMutation(0.99);
+
 
 		problem = new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", COST_FACTOR);
-		algorithm = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(MAX_EVALUATION)
+		algorithm = new RandomSearchBuilder<BinarySolution>(problem, mutation).setMaxEvaluations(MAX_EVALUATION)
 				.setInitialPopulationProbability(INITIAL_POPULATION_PROBABILITY).build();
 
 		AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

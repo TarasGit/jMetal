@@ -94,7 +94,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 50;
+		int NUMBER_OF_ANTS = 200;
 		double ALPHA = 2;// importance of pheramon trail, x >= 0,
 		double BETA = 2;// importance between source and destination, x >= 1
 
@@ -125,10 +125,10 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * Simulated Annealing
 		 * -------------------------------------
 		 */
-		double RATE_OF_COOLING = 0.0005;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
-		int INITIAL_TEMPERATURE = 1000;// 8000 - erp-e1 | 8000 - nrp-e2 |
+		double RATE_OF_COOLING = 0.0001;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
+		int INITIAL_TEMPERATURE = 100;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
-		double mutationProbabilitySA = 0.95;
+		double mutationProbabilitySA = 0.999;
 
 		double INITIAL_SOLUTION_PROBABILITY_SA = 1;
 
@@ -166,7 +166,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		double mutationProbabilityTS = 0.5;
 		int tabuListSize = 1000;
 		int numberOfNeighbors = 100;
-		int numbOfIterations = 2000; // 1000 - nrp-e1 |
+		int numbOfIterations = 1000; // 1000 - nrp-e1 |
 
 		double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 
@@ -191,10 +191,14 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * Random
 		 * -------------------------------------------------
 		 * */
-		double INITIAL_SOLUTION_PROBABILITY_R = 0.75;
+		double INITIAL_SOLUTION_PROBABILITY_R = 1;
+		MutationOperator<BinarySolution> mutation;
+
+		mutation = new BitFlipOrExchangeMutation(0.95);//1 for swap mutation.
+
 
 		Algorithm<List<BinarySolution>> algorithmRandom;
-		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem).setMaxEvaluations(50000)
+		algorithmRandom = new RandomSearchBuilder<BinarySolution>(problem, mutation).setMaxEvaluations(40000)
 				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 
 		new AlgorithmRunner.Executor(algorithmRandom).execute();
@@ -223,13 +227,13 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		doubleArrayList.add(data1ACO);// blue
 		doubleArrayList.add(data2ACO);
 
-		doubleArrayList.add(data1SA);// black
+		doubleArrayList.add(data1SA);// orange
 		doubleArrayList.add(data2SA);
 
 		doubleArrayList.add(data1TS);// magenta
 		doubleArrayList.add(data2TS);
 
-		doubleArrayList.add(data1Random);// yellow
+		doubleArrayList.add(data1Random);// black
 		doubleArrayList.add(data2Random);
 
 		/* Create Chart */

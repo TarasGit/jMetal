@@ -89,15 +89,12 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 				currentSolution = (S) tmpSolution;
 
 				if (D) {
-					System.out.println("---------------------------------# " + shortestSolution.getObjective(0) + "| "
+					System.out.println(">SA: " + shortestSolution.getObjective(0) + "| "
 							+ shortestSolution.getObjective(1));
 				}
 
 			}
 			temperature *= 1 - rateOfCooling;
-			if (D) {
-				System.out.println(">" + tmpSolution.getObjective(0) + " + " + currentSolution.getObjective(1));
-			}
 		}
 
 		problem.evaluate(shortestSolution);
