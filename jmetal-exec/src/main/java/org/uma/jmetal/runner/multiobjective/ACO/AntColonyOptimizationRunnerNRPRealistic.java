@@ -36,10 +36,10 @@ public class AntColonyOptimizationRunnerNRPRealistic {
 	 */
 	public static final boolean METRICS = true;
 
-	public static final int NUMBER_OF_ANTS = 50;
-	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
-	public static final double BETA = 2;// importance between source and destination, x >= 1
-	public static final double Q = 2;// pheromone deposited level;
+	public static final int NUMBER_OF_ANTS = 2000;
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 10;// importance between source and destination, x >= 1
+	public static final double Q = 9000;// pheromone deposited level;
 	public static final double RHO = 0.1;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double INITIAL_SOLUTION_PROBABILITY = 1;

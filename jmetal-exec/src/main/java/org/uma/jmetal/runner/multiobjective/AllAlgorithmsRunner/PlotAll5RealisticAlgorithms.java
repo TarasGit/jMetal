@@ -74,7 +74,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * nrp-e1 - 300.000 | nrp-e2 - 200.000 |
 		 */
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(250000).setPopulationSize(500)
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(300000).setPopulationSize(500)
 				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_GA).build();
 
 		algorithmRunner = new AlgorithmRunner.Executor(algorithmNSGA).execute();
@@ -94,12 +94,12 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 200;
-		double ALPHA = 2;// importance of pheramon trail, x >= 0,
-		double BETA = 2;// importance between source and destination, x >= 1
+		int NUMBER_OF_ANTS = 1500;
+		double ALPHA = 10;// importance of pheramon trail, x >= 0,
+		double BETA = 10;// importance between source and destination, x >= 1
 
-		double Q = 5.0;// feramon deposited level;
-		double RHO = 0.01;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+		double Q = 10500;// feramon deposited level;
+		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 		double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
@@ -126,9 +126,9 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * -------------------------------------
 		 */
 		double RATE_OF_COOLING = 0.0001;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
-		int INITIAL_TEMPERATURE = 100;// 8000 - erp-e1 | 8000 - nrp-e2 |
+		int INITIAL_TEMPERATURE = 1000;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
-		double mutationProbabilitySA = 0.999;
+		double mutationProbabilitySA = 0.99;
 
 		double INITIAL_SOLUTION_PROBABILITY_SA = 1;
 
@@ -164,9 +164,9 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		MutationOperator<BinarySolution> mutationTS;
 		Algorithm<List<BinarySolution>> algorithmTS;
 		double mutationProbabilityTS = 0.5;
-		int tabuListSize = 1000;
-		int numberOfNeighbors = 100;
-		int numbOfIterations = 1000; // 1000 - nrp-e1 |
+		int tabuListSize = 500;
+		int numberOfNeighbors = 200;
+		int numbOfIterations = 1500; // 1000 - nrp-e1 |
 
 		double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 

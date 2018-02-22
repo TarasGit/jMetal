@@ -65,7 +65,7 @@ public class MOAntNRP<S extends Solution<?>> {
 
 			if (solution.getObjective(0) == -1) {
 				solution = tmpCopy;
-				aco.getPheramonLevelMatrix()[_x][_y] = 0.01; // last pheromon level update should be set to 0 or very
+				aco.getPheramonLevelMatrix()[_x][_y] = 0.1; // last pheromon level update should be set to 0 or very
 																// small value, because it caused invalid solution!
 
 				return this;
@@ -98,7 +98,8 @@ public class MOAntNRP<S extends Solution<?>> {
 		boolean flag = false;
 		while (!flag) {
 			double currentPheromonLevel = aco.getPheramonLevelMatrix()[x][y];
-			double updatedPheromonLevel = (1 - rho) * currentPheromonLevel +  routeDistance;// 1/routeDistance;
+			double updatedPheromonLevel = (1 - rho) * currentPheromonLevel + routeDistance/q;// 1/routeDistance;
+			//System.out.println(updatedPheromonLevel);
 
 			if (updatedPheromonLevel < 0.00) {
 				aco.getPheramonLevelMatrix()[x][y] = 0.0;

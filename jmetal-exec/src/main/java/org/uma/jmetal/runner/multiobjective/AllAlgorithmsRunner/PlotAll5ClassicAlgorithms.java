@@ -70,7 +70,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		mutationNSGA = new BitFlipOrExchangeMutation(mutationProbabilityNSGA);
 		algorithmNSGA = new NSGAIIBuilder<BinarySolution>(problem, crossoverNSGA, mutationNSGA)
-				.setSelectionOperator(selectionNSGA).setMaxEvaluations(200000).setPopulationSize(300)
+				.setSelectionOperator(selectionNSGA).setMaxEvaluations(250000).setPopulationSize(300)
 				.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_GA).build();// nrp1 - 300.000 | nrp2
 																							// -200.000 | nrp4 - 300.000
 																							// | nrp5 - 400.000 |
@@ -91,11 +91,11 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 		 * Ant Colony Optimization
 		 *----------------------------------------------------
 		 */
-		int NUMBER_OF_ANTS = 300;// nrp1 - 4000 | nrp2 - 2000 | nrp4 - 250 | nrp5 - 20.
+		int NUMBER_OF_ANTS = 10000;// nrp1 - 4000 | nrp2 - 2000 | nrp4 - 250 | nrp5 - 20.
 		double ALPHA = 2;// importance of pheramon trail, x >= 0,
 		double BETA = 2;// importance between source and destination, x >= 1
 
-		double Q = 0.0;// feramon deposited level;
+		double Q = 7600; //nrp1: 1800; // feramon deposited level;
 		double RHO = 0.1;// feramon avapouration level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 		double INITIAL_SOLUTION_PROBABILITY_ACO = 1;

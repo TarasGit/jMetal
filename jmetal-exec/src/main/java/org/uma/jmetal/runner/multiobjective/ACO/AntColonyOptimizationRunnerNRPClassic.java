@@ -11,7 +11,6 @@ import org.uma.jmetal.algorithm.multiobjective.MOACO.MOAntColonyOptimizationBuil
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
 import org.uma.jmetal.solution.BinarySolution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -29,11 +28,11 @@ public class AntColonyOptimizationRunnerNRPClassic {
 	/*
 	 * TODO: BUG: BETA > ALPHA & #Ants = 10 -> Rank = -1 Exception.
 	 */
-	public static final int NUMBER_OF_ANTS = 100;
-	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
-	public static final double BETA = 2;// importance between source and destination, x >= 1
-	public static final double Q = 2;// pheromone deposited level;
-	public static final double RHO = 0.01;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
+	public static final int NUMBER_OF_ANTS = 20000;
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 10;// importance between source and destination, x >= 1
+	public static final double Q = 1800;// pheromone deposited level;
+	public static final double RHO = 0.1;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double INITIAL_SOLUTION_PROBABILITY = 1;
 
