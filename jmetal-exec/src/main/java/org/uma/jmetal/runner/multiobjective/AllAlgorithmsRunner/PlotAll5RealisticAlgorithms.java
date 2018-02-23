@@ -94,7 +94,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 *----------------------------------------------------
 		 */
 
-		int NUMBER_OF_ANTS = 1500;
+		int NUMBER_OF_ANTS = 500;
 		double ALPHA = 10;// importance of pheramon trail, x >= 0,
 		double BETA = 10;// importance between source and destination, x >= 1
 
@@ -126,7 +126,7 @@ public class PlotAll5RealisticAlgorithms extends AbstractAlgorithmRunner {
 		 * -------------------------------------
 		 */
 		double RATE_OF_COOLING = 0.0001;// 0.001 - nrp-e1 | 0.01 - rnp-e2 |
-		int INITIAL_TEMPERATURE = 1000;// 8000 - erp-e1 | 8000 - nrp-e2 |
+		int INITIAL_TEMPERATURE = 2000;// 8000 - erp-e1 | 8000 - nrp-e2 |
 		int MINIMAL_TEMPERATURE = 1;
 		double mutationProbabilitySA = 0.99;
 

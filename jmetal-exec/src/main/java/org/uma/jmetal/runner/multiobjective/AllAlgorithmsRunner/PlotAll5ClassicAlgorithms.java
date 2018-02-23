@@ -58,7 +58,7 @@ public class PlotAll5ClassicAlgorithms extends AbstractAlgorithmRunner {
 
 		double INITIAL_SOLUTION_PROBABILITY_GA = 0.99;
 
-		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp2.txt", costFactor);
+		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", costFactor);
 
 		crossoverNSGA = new SinglePointCrossover(0.5);
 		AlgorithmRunner algorithmRunner = null;

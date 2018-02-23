@@ -5,7 +5,6 @@ import java.util.Comparator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.util.DefaultBinaryIntegerPermutationSolutionConfiguration;
 import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;

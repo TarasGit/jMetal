@@ -1,6 +1,7 @@
 package org.uma.jmetal.utility;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Shape;
 import java.util.List;
 
@@ -9,12 +10,17 @@ import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTitleAnnotation;
+import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.util.ShapeUtilities;
 
 public class GenerateScatterPlotChart extends JFrame {
@@ -29,16 +35,32 @@ public class GenerateScatterPlotChart extends JFrame {
 		// Create chart
 		JFreeChart chart = ChartFactory.createScatterPlot(
 				"Metaheuristics Performance", "Profit",
-				"Costs", dataset, PlotOrientation.VERTICAL, true, true, false);
+				"Costs", dataset, PlotOrientation.VERTICAL, false, false, false);
 
 		// chart.getXYPlot().getDomainAxis().setInverted(true);//invert x-axis
 
 		chart.getXYPlot().getRangeAxis().setInverted(true); // invert y-axis
 
-		// Changes background color
+		/*
+		 * Label Position inside
+		 * */
 		XYPlot plot = (XYPlot) chart.getPlot();
+		LegendTitle lt = new LegendTitle(plot);
+		lt.setItemFont(new Font("Dialog", Font.PLAIN, 9));
+		lt.setBackgroundPaint(new Color(200, 200, 255, 100));
+		lt.setFrame(new BlockBorder(Color.white));
+		lt.setPosition(RectangleEdge.BOTTOM);
+		XYTitleAnnotation ta = new XYTitleAnnotation(0.95, 0.05, lt,RectangleAnchor.BOTTOM_RIGHT);
+
+		ta.setMaxWidth(0.48);
+		plot.addAnnotation(ta);
+		
+		
+		// Changes background color
+		//XYPlot plot = (XYPlot) chart.getPlot();
 		plot.setBackgroundPaint(new Color(255, 228, 196));
 
+		
 		/* Change shape of points to cross (x) */
 		Shape cross = ShapeUtilities.createDiagonalCross(0.3f, 0.3f);
 		Shape triangle = ShapeUtilities.createUpTriangle(0.9f);
@@ -48,6 +70,7 @@ public class GenerateScatterPlotChart extends JFrame {
 
 		// plot = (XYPlot) chart.getPlot();
 		XYItemRenderer renderer = plot.getRenderer();
+		
 
 		renderer.setSeriesShape(0, diamond);
 		renderer.setSeriesShape(1, cross);
