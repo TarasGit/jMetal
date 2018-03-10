@@ -76,13 +76,13 @@ public class MetaheuristicStudy {
 
 	/* RANDOM */
 	public static final int RANDOM_MAX_EVALUATION = 30000;
-	public static final double INITIAL_SOLUTION_PROBABILITY_R = 0.85;
+	public static final double INITIAL_SOLUTION_PROBABILITY_R = 1;
 
 	/* SA */
 	public static final double RATE_OF_COOLING = 0.0005;
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
-	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 0.95;
+	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 1;
 	public static final double MUTATION_PROBABILITY_SA = 0.95;
 
 	/* TS */
