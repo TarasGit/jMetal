@@ -21,11 +21,13 @@ import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
+import org.uma.jmetal.qualityindicator.impl.ContributionMetric;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
 import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.Spread;
+import org.uma.jmetal.qualityindicator.impl.UniqueContributionMetric;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.BinarySolution;
 import org.uma.jmetal.util.JMetalException;
@@ -58,7 +60,7 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  *         Iks<ikstaras@gmail.com>
  */
 public class MetaheuristicStudy {
-	private static final int INDEPENDENT_RUNS = 2;
+	private static final int INDEPENDENT_RUNS = 3;
 
 	/* GA */
 	public static final int POPULATION_SIZE = 500;
@@ -66,28 +68,28 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_GA = 0.98;
 
 	/* ACO */
-	public static final int NUMBER_OF_ANTS = 100;
-	public static final double ALPHA = 2;// importance of pheromone trail, x >= 0,
-	public static final double BETA = 2;// importance between source and destination, x >= 1
-	public static final double Q = 100;// pheromone deposited level;
+	public static final int NUMBER_OF_ANTS = 500;//500
+	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
+	public static final double BETA = 10;// importance between source and destination, x >= 1
+	public static final double Q = 10500;// pheromone deposited level;
 	public static final double RHO = 0.01;// pheromone evaporation level, 0<=x<=1 -> 0.1 <= x <= 0.01 is ok.
 
 	public static final double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
 	/* RANDOM */
-	public static final int RANDOM_MAX_EVALUATION = 30000;
+	public static final int RANDOM_MAX_EVALUATION = 3000;//30000
 	public static final double INITIAL_SOLUTION_PROBABILITY_R = 1;
 
 	/* SA */
-	public static final double RATE_OF_COOLING = 0.0005;
+	public static final double RATE_OF_COOLING = 0.0001;//0.0005
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 1;
-	public static final double MUTATION_PROBABILITY_SA = 0.95;
+	public static final double MUTATION_PROBABILITY_SA = 0.98;
 
 	/* TS */
-	public static final int TABU_LIST_SIZE = 1000;
-	public static final int NUMBER_OF_ITERATIONS = 1000;
+	public static final int TABU_LIST_SIZE = 10;
+	public static final int NUMBER_OF_ITERATIONS = 1000;//1000
 	public static final int NUMBER_OF_NEIGHBORS = 100;
 	public static final double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 
@@ -111,9 +113,10 @@ public class MetaheuristicStudy {
 				.setExperimentBaseDirectory(experimentBaseDirectory).setOutputParetoFrontFileName("FUN")
 				.setOutputParetoSetFileName("VAR")
 				.setReferenceFrontDirectory(experimentBaseDirectory + "/referenceFronts")
-				.setIndicatorList(Arrays.asList(new Spread<BinarySolution>(), new Epsilon<BinarySolution>(),
-						new GenerationalDistance<BinarySolution>(), new PISAHypervolume<BinarySolution>(),
-						new InvertedGenerationalDistance<BinarySolution>(),
+				.setIndicatorList(Arrays.asList(new ContributionMetric<BinarySolution>(),
+						new UniqueContributionMetric<BinarySolution>(), new Spread<BinarySolution>(),
+						new Epsilon<BinarySolution>(), new GenerationalDistance<BinarySolution>(),
+						new PISAHypervolume<BinarySolution>(), new InvertedGenerationalDistance<BinarySolution>(),
 						new InvertedGenerationalDistancePlus<BinarySolution>()))
 				.setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(1).build();
 
@@ -197,16 +200,16 @@ public class MetaheuristicStudy {
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_SA).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-
+		
 		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
-					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(0))
+					problemList.get(i).getProblem(), new BitFlipOrExchangeMutation(MUTATION_PROBABILITY_SA))
 							.setMaxEvaluations(RANDOM_MAX_EVALUATION)
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-
+		
 		return algorithms;
 	}
 }

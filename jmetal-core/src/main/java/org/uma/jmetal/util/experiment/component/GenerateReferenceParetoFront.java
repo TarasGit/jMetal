@@ -10,6 +10,7 @@ import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentComponent;
+import org.uma.jmetal.util.experiment.util.AllFrontFileNames;
 import org.uma.jmetal.util.experiment.util.ExperimentAlgorithm;
 import org.uma.jmetal.util.experiment.util.ExperimentProblem;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -47,21 +48,26 @@ public class GenerateReferenceParetoFront implements ExperimentComponent {
 	 */
 	@Override
 	public void run() throws IOException {
+		AllFrontFileNames frontNames = AllFrontFileNames.getInstance();// added by Taras / Singleton.
+
 		String outputDirectoryName = experiment.getReferenceFrontDirectory();
 
 		createOutputDirectory(outputDirectoryName);
 
 		List<String> referenceFrontFileNames = new LinkedList<>();
 		for (ExperimentProblem<?> problem : experiment.getProblemList()) {
-			NonDominatedSolutionListArchive<PointSolution> nonDominatedSolutionArchive = new NonDominatedSolutionListArchive<PointSolution>();
+			NonDominatedSolutionListArchive<PointSolution> nonDominatedSolutionArchive = new NonDominatedSolutionListArchive<PointSolution>();																																								// Taras.
 
 			for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
+				NonDominatedSolutionListArchive<PointSolution> nonDominatedSolutionArchiveAllTSV = new NonDominatedSolutionListArchive<PointSolution>();																																								// Taras.
+
 				String problemDirectory = experiment.getExperimentBaseDirectory() + "/data/"
 						+ algorithm.getAlgorithmTag() + "/" + problem.getTag();
 
 				for (int i = 0; i < experiment.getIndependentRuns(); i++) {
 					String frontFileName = problemDirectory + "/" + experiment.getOutputParetoFrontFileName() + i
 							+ ".tsv";
+					
 					Front front = new ArrayFront(frontFileName);
 					List<PointSolution> solutionList = FrontUtils.convertFrontToSolutionList(front);
 					GenericSolutionAttribute<PointSolution, String> solutionAttribute = new GenericSolutionAttribute<PointSolution, String>();
@@ -69,11 +75,23 @@ public class GenerateReferenceParetoFront implements ExperimentComponent {
 					for (PointSolution solution : solutionList) {
 						solutionAttribute.setAttribute(solution, algorithm.getAlgorithmTag());
 						nonDominatedSolutionArchive.add(solution);
+						nonDominatedSolutionArchiveAllTSV.add(solution);
 					}
 				}
+				String referenceSetFileName = outputDirectoryName + "/" + problem.getTag() + "." + algorithm.getAlgorithmTag() +  ".FullTSV" + ".rf";
+
+				new SolutionListOutput(nonDominatedSolutionArchiveAllTSV.getSolutionList())
+				.printObjectivesToFile(referenceSetFileName);
+				
+				frontNames.put(referenceSetFileName);// added by Taras.
+				frontNames.setOfAllFileNames.add(referenceSetFileName);
+				
 			}
 			String referenceSetFileName = outputDirectoryName + "/" + problem.getTag() + ".rf";
 			referenceFrontFileNames.add(problem.getTag() + ".rf");
+
+			System.out.println("Saved filename: " + referenceSetFileName);
+
 			new SolutionListOutput(nonDominatedSolutionArchive.getSolutionList())
 					.printObjectivesToFile(referenceSetFileName);
 
@@ -97,6 +115,7 @@ public class GenerateReferenceParetoFront implements ExperimentComponent {
 
 	private void writeFilesWithTheSolutionsContributedByEachAlgorithm(String outputDirectoryName,
 			ExperimentProblem<?> problem, List<PointSolution> nonDominatedSolutions) throws IOException {
+
 		GenericSolutionAttribute<PointSolution, String> solutionAttribute = new GenericSolutionAttribute<PointSolution, String>();
 
 		for (ExperimentAlgorithm<?, ?> algorithm : experiment.getAlgorithmList()) {
@@ -107,6 +126,8 @@ public class GenerateReferenceParetoFront implements ExperimentComponent {
 				}
 			}
 
+			System.out.println("FileName added:" + experiment.getReferenceFrontDirectory() + "/" + problem.getTag()
+					+ "." + algorithm.getAlgorithmTag() + ".rf");
 			new SolutionListOutput(solutionsPerAlgorithm).printObjectivesToFile(
 					outputDirectoryName + "/" + problem.getTag() + "." + algorithm.getAlgorithmTag() + ".rf");
 		}

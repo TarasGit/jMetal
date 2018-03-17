@@ -99,6 +99,8 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 			s.setObjective(0, s.getObjective(0) * -1);
 			s.setObjective(1, s.getObjective(1) * -1);
 		}
+		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<>();
+
 		return solutions;
 	}
 

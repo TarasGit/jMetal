@@ -74,7 +74,7 @@ public class NonDominatedSolutionListArchive<S extends Solution<?>> implements A
         } else if (flag == 0) {
           int equalflag = equalSolutions.compare(solution, listIndividual);
           if (equalflag == 0) // solutions are equals
-            isContained = true;
+            isContained = true; //true - original - changed by Taras.
         }
       }
       

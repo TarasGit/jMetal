@@ -73,6 +73,7 @@ public class NonDominatedSolutionListArchiveForMinMax<S extends Solution<?>> imp
 					isDominated = true; // dominated by one in the list
 				} else if (flag == 0) {
 					int equalflag = equalSolutions.compare(solution, listIndividual);
+				
 					if (equalflag == 0) // solutions are equals
 						isContained = true;
 				}

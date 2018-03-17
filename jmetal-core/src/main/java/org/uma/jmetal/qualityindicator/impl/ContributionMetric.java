@@ -1,11 +1,14 @@
 package org.uma.jmetal.qualityindicator.impl;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.experiment.util.AllFrontFileNames;
 import org.uma.jmetal.util.front.Front;
 import org.uma.jmetal.util.front.imp.ArrayFront;
+import org.uma.jmetal.util.front.util.FrontNormalizer;
 import org.uma.jmetal.util.point.Point;
 
 /**
@@ -51,7 +54,7 @@ public class ContributionMetric<S extends Solution<?>> extends GenericIndicator<
 	 */
 	@Override
 	public Double evaluate(List<S> solutionList) {
-		return generalizedSpread(new ArrayFront(solutionList), referenceParetoFront);
+		return contributionMetric(new ArrayFront(solutionList), referenceParetoFront);
 	}
 
 	/**
@@ -65,24 +68,42 @@ public class ContributionMetric<S extends Solution<?>> extends GenericIndicator<
 	 *            The reference pareto front.
 	 * @return the value of the generalized spread metric
 	 **/
-	public double generalizedSpread(Front front, Front referenceFront) {
+	static int count = 0;
 
-		double totalNumberOfPointsInFront = front.getNumberOfPoints();
+	public double contributionMetric(Front front, Front referenceFront) {
+
+		AllFrontFileNames frontNames = AllFrontFileNames.getInstance();// added by Taras / Singleton.
+		Front newFront = null;
+		FrontNormalizer frontNormalizer = null;
+		Front normalizedReferenceFront = null;
+		int number = 0;
+		Front globalReferenceFront = null;
 		double totalNumberOfPointsInReferenceFront = referenceFront.getNumberOfPoints();
-		Point frontPoint;
-		Point tmpPoint;
-		double count = 0;
+		List<String> referenceFrontNames = new ArrayList<>(frontNames.referenceFront);
+		System.out.println("Contribution: " + frontNames.get(count));
 
-		for (int i = 0; i < totalNumberOfPointsInFront; i++) {
-			frontPoint = front.getPoint(i);
-			for (int j = 0; j < totalNumberOfPointsInReferenceFront; j++) {
-				tmpPoint = referenceFront.getPoint(j);
-				if (frontPoint.getDimensionValue(0) == tmpPoint.getDimensionValue(0)
-						&& frontPoint.getDimensionValue(1) == tmpPoint.getDimensionValue(1))
-					count++;
+		try {
+			globalReferenceFront = new ArrayFront(referenceFrontNames.get(0));
+			newFront = new ArrayFront(frontNames.get(count++));
+			frontNormalizer = new FrontNormalizer(globalReferenceFront);
+			normalizedReferenceFront = frontNormalizer.normalize(newFront);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < normalizedReferenceFront.getNumberOfPoints(); i++) {
+			Point p1 = normalizedReferenceFront.getPoint(i);
+			for (int j = 0; j < referenceFront.getNumberOfPoints(); j++) {
+				Point p2 = referenceFront.getPoint(j);
+				if (p1.equals(p2)) {
+					number++;
+					break;
+				}
 			}
 		}
-		return count / totalNumberOfPointsInFront;
+
+		return number / totalNumberOfPointsInReferenceFront;
 	}
 
 	@Override

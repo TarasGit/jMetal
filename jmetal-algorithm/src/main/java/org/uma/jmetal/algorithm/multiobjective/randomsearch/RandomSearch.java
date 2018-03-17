@@ -66,6 +66,8 @@ public class RandomSearch<S extends Solution<?>> implements Algorithm<List<S>> {
 				s.setObjective(0, s.getObjective(0));
 			}
 		}
+		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<>();
+
 		return solutions;
 	}
 

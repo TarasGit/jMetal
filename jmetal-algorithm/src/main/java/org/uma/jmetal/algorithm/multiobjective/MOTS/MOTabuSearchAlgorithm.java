@@ -108,6 +108,8 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 			s.setObjective(0, s.getObjective(0) * -1);
 			s.setObjective(1, s.getObjective(1) * -1);
 		}
+		
+		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<>();
 		return solutions;
 	}
 
