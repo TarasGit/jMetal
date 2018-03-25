@@ -88,7 +88,7 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 
 	@Override
 	public String getName() {
-		return "MOTS";
+		return "TS";
 	}
 
 	@Override

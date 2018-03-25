@@ -28,7 +28,7 @@ public class AntColonyOptimizationRunnerNRPClassic {
 	/*
 	 * TODO: BUG: BETA > ALPHA & #Ants = 10 -> Rank = -1 Exception.
 	 */
-	public static final int NUMBER_OF_ANTS = 20000;
+	public static final int NUMBER_OF_ANTS = 1000;
 	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
 	public static final double BETA = 10;// importance between source and destination, x >= 1
 	public static final double Q = 1800;// pheromone deposited level;

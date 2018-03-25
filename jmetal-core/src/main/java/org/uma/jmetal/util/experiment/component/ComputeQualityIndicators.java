@@ -95,6 +95,8 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
 					indicator.setReferenceParetoFront(normalizedReferenceFront);
 					
 					for (int i = 0; i < experiment.getIndependentRuns(); i++) {
+						frontNames.actualTag = algorithm.getAlgorithmTag();
+						frontNames.numberOfRuns = experiment.getIndependentRuns();
 						frontNames.put(tmpStrings.get(tmpIndex));
 						String frontFileName = problemDirectory + "/" + experiment.getOutputParetoFrontFileName() + i
 								+ ".tsv";

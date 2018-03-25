@@ -29,7 +29,7 @@ import org.uma.jmetal.utility.GenerateScatterPlotChart;
 public class RandomSearchNRPClassic {
 
 	public static final double COST_FACTOR = 0.5;
-	public static final int MAX_EVALUATIONS = 80000;
+	public static final int MAX_EVALUATIONS = 20000;
 
 	public static final double INITIAL_POPULATION_PROBABILITY = 1;
 
@@ -40,7 +40,7 @@ public class RandomSearchNRPClassic {
 		double[] data1 = null, data2 = null;
 		MutationOperator<BinarySolution> mutation;
 
-		mutation = new BitFlipOrExchangeMutation(0.98);
+		mutation = new BitFlipOrExchangeMutation(0.99);
 
 
 		problem = new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", COST_FACTOR);

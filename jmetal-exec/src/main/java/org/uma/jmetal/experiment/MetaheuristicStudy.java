@@ -27,6 +27,7 @@ import org.uma.jmetal.qualityindicator.impl.GenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistance;
 import org.uma.jmetal.qualityindicator.impl.InvertedGenerationalDistancePlus;
 import org.uma.jmetal.qualityindicator.impl.Spread;
+import org.uma.jmetal.qualityindicator.impl.TimeMetric;
 import org.uma.jmetal.qualityindicator.impl.UniqueContributionMetric;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.BinarySolution;
@@ -60,7 +61,7 @@ import org.uma.jmetal.util.experiment.util.ExperimentProblem;
  *         Iks<ikstaras@gmail.com>
  */
 public class MetaheuristicStudy {
-	private static final int INDEPENDENT_RUNS = 3;
+	private static final int INDEPENDENT_RUNS = 2;
 
 	/* GA */
 	public static final int POPULATION_SIZE = 500;
@@ -68,7 +69,7 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_GA = 0.98;
 
 	/* ACO */
-	public static final int NUMBER_OF_ANTS = 500;//500
+	public static final int NUMBER_OF_ANTS = 500;// 500
 	public static final double ALPHA = 10;// importance of pheromone trail, x >= 0,
 	public static final double BETA = 10;// importance between source and destination, x >= 1
 	public static final double Q = 10500;// pheromone deposited level;
@@ -77,11 +78,11 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
 	/* RANDOM */
-	public static final int RANDOM_MAX_EVALUATION = 3000;//30000
+	public static final int RANDOM_MAX_EVALUATION = 30000;// 30000
 	public static final double INITIAL_SOLUTION_PROBABILITY_R = 1;
 
 	/* SA */
-	public static final double RATE_OF_COOLING = 0.0001;//0.0005
+	public static final double RATE_OF_COOLING = 0.0001;// 0.0005
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 1;
@@ -89,7 +90,7 @@ public class MetaheuristicStudy {
 
 	/* TS */
 	public static final int TABU_LIST_SIZE = 10;
-	public static final int NUMBER_OF_ITERATIONS = 1000;//1000
+	public static final int NUMBER_OF_ITERATIONS = 1000;// 1000
 	public static final int NUMBER_OF_NEIGHBORS = 100;
 	public static final double INITIAL_SOLUTION_PROBABILITY_TS = 1;
 
@@ -113,10 +114,11 @@ public class MetaheuristicStudy {
 				.setExperimentBaseDirectory(experimentBaseDirectory).setOutputParetoFrontFileName("FUN")
 				.setOutputParetoSetFileName("VAR")
 				.setReferenceFrontDirectory(experimentBaseDirectory + "/referenceFronts")
-				.setIndicatorList(Arrays.asList(new ContributionMetric<BinarySolution>(),
-						new UniqueContributionMetric<BinarySolution>(), new Spread<BinarySolution>(),
-						new Epsilon<BinarySolution>(), new GenerationalDistance<BinarySolution>(),
-						new PISAHypervolume<BinarySolution>(), new InvertedGenerationalDistance<BinarySolution>(),
+				.setIndicatorList(Arrays.asList(new TimeMetric<BinarySolution>(),
+						new ContributionMetric<BinarySolution>(), new UniqueContributionMetric<BinarySolution>(),
+						new Spread<BinarySolution>(), new Epsilon<BinarySolution>(),
+						new GenerationalDistance<BinarySolution>(), new PISAHypervolume<BinarySolution>(),
+						new InvertedGenerationalDistance<BinarySolution>(),
 						new InvertedGenerationalDistancePlus<BinarySolution>()))
 				.setIndependentRuns(INDEPENDENT_RUNS).setNumberOfCores(1).build();
 
@@ -200,7 +202,7 @@ public class MetaheuristicStudy {
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_SA).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-		
+
 		/* Random Study */
 		for (int i = 0; i < problemList.size(); i++) {
 			Algorithm<List<BinarySolution>> algorithm = new RandomSearchBuilder<BinarySolution>(
@@ -209,7 +211,7 @@ public class MetaheuristicStudy {
 							.setInitialPopulationProbability(INITIAL_SOLUTION_PROBABILITY_R).build();
 			algorithms.add(new ExperimentAlgorithm<>(algorithm, problemList.get(i).getTag()));
 		}
-		
+
 		return algorithms;
 	}
 }

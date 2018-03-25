@@ -146,7 +146,7 @@ public class MOSimulatedAnnealingAlgorithm<S extends Solution<?>> implements Alg
 
 	@Override
 	public String getName() {
-		return "MOSA";
+		return "SA";
 	}
 
 	@Override
