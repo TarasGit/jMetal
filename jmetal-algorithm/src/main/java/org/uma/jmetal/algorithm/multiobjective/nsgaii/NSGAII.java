@@ -82,10 +82,16 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
 
   protected List<S> getNonDominatedSolutions(List<S> solutionList) {
 	    List<S> solutions = SolutionListUtils.getNondominatedSolutions(solutionList);
-	    for(S s : solutions) {
-	    	s.setObjective(0, s.getObjective(0) * -1);
-	    	s.setObjective(1, s.getObjective(1) * -1);
-	    }
+		if (problem.getNumberOfObjectives() == 2) {
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0) * -1);
+				s.setObjective(1, s.getObjective(1) * -1);
+			}
+		}else{
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0));
+			}
+		}
 	    return solutions;
   }
 

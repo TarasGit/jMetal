@@ -102,6 +102,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
 								+ ".tsv";
 
 						Front front = new ArrayFront(frontFileName);
+						System.out.println(frontFileName);
 						Front normalizedFront = frontNormalizer.normalize(front);
 						List<PointSolution> normalizedPopulation = FrontUtils
 								.convertFrontToSolutionList(normalizedFront);

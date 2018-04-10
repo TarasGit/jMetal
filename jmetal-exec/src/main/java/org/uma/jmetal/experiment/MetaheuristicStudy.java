@@ -20,6 +20,9 @@ import org.uma.jmetal.operator.impl.crossover.SinglePointCrossover;
 import org.uma.jmetal.operator.impl.mutation.BitFlipOrExchangeMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.singleobjective.NRPClassic;
+import org.uma.jmetal.problem.singleobjective.NRPClassicBinarySolution;
+import org.uma.jmetal.problem.singleobjective.NRPClassicMultiObjectiveBinarySolution;
 import org.uma.jmetal.problem.singleobjective.NRPRealisticMultiObjectiveBinarySolution;
 import org.uma.jmetal.qualityindicator.impl.ContributionMetric;
 import org.uma.jmetal.qualityindicator.impl.Epsilon;
@@ -78,7 +81,7 @@ public class MetaheuristicStudy {
 	public static final double INITIAL_SOLUTION_PROBABILITY_ACO = 1;
 
 	/* RANDOM */
-	public static final int RANDOM_MAX_EVALUATION = 30000;// 30000
+	public static final int RANDOM_MAX_EVALUATION = 20000;// 30000
 	public static final double INITIAL_SOLUTION_PROBABILITY_R = 1;
 
 	/* SA */
@@ -86,10 +89,10 @@ public class MetaheuristicStudy {
 	public static final int INITIAL_TEMPERATURE = 1000;
 	public static final int MINIMAL_TEMPERATURE = 1;
 	public static final double INITIAL_SOLUTION_PROBABILITY_SA = 1;
-	public static final double MUTATION_PROBABILITY_SA = 0.98;
+	public static final double MUTATION_PROBABILITY_SA = 0.9;
 
 	/* TS */
-	public static final int TABU_LIST_SIZE = 10;
+	public static final int TABU_LIST_SIZE = 100;
 	public static final int NUMBER_OF_ITERATIONS = 1000;// 1000
 	public static final int NUMBER_OF_NEIGHBORS = 100;
 	public static final double INITIAL_SOLUTION_PROBABILITY_TS = 1;
@@ -102,8 +105,10 @@ public class MetaheuristicStudy {
 
 		List<ExperimentProblem<BinarySolution>> problemList = new ArrayList<>();
 
+//		problemList.add(new ExperimentProblem<>(
+//				new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", 0.5)));#
 		problemList.add(new ExperimentProblem<>(
-				new NRPRealisticMultiObjectiveBinarySolution("/nrpRealisticInstances/nrp-e1.txt", 0.5)));
+				new NRPClassicMultiObjectiveBinarySolution("/nrpClassicInstances/nrp1.txt", 0.5)));
 
 		List<ExperimentAlgorithm<BinarySolution, List<BinarySolution>>> algorithmList = configureAlgorithmList(
 				problemList);

@@ -104,9 +104,15 @@ public class MOTabuSearchAlgorithm<S extends Solution<?>> implements Algorithm<L
 	@Override
 	public List<S> getResult() {
 		List<S> solutions = nonDominatedArchive.getSolutionList();
-		for (S s : solutions) {
-			s.setObjective(0, s.getObjective(0) * -1);
-			s.setObjective(1, s.getObjective(1) * -1);
+		if (problem.getNumberOfObjectives() == 2) {
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0) * -1);
+				s.setObjective(1, s.getObjective(1) * -1);
+			}
+		}else{
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0));
+			}
 		}
 		
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<>();

@@ -95,9 +95,15 @@ public class MOAntColonyOptimizationAlgorithmNRP<S extends Solution<?>> implemen
 	public List<S> getResult() {
 		List<S> solutions = nonDominatedArchive.getSolutionList();
 		JMetalLogger.logger.info(solutions.size()+"");
-		for (S s : solutions) {
-			s.setObjective(0, s.getObjective(0) * -1);
-			s.setObjective(1, s.getObjective(1) * -1);
+		if (problem.getNumberOfObjectives() == 2) {
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0) * -1);
+				s.setObjective(1, s.getObjective(1) * -1);
+			}
+		}else{
+			for (S s : solutions) {
+				s.setObjective(0, s.getObjective(0));
+			}
 		}
 		nonDominatedArchive = new NonDominatedSolutionListArchiveForMinMax<>();
 
